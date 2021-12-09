@@ -1,7 +1,9 @@
 import { Room, Client } from "colyseus";
+import WorldGenerator from "../../Generators/WorldGenerator";
 import { Crypto } from "../shared/schemas/Crypto";
 import { Player } from "../shared/schemas/Player";
 import { Block } from "../shared/schemas/World/Block";
+import { World } from "../shared/schemas/World/World";
 import { ClassicSchema } from "./schema/ClassicSchema";
 
 export class Classic extends Room<ClassicSchema> {
@@ -16,14 +18,12 @@ export class Classic extends Room<ClassicSchema> {
     });
 
     //Generate blocks for world
-    for (let index = 0; index < 40*1000; index++) {
-      let block : Block = new Block();
-      block.crypto = new Crypto();
+    let worldGenerator : WorldGenerator = new WorldGenerator(6, this.state.world.blocks);
+  }
 
-      this.state.world.blocks.push(new Block());
-      
-    }
 
+  update() {
+    
   }
 
   onAuth(client: Client, options: object, request: any) {

@@ -34,8 +34,10 @@
     "@colyseus/arena": "^0.14.22",
     "@colyseus/monitor": "^0.14.20",
     "@colyseus/uwebsockets-transport": "^0.14.26",
+    "chisel-api-interface": "^1.0.0",
     "colyseus": "^0.14.20",
     "cors": "^2.8.5",
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "node-worker-threads-pool": "^1.5.1"
   }
 }

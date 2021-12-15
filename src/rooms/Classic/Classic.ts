@@ -4,13 +4,15 @@ import { Crypto } from "../shared/schemas/Crypto";
 import { Player } from "../shared/schemas/Player";
 import { Block } from "../shared/schemas/World/Block";
 import { World } from "../shared/schemas/World/World";
-import { ClassicSchema } from "./schema/ClassicSchema";
+import http from 'http';
 
-export class Classic extends Room<ClassicSchema> {
+export class Classic extends Room<World> {
 
-  onCreate (options: any) {
-    this.setState(new ClassicSchema());
+  onCreate (options:any) {
+    this.setState(new World());
     this.maxClients = 10;
+    this.state.id = options.worldID;
+    // console.log(`New room with name ${this.roomName} was created`);
     this.onMessage("type", (client, message) => {
       //
       // handle "type" message
@@ -18,7 +20,7 @@ export class Classic extends Room<ClassicSchema> {
     });
 
     //Generate blocks for world
-    let worldGenerator : WorldGenerator = new WorldGenerator(6, this.state.world.blocks);
+    let worldGenerator : WorldGenerator = new WorldGenerator(options.worldID, this.state.blocks)
   }
 
 
@@ -26,16 +28,18 @@ export class Classic extends Room<ClassicSchema> {
     
   }
 
-  onAuth(client: Client, options: object, request: any) {
+  onAuth(client: Client, options: object, request: http.IncomingMessage) {
+    console.info(`User with IP ${request.socket.remoteAddress} authenticating`)
     //Verify wallet authentication
-    if(options.hasOwnProperty("wallet_address") && options.hasOwnProperty("wallet_auth_token")){
+    // if(options.hasOwnProperty("wallet_address") && options.hasOwnProperty("wallet_auth_token")){
 
-    }
+    // }
 
-    //Check for name and gotchiID
-    if("gotchiID" in options && "name" in options ){
+    // //Check for name and gotchiID
+    // if("gotchiID" in options && "name" in options ){
       
-    } else return false;
+    // } else return false;
+    // return true;
     return true;
   }
   
@@ -45,8 +49,8 @@ export class Classic extends Room<ClassicSchema> {
     if("gotchiID" in options && "name" in  options) {
 
     }
-    this.state.world.players.push(new Player());
-    console.log(client.sessionId, "joined!");
+    this.state.players.push(new Player());
+    console.log(`${client.sessionId}, joined!`);
   }
 
   onLeave (client: Client, consented: boolean) {
@@ -54,7 +58,7 @@ export class Classic extends Room<ClassicSchema> {
   }
 
   onDispose() {
-    console.log("room", this.roomId, "disposing...");
+    console.log("Room", this.roomId, "disposing...");
   }
 
 }

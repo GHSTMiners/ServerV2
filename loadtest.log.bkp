@@ -1,11 +1,11 @@
-[25-11-2021 15:46:29] @colyseus/loadtest
+[09/12/2021, 17:56:23] @colyseus/loadtest
 endpoint: ws://localhost:2567
 roomName: Classic
 numClients: 32
-scriptFile: C:\Users\martens\Projects\ServerV2\loadtest\Classic.ts
+scriptFile: C:\Users\Martens\Projects\ServerV2\loadtest\Classic.ts
 logLevel: all
-output: C:\Users\martens\Projects\ServerV2\loadtest.log
-[25-11-2021 15:47:42] Finished. Summary:
+output: C:\Users\Martens\Projects\ServerV2\loadtest.log
+[09/12/2021, 18:52:05] Finished. Summary:
 Successful connections: 32
 Failed connections: 0
 Total errors: 0

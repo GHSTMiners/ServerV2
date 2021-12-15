@@ -2,7 +2,7 @@ import Arena from "@colyseus/arena";
 import { monitor } from "@colyseus/monitor";
 import { Server } from "@colyseus/core";
 import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
-
+import { APIInterface } from "chisel-api-interface";
 /**
  * Import your Room files
  */
@@ -12,12 +12,15 @@ export default Arena({
     getId: () => "Gotchiminer",
 
     initializeGameServer: (gameServer) => {
-        /**
-         * Define your room handlers:
-         */
-        gameServer.define('Classic', Classic, {
-            
-        });
+        let apiInterface : APIInterface = new APIInterface('https://chisel.gotchiminer.rocks/api');
+        apiInterface.worlds().then(worlds => {
+            worlds.forEach(world => {
+                console.info(`Registering room with name ${world.name}_Classic for world with id: ${world.id}`);
+                gameServer.define(`${world.name}_Classic`, Classic, {
+                    worldID: world.id
+                });
+            })
+        })
 
     },
 

@@ -57,7 +57,8 @@ export default class WorldGenerator {
                             case SpawnType.Rock:
                                 currentBlock.spawnID = (spawn as RockSpawn).rock_id;
                                 break;
-                            default:
+                            case SpawnType.WhiteSpace:
+                                currentBlock.spawnType = (spawn as WhiteSpace).background_only ? SpawnType.None : SpawnType.WhiteSpace
                                 break;
                         } 
 

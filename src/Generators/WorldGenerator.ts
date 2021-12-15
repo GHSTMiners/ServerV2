@@ -22,6 +22,7 @@ export default class WorldGenerator {
         staticPool.exec(worldID, blockSchema);
     }
 
+
     private static generateWorld(worldID : number, blockSchema : ArraySchema<Block>) {
         const start = new Date().getTime();
         //Fetch world information
@@ -38,7 +39,7 @@ export default class WorldGenerator {
             //Fetch all spawns for that layer, and also the soil
             for (let layer = 0; layer < world.height; layer++) {
                 let filteredSpawns : (CryptoSpawn|RockSpawn|WhiteSpace)[] = spawns.filter(spawn => 
-                    (spawn.starting_layer >= layer && layer <= spawn.ending_layer));
+                    (layer >= spawn.starting_layer && layer <= spawn.ending_layer));
                 let currentSoil : Soil = WorldGenerator.soilForLayer(sortedSoil, layer);
                 for (let x = 0; x < world.width; x++) {
                     //Fetch current block
@@ -58,9 +59,9 @@ export default class WorldGenerator {
                                 break;
                             default:
                                 break;
-                        }
-                    }
-                    //Insert generated block into layer
+                        } 
+
+                    } else currentBlock.spawnType = SpawnType.None
                     blockSchema.push(currentBlock);
                 }
             }

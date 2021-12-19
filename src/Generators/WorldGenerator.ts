@@ -23,7 +23,7 @@ export default class WorldGenerator {
     }
 
 
-    private static generateWorld(worldID : number, blockSchema : ArraySchema<Block>) {
+    private static async generateWorld(worldID : number, blockSchema : ArraySchema<Block>) {
         const start = new Date().getTime();
         //Fetch world information
         let apiInterface = new APIInterface('https://chisel.gotchiminer.rocks/api');

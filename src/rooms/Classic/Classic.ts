@@ -5,6 +5,7 @@ import { Player } from "../shared/schemas/Player";
 import { Block } from "../shared/schemas/World/Block";
 import { World } from "../shared/schemas/World/World";
 import http from 'http';
+import Game from "../../Game";
 
 export class Classic extends Room<World> {
 
@@ -12,21 +13,22 @@ export class Classic extends Room<World> {
     this.setState(new World());
     this.maxClients = 10;
     this.state.id = options.worldID;
-    // console.log(`New room with name ${this.roomName} was created`);
-    this.onMessage("type", (client, message) => {
-      //
-      // handle "type" message
-      //
-    });
 
     //Generate blocks for world
     let worldGenerator : WorldGenerator = new WorldGenerator(options.worldID, this.state.blocks)
+    this.clientPlayerMap = new Map<string, Player>()
+    this.game = new Game()
+    this.setSimulationInterval(delta => {
+      this.game.headlessStep(Date.now(), 1000/30)
+    }, 100);
   }
 
 
   update() {
     
   }
+
+  
 
   onAuth(client: Client, options: object, request: http.IncomingMessage) {
     console.info(`User with IP ${request.socket.remoteAddress} authenticating`)
@@ -46,14 +48,16 @@ export class Classic extends Room<World> {
   
 
   onJoin (client: Client, options: any) {
-    if("gotchiID" in options && "name" in  options) {
-
-    }
-    this.state.players.push(new Player());
-    console.log(`${client.sessionId}, joined!`);
+    let newPlayer = new Player();
+    this.clientPlayerMap.set(client.id, newPlayer)
+    this.state.players.push(newPlayer);
+    console.log(`${client.id}, joined!`);
   }
 
   onLeave (client: Client, consented: boolean) {
+    let player : Player = this.clientPlayerMap.get(client.id)
+    this.state.players.deleteAt(this.state.players.indexOf(player))
+    this.clientPlayerMap.delete(client.id)
     console.log(client.sessionId, "left!");
   }
 
@@ -61,4 +65,6 @@ export class Classic extends Room<World> {
     console.log("Room", this.roomId, "disposing...");
   }
 
+  private game : Game
+  private clientPlayerMap : Map<string, Player>
 }

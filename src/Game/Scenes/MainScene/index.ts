@@ -13,7 +13,7 @@ export default class MainScene extends Phaser.Scene {
     }
 
     update(time: number, delta: number): void {
-        console.log(`Update, delta ${delta}`)
+
     }
 
 }

@@ -19,8 +19,18 @@ export class Classic extends Room<World> {
     this.clientPlayerMap = new Map<string, Player>()
     this.game = new Game()
     this.setSimulationInterval(delta => {
-      this.game.headlessStep(Date.now(), 1000/30)
-    }, 100);
+      this.game.headlessStep(Date.now(), delta)
+    }, 1000/30);
+
+    var self = this;
+    this.onMessage("*", (client: Client, type: string | number, message: string) => {
+      let direction : object = JSON.parse(message)
+      //@ts-ignore
+      self.clientPlayerMap.get(client.id).x += direction.x * 10
+      //@ts-ignore
+      self.clientPlayerMap.get(client.id).y += direction.y * 10
+
+    })
   }
 
 

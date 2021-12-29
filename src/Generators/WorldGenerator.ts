@@ -1,34 +1,18 @@
 import { ArraySchema } from "@colyseus/schema"
 import { APIInterface, DetailedWorld, Crypto, CryptoSpawn, RockSpawn, WhiteSpace, Soil, SpawnType } from "chisel-api-interface";
 import { StaticPool } from "node-worker-threads-pool"
-import { Block } from "../rooms/shared/schemas/World/Block";
-import { Rock } from "../rooms/shared/schemas/World/Rock";
-import { World } from "../rooms/shared/schemas/World/World";
+import { Block } from "../Rooms/shared/schemas/World/Block";
+import { Rock } from "../Rooms/shared/schemas/World/Rock";
+import { World } from "../Rooms/shared/schemas/World/World";
 
 export default class WorldGenerator {
-    constructor(worldID : number, blockSchema : ArraySchema<Block>) {
-        this.worldID = worldID
-        WorldGenerator.generateWorld(this.worldID, blockSchema);
-    }
 
-    private generateAsync(worldID : number, blockSchema : ArraySchema<ArraySchema<Block>>) {
-        const staticPool = new StaticPool({
-            size: 1,
-            shareEnv: true,
-            task(worldID : number, blockSchema : ArraySchema<ArraySchema<Block>>) {
-
-            }
-        })
-        staticPool.exec(worldID, blockSchema);
-    }
-
-
-    private static async generateWorld(worldID : number, blockSchema : ArraySchema<Block>) {
+    public static async generateWorld(worldID : number, blockSchema : ArraySchema<Block>) {
         const start = new Date().getTime();
         //Fetch world information
         let apiInterface = new APIInterface('https://chisel.gotchiminer.rocks/api');
         //When detailed world information was fetches, start generating world
-        apiInterface.world(worldID).then(world => {
+        await apiInterface.world(worldID).then(world => {
             console.log("Generating new world of type: %s, with size %dx%d", world.name, world.width, world.height);
             //Put all spawns in array, maddness
             let sortedSoil : Soil[] = world.soil.sort(WorldGenerator.sortSoil);

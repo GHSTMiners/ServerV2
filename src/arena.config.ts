@@ -6,7 +6,7 @@ import { APIInterface } from "chisel-api-interface";
 /**
  * Import your Room files
  */
-import { Classic } from "./rooms/Classic/Classic";
+import { Classic } from "./Rooms/Classic";
 
 export default Arena({
     getId: () => "Gotchiminer",

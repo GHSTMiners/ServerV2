@@ -11,14 +11,21 @@ export class Classic extends Room<Schema.World> {
     this.setState(new Schema.World());
     this.maxClients = 10;
     this.state.id = options.worldID;
-    this.clientPlayerMap = new Map<string, Schema.Player>()
 
     //Generate blocks for world
     var self = this;
-    WorldGenerator.generateWorld(options.worldID, this.state.blocks).then(nothing =>{
+    WorldGenerator.generateWorld(options.worldID, this.state).then(nothing =>{
       self.game = new Game(this.state)
+      //Register clients with clientmanager
+      this.clients.forEach(client => {
+        this.onMessage("*", (client: Client, type: string | number, message: string) => {
+          this.game.mainScene.clientManager.handleMessage(client, type, message)
+        })
+        this.game.mainScene.clientManager.handleClientJoined(client, null)
+      }, this)
       self.setSimulationInterval((deltaTime) => this.update(deltaTime))
     })
+
   }
 
   update(delta : number): void {
@@ -41,7 +48,11 @@ export class Classic extends Room<Schema.World> {
   }
   
   onJoin (client: Client, options: any) {
-    // this.game.onClientJoined(client, options)
+    if(this.game) {
+      this.game.mainScene.clientManager.handleClientJoined(client, options)
+    } else {
+      console.debug("MainScene was not created yet, not forwarding join event to clientManager")
+    }
   }
 
   onLeave (client: Client, consented: boolean) {

@@ -4,7 +4,7 @@ import { Crypto } from "../Crypto";
 import { Rock } from "./Rock";
 
 export class Block extends Schema {
-    @type("number") soilID : number = 0;
-    @type("number") spawnType : SpawnType = SpawnType.None;
-    @type("number") spawnID : number = 0;
+    @type("int16") soilID : number = 0;
+    @type("uint8") spawnType : SpawnType = SpawnType.None;
+    @type("int16") spawnID : number = 0;
 }

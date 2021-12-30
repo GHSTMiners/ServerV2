@@ -1,27 +1,28 @@
 import * as Schema from "../../../Rooms/shared/schemas/Schemas"
 import { Scene } from "phaser";
 import Player from "../../Objects/Player";
-
+import ClientManager from "../ClientManager";
+import { Client } from "colyseus";
+import ClientWrapper from "../../Objects/ClientWrapper";
 export default class PlayerManager extends Phaser.GameObjects.GameObject{
-    constructor(scene: Scene, worldSchema : Schema.World) {
+    constructor(scene: Scene, clientManager : ClientManager, worldSchema : Schema.World) {
         super(scene, "PlayerManager")
         this.worldSchema = worldSchema;
-        this.worldSchema.players.onAdd = this.playerAdded;
-        this.worldSchema.players.onRemove = this.playerRemoved;
+        this.playerMap = new Map<ClientWrapper, Player>()
+        clientManager.clientJoinedCallback = this.handleClientJoined.bind(this)
     }
 
-    private playerAdded(item: Schema.Player, key: number): void {
-        this.playerMap.set(item, new Player(this.scene, 128,128, item));
+    private handleClientJoined(client : ClientWrapper, options : any) {
+        //Create new objects
+        let newPlayerSchema : Schema.Player = new Schema.Player()
+        let newPlayerSprite : Player = new Player(this.scene, newPlayerSchema, client)
+        newPlayerSchema.playerSessionID = client.client.sessionId
+        //Add new object to game server logic
+        this.worldSchema.players.push(newPlayerSchema)
+        this.scene.add.existing(newPlayerSprite)
+        this.playerMap.set(client, newPlayerSprite)
     }
 
-    private playerRemoved(item: Schema.Player, key: number): void {
-        let player : Player | undefined = this.playerMap.get(item)
-        if(player) {
-            player.destroy()
-            this.playerMap.delete(item)
-        }
-    }
-
-    private playerMap : Map<Schema.Player, Player>
+    private playerMap : Map<ClientWrapper, Player>
     private worldSchema : Schema.World
 }

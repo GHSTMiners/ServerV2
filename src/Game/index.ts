@@ -6,6 +6,7 @@ import PlayerManager from "./Managers/PlayerManager";
 
 export default class Game extends Phaser.Game {
     constructor(world : Schema.World) {
+      const mainScene : MainScene = new MainScene(world)
        const config : Phaser.Types.Core.GameConfig = {
             type: Phaser.HEADLESS,
             width: 1280,
@@ -14,15 +15,16 @@ export default class Game extends Phaser.Game {
             audio: {
                 noAudio: true
             },
-            scene: new MainScene(world),
+            scene: mainScene,
             physics: {
               default: 'arcade',
               arcade: {
-                gravity: { y: 300 }
+                gravity: { y: 0 }
               }
             }
         }
         super(config)
+        this.mainScene = mainScene;
         this.events.emit(Phaser.Core.Events.READY);
     }
 
@@ -33,4 +35,6 @@ export default class Game extends Phaser.Game {
     public onClientLeave(client: Colyseus.Client, consented: boolean) {
 
     }
+
+    public readonly mainScene : MainScene
 }

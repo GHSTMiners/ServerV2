@@ -44,6 +44,7 @@
     "colyseus": "^0.14.20",
     "cors": "^2.8.5",
     "express": "^4.16.4",
+    "gotchiminer-multiplayer-protocol": "^1.0.0",
     "node-navigator": "^1.0.1",
     "node-worker-threads-pool": "^1.5.1",
     "phaser": "^3.55.2"

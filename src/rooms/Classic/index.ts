@@ -41,7 +41,7 @@ export class Classic extends Room<Schema.World> {
   }
   
   onJoin (client: Client, options: any) {
-    this.game.onClientJoined(client, options)
+    // this.game.onClientJoined(client, options)
   }
 
   onLeave (client: Client, consented: boolean) {

@@ -15,7 +15,7 @@ export default class MainScene extends Phaser.Scene {
 
     create() {
         console.log("Created mainscene")
-        this.blockManager = new BlockManager(this, this.worldSchema)
+        // this.blockManager = new BlockManager(this, this.worldSchema)
         this.playerManager = new PlayerManager(this, this.worldSchema)
     }
 

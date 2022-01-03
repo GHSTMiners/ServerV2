@@ -28,13 +28,5 @@ export default class Game extends Phaser.Game {
         this.events.emit(Phaser.Core.Events.READY);
     }
 
-    public onClientJoined(client: Colyseus.Client, consented: boolean) {
-      
-    }
-
-    public onClientLeave(client: Colyseus.Client, consented: boolean) {
-
-    }
-
     public readonly mainScene : MainScene
 }

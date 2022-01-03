@@ -15,15 +15,16 @@ export class Classic extends Room<Schema.World> {
     //Generate blocks for world
     var self = this;
     WorldGenerator.generateWorld(options.worldID, this.state).then(nothing =>{
+      //Create game
       self.game = new Game(this.state)
+      //Register message handler 
+      this.onMessage("*", (client: Client, type: string | number, message: string) => this.game.mainScene.clientManager.handleMessage(client, type as string, message))
       //Register clients with clientmanager
       this.clients.forEach(client => {
-        this.onMessage("*", (client: Client, type: string | number, message: string) => {
-          this.game.mainScene.clientManager.handleMessage(client, type, message)
-        })
         this.game.mainScene.clientManager.handleClientJoined(client, null)
       }, this)
-      self.setSimulationInterval((deltaTime) => this.update(deltaTime))
+      //Start running the engine loop
+      self.setSimulationInterval((deltaTime) => this.update(deltaTime), 1000/20)
     })
 
   }
@@ -56,7 +57,11 @@ export class Classic extends Room<Schema.World> {
   }
 
   onLeave (client: Client, consented: boolean) {
-    this.game.onClientLeave
+    if(this.game) {
+      this.game.mainScene.clientManager.handleClientLeave(client)
+    } else {
+      console.debug("MainScene was not created yet, not forwarding leave event to clientManager")
+    }
   }
 
   onDispose() {

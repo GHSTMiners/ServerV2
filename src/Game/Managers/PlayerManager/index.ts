@@ -9,7 +9,8 @@ export default class PlayerManager extends Phaser.GameObjects.GameObject{
         super(scene, "PlayerManager")
         this.worldSchema = worldSchema;
         this.playerMap = new Map<ClientWrapper, Player>()
-        clientManager.clientJoinedCallback = this.handleClientJoined.bind(this)
+        clientManager.on(ClientManager.CLIENT_JOINED, this.handleClientJoined.bind(this))
+        clientManager.on(ClientManager.CLIENT_LEFT, this.handleClientLeave.bind(this))
     }
 
     private handleClientJoined(client : ClientWrapper, options : any) {
@@ -21,8 +22,23 @@ export default class PlayerManager extends Phaser.GameObjects.GameObject{
         this.worldSchema.players.push(newPlayerSchema)
         this.scene.add.existing(newPlayerSprite)
         this.playerMap.set(client, newPlayerSprite)
+        this.emit(PlayerManager.PLAYER_ADDED, newPlayerSprite)
+    }
+
+    private handleClientLeave(client : ClientWrapper) {
+        let player : Player | undefined = this.playerMap.get(client)
+        if(player) {
+            let playerIndex : number = this.worldSchema.players.indexOf(player.playerSchema)
+            this.worldSchema.players.deleteAt(playerIndex)
+            player.destroy(true)
+            this.playerMap.delete(client)
+            this.emit(PlayerManager.PLAYER_REMOVED, player)
+        }
     }
 
     private playerMap : Map<ClientWrapper, Player>
     private worldSchema : Schema.World
+    static readonly PLAYER_ADDED: unique symbol = Symbol();
+    static readonly PLAYER_REMOVED: unique symbol = Symbol();
+
 }

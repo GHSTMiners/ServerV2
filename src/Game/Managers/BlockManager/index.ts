@@ -5,6 +5,8 @@ import Config from "../../../Config";
 import PlayerManager from "../PlayerManager";
 import Player from "../../Objects/Player";
 import Block from "../../Objects/Block";
+import { SpawnType } from "chisel-api-interface";
+import PlayerExcavationManager from "../PlayerExcavationManager";
 
 export default class BlockManager extends Phaser.GameObjects.GameObject {
     constructor(scene : Phaser.Scene, world : World, playerManager : PlayerManager) {
@@ -14,21 +16,29 @@ export default class BlockManager extends Phaser.GameObjects.GameObject {
         //Create maps
         this.colliders = new Map<Player, Phaser.Physics.Arcade.Collider>()
         this.staticBodies = new Map<Player, Phaser.Physics.Arcade.StaticGroup>()
+        this.excavationManagers = new Map<Player, PlayerExcavationManager>()
+
         // Set world bounds
         this.scene.physics.world.setBounds(0, -Config.skyHeight, 
             world.width * Config.blockWidth, Config.skyHeight + world.height * Config.blockHeight, true, true, true, true)
         // Register event handlers
         playerManager.on(PlayerManager.PLAYER_ADDED, this.handlePlayerAdded.bind(this))
         playerManager.on(PlayerManager.PLAYER_REMOVED, this.handlePlayerDeleted.bind(this))
-
     }
 
     private handlePlayerAdded(player : Player) {
         //Create staticgroup and collider
         let newStaticGroup : Phaser.Physics.Arcade.StaticGroup = this.scene.physics.add.staticGroup()
+        this.excavationManagers.set(player, new PlayerExcavationManager(this.scene, player, this))
         this.staticBodies.set(player, newStaticGroup)
-        this.colliders.set(player, this.scene.physics.add.collider(player, newStaticGroup))
+        this.colliders.set(player, this.scene.physics.add.collider(player, newStaticGroup, null, this.processCollision))
         player.on(Player.BLOCK_POSITION_CHANGED, this.handlePlayerBlockPositionChanged.bind(this, player))
+    }
+
+    private processCollision(player : Phaser.Types.Physics.Arcade.GameObjectWithBody, block : Phaser.Types.Physics.Arcade.GameObjectWithBody) : boolean {
+        if(block instanceof Block) {
+            return(block.blockSchema.spawnType != SpawnType.None)
+        } else return true
     }
 
     private handlePlayerDeleted(player : Player) {
@@ -44,6 +54,10 @@ export default class BlockManager extends Phaser.GameObjects.GameObject {
         }
     }
 
+    public blockAt(x : number, y : number) : Schema.Block {
+        return this.world.blocks[y * this.world.width + x]
+    }
+
     private handlePlayerBlockPositionChanged(player : Player, position : Phaser.Geom.Point) {
         let renderRectangle : Phaser.Geom.Rectangle = new Phaser.Geom.Rectangle(position.x - Config.blockLoadingRadius, position.y - Config.blockLoadingRadius, Config.blockLoadingRadius*2, Config.blockLoadingRadius*2)
         let staticGroup  : Phaser.Physics.Arcade.StaticGroup | undefined = this.staticBodies.get(player)
@@ -52,7 +66,10 @@ export default class BlockManager extends Phaser.GameObjects.GameObject {
             for (let x = renderRectangle.x; x < (renderRectangle.x + renderRectangle.width); x++) {
                 for (let y = renderRectangle.y; y < (renderRectangle.y + renderRectangle.height); y++) {
                     if(x >=0 && this.world.width >= x && y >= 0 && this.world.height >= y) {
-                        staticGroup.add(new Block(this.scene, x*Config.blockWidth+Config.blockWidth/2, y*Config.blockHeight+Config.blockHeight/2, Config.blockWidth, Config.blockHeight))
+                        let blockSchema : Schema.Block = this.blockAt(x, y)
+                        if(blockSchema.spawnType != SpawnType.None) {
+                            staticGroup.add(new Block(this.scene, blockSchema, x*Config.blockWidth+Config.blockWidth/2, y*Config.blockHeight+Config.blockHeight/2, Config.blockWidth, Config.blockHeight))
+                        }
                     }
                 }
             }
@@ -60,6 +77,7 @@ export default class BlockManager extends Phaser.GameObjects.GameObject {
     }
 
     private colliders : Map<Player, Phaser.Physics.Arcade.Collider>
+    private excavationManagers : Map<Player, PlayerExcavationManager>
     private staticBodies : Map<Player, Phaser.Physics.Arcade.StaticGroup>
     private world : World
 }

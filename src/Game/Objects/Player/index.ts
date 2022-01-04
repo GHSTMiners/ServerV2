@@ -1,6 +1,7 @@
-import { ChangeDirection } from "gotchiminer-multiplayer-protocol";
 import Config from "../../../Config";
 import * as Schema from "../../../Rooms/shared/schemas/Player";
+import PlayerExcavationManager from "../../Managers/PlayerExcavationManager";
+import PlayerMovementManager from "../../Managers/PlayerMovementManager";
 import ClientWrapper from "../ClientWrapper";
 
 export default class Player extends Phaser.GameObjects.Rectangle {
@@ -19,21 +20,15 @@ export default class Player extends Phaser.GameObjects.Rectangle {
             this.body.setDamping(true)
             this.body.setBounce(0.2, 0.2)
             this.body.setDrag(0.01, 0.01)
+            this.body.setSize(Config.blockWidth*0.85, Config.blockHeight)
         }
         
-        //Register message handler
-        client.messageRouter.addRoute(ChangeDirection, this.handleChangeDirection.bind(this))
         //Configure size and position
         this.setPosition(playerSchema.x, playerSchema.y)
-        this.setSize(Config.blockWidth*0.85, Config.blockWidth)
-        //Start moving
-        this.handleChangeDirection(new ChangeDirection())
-    }
+        this.setSize(Config.blockWidth*0.5, Config.blockHeight)
+        //Create managers
+        this.movementManager = new PlayerMovementManager(scene, this, client)
 
-    private handleChangeDirection(direction : ChangeDirection) {
-        if(this.body instanceof Phaser.Physics.Arcade.Body) {
-            this.body.setAcceleration(direction.x *400, (direction.y < 0) ? direction.y * 400 : 600)
-        }
     }
 
     public blockPosition() : Phaser.Geom.Point {
@@ -54,6 +49,7 @@ export default class Player extends Phaser.GameObjects.Rectangle {
         if(this.playerSchema.y != this.y) this.playerSchema.y = this.y
     }
 
+    private movementManager : PlayerMovementManager
     private lastBlockPosition : Phaser.Geom.Point
     public readonly playerSchema : Schema.Player
     static readonly BLOCK_POSITION_CHANGED: unique symbol = Symbol();

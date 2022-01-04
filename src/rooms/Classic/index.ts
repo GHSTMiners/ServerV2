@@ -24,7 +24,7 @@ export class Classic extends Room<Schema.World> {
         this.game.mainScene.clientManager.handleClientJoined(client, null)
       }, this)
       //Start running the engine loop
-      self.setSimulationInterval((deltaTime) => this.update(deltaTime), 1000/20)
+      self.setSimulationInterval((deltaTime) => this.update(deltaTime))
     })
 
   }

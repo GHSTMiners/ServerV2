@@ -1,5 +1,5 @@
 import { Schema, ArraySchema, type } from "@colyseus/schema"
-import { Block } from "./World/Block";
+import { Block } from "../World/Block";
 
 export enum PlayerState {
     Stationary = 0,
@@ -12,6 +12,7 @@ export enum DrillingDirection {
     Down = 1,
     Left = 2,
     Right = 3,
+    None = 4
 }
 
 export class Player extends Schema {

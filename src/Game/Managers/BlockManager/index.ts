@@ -16,7 +16,6 @@ export default class BlockManager extends Phaser.GameObjects.GameObject {
         //Create maps
         this.colliders = new Map<Player, Phaser.Physics.Arcade.Collider>()
         this.staticBodies = new Map<Player, Phaser.Physics.Arcade.StaticGroup>()
-        this.excavationManagers = new Map<Player, PlayerExcavationManager>()
 
         // Set world bounds
         this.scene.physics.world.setBounds(0, -Config.skyHeight, 
@@ -29,7 +28,6 @@ export default class BlockManager extends Phaser.GameObjects.GameObject {
     private handlePlayerAdded(player : Player) {
         //Create staticgroup and collider
         let newStaticGroup : Phaser.Physics.Arcade.StaticGroup = this.scene.physics.add.staticGroup()
-        this.excavationManagers.set(player, new PlayerExcavationManager(this.scene, player, this))
         this.staticBodies.set(player, newStaticGroup)
         this.colliders.set(player, this.scene.physics.add.collider(player, newStaticGroup, null, this.processCollision))
         player.on(Player.BLOCK_POSITION_CHANGED, this.handlePlayerBlockPositionChanged.bind(this, player))
@@ -54,13 +52,15 @@ export default class BlockManager extends Phaser.GameObjects.GameObject {
         }
     }
 
-    public blockAt(x : number, y : number) : Schema.Block {
-        return this.world.blocks[y * this.world.width + x]
+    public blockAt(x : number, y : number) : Schema.Block | undefined{
+        let blockIndex : number = y * this.world.width + x
+        if(blockIndex < 0) return null
+        return this.world.blocks[blockIndex]
     }
 
     private handlePlayerBlockPositionChanged(player : Player, position : Phaser.Geom.Point) {
         let renderRectangle : Phaser.Geom.Rectangle = new Phaser.Geom.Rectangle(position.x - Config.blockLoadingRadius, position.y - Config.blockLoadingRadius, Config.blockLoadingRadius*2, Config.blockLoadingRadius*2)
-        let staticGroup  : Phaser.Physics.Arcade.StaticGroup | undefined = this.staticBodies.get(player)
+        let staticGroup : Phaser.Physics.Arcade.StaticGroup | undefined = this.staticBodies.get(player)
         if(staticGroup) {
             staticGroup.clear(true, true)
             for (let x = renderRectangle.x; x < (renderRectangle.x + renderRectangle.width); x++) {
@@ -77,7 +77,6 @@ export default class BlockManager extends Phaser.GameObjects.GameObject {
     }
 
     private colliders : Map<Player, Phaser.Physics.Arcade.Collider>
-    private excavationManagers : Map<Player, PlayerExcavationManager>
     private staticBodies : Map<Player, Phaser.Physics.Arcade.StaticGroup>
     private world : World
 }

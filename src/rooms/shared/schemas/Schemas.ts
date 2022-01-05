@@ -1,5 +1,5 @@
 export * from "./Crypto"
-export * from "./Player"
+export * from "./Player/Player"
 export * from "./World/World"
 export * from "./World/Block"
 export * from "./World/Rock"

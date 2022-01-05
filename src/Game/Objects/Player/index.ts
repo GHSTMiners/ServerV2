@@ -1,6 +1,5 @@
 import Config from "../../../Config";
-import * as Schema from "../../../Rooms/shared/schemas/Player";
-import PlayerExcavationManager from "../../Managers/PlayerExcavationManager";
+import * as Schema from "../../../Rooms/shared/schemas/Player/Player";
 import PlayerMovementManager from "../../Managers/PlayerMovementManager";
 import ClientWrapper from "../ClientWrapper";
 
@@ -28,13 +27,24 @@ export default class Player extends Phaser.GameObjects.Rectangle {
         this.setSize(Config.blockWidth*0.5, Config.blockHeight)
         //Create managers
         this.movementManager = new PlayerMovementManager(scene, this, client)
-
     }
 
     public blockPosition() : Phaser.Geom.Point {
         let currentLayer : number = this.y / Config.blockHeight
         let x : number = this.x / Config.blockWidth
         return new Phaser.Geom.Point(Math.floor(x), Math.floor(currentLayer))
+    }
+
+    public moveToLocation(x: number, y: number, duration: number) { 
+        if(this.moveTween) this.scene.tweens.remove(this.moveTween)
+        this.moveTween = this.scene.tweens.add({
+            targets: this,
+            y: y,
+            x: x,
+            duration: duration,
+            ease: Phaser.Math.Easing.Linear,
+            loop: 0,
+        })
     }
 
     protected preUpdate(willStep: boolean, delta: number): void {
@@ -52,6 +62,7 @@ export default class Player extends Phaser.GameObjects.Rectangle {
     private movementManager : PlayerMovementManager
     private lastBlockPosition : Phaser.Geom.Point
     public readonly playerSchema : Schema.Player
+    private moveTween : Phaser.Tweens.Tween
     static readonly BLOCK_POSITION_CHANGED: unique symbol = Symbol();
 
 }

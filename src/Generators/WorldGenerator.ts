@@ -1,13 +1,11 @@
 import { ArraySchema } from "@colyseus/schema"
 import { APIInterface, DetailedWorld, Crypto, CryptoSpawn, RockSpawn, WhiteSpace, Soil, SpawnType } from "chisel-api-interface";
 import { StaticPool } from "node-worker-threads-pool"
-import { Block } from "../Rooms/shared/schemas/World/Block";
-import { Rock } from "../Rooms/shared/schemas/World/Rock";
-import { World } from "../Rooms/shared/schemas/World/World";
+import * as Schema from "../Rooms/shared/schemas/Schemas"
 
 export default class WorldGenerator {
 
-    public static async generateWorld(worldID : number, worldSchema : World) {
+    public static async generateWorld(worldID : number, worldSchema : Schema.World) {
         const start = new Date().getTime();
         //Fetch world information
         let apiInterface = new APIInterface('https://chisel.gotchiminer.rocks/api')
@@ -30,7 +28,7 @@ export default class WorldGenerator {
                 let currentSoil : Soil = WorldGenerator.soilForLayer(sortedSoil, layer)
                 for (let x = 0; x < world.width; x++) {
                     //Fetch current block
-                    let currentBlock : Block = new Block()
+                    let currentBlock : Schema.Block = new Schema.Block()
                     //First write soil to blockSchema
                     currentBlock.soilID = currentSoil.id;
                     if(filteredSpawns.length > 0 ) {

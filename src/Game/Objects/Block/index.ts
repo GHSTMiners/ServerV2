@@ -1,5 +1,5 @@
 import Config from "../../../Config"
-import * as Schema from "../../../Rooms/shared/schemas/Schemas"
+import * as Schema from "../../../Rooms/shared/schemas"
 export default class Block extends Phaser.GameObjects.Rectangle {
     constructor(scene: Phaser.Scene, blockSchema: Schema.Block, x: number, y: number, width?: number, height?: number) {
         super(scene, x, y, width, height) 

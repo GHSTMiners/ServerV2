@@ -1,7 +1,7 @@
 import { ArraySchema } from "@colyseus/schema"
 import { APIInterface, DetailedWorld, Crypto, CryptoSpawn, RockSpawn, WhiteSpace, Soil, SpawnType } from "chisel-api-interface";
 import { StaticPool } from "node-worker-threads-pool"
-import * as Schema from "../Rooms/shared/schemas/Schemas"
+import * as Schema from "../Rooms/shared/schemas"
 
 export default class WorldGenerator {
 

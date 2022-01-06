@@ -2,7 +2,8 @@ import { SpawnType } from "chisel-api-interface";
 import { ChangeDirection } from "gotchiminer-multiplayer-protocol";
 import { Scene } from "phaser";
 import Config from "../../../Config";
-import * as Schema from "../../../Rooms/shared/schemas/Schemas";
+import * as Schema from "../../../Rooms/shared/schemas";
+import { CargoEntry } from "../../../Rooms/shared/schemas";
 
 import Player from "../../Objects/Player";
 import MainScene from "../../Scenes/MainScene";
@@ -84,6 +85,9 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
         let drillDuration : number = 200
         //Mint block
         let targetBlock : Schema.Block | undefined = this.blockInDirectionRelativeToPlayer(drillingDirection)
+        //Process block on player inventory manager
+        this.player.getCargoManager().processBlock(targetBlock)
+        //Remove block when digging is complete
         setTimeout(function() {
             targetBlock.spawnType = SpawnType.None
         }, drillDuration)        

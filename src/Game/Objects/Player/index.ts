@@ -1,5 +1,6 @@
 import Config from "../../../Config";
 import * as Schema from "../../../Rooms/shared/schemas/Player/Player";
+import PlayerCargoManager from "../../Managers/PlayerCargoManager";
 import PlayerMovementManager from "../../Managers/PlayerMovementManager";
 import ClientWrapper from "../ClientWrapper";
 
@@ -19,7 +20,8 @@ export default class Player extends Phaser.GameObjects.Rectangle {
             this.body.setDamping(true)
             this.body.setBounce(0.2, 0.2)
             this.body.setDrag(0.01, 0.01)
-            this.body.setSize(Config.blockWidth*0.85, Config.blockHeight)
+            this.body.setSize(Config.blockWidth*0.85, Config.blockHeight*0.90)
+            this.body.setOffset(0, Config.blockHeight*0.1)
         }
         
         //Configure size and position
@@ -27,6 +29,7 @@ export default class Player extends Phaser.GameObjects.Rectangle {
         this.setSize(Config.blockWidth*0.5, Config.blockHeight)
         //Create managers
         this.movementManager = new PlayerMovementManager(scene, this, client)
+        this.cargoManager = new PlayerCargoManager(scene, this)
     }
 
     public blockPosition() : Phaser.Geom.Point {
@@ -47,6 +50,10 @@ export default class Player extends Phaser.GameObjects.Rectangle {
         })
     }
 
+    public getCargoManager() : PlayerCargoManager {
+        return this.cargoManager
+    }
+
     protected preUpdate(willStep: boolean, delta: number): void {
         //Check if player's block position has changed
         let newBlockPosition : Phaser.Geom.Point = this.blockPosition()
@@ -59,6 +66,7 @@ export default class Player extends Phaser.GameObjects.Rectangle {
         if(this.playerSchema.y != this.y) this.playerSchema.y = this.y
     }
 
+    private cargoManager : PlayerCargoManager
     private movementManager : PlayerMovementManager
     private lastBlockPosition : Phaser.Geom.Point
     public readonly playerSchema : Schema.Player

@@ -1,9 +1,10 @@
 import { Room, Client } from "colyseus";
 import WorldGenerator from "../../Generators/WorldGenerator";
-import * as Schema from "../shared/schemas/Schemas";
+import * as Schema from "../shared/schemas";
 
 import http from 'http';
 import Game from "../../Game";
+import AavegotchiTraitFetcher from "../../Game/Helpers/AavegotchiTraitFetcher";
 
 export class Classic extends Room<Schema.World> {
 
@@ -11,6 +12,13 @@ export class Classic extends Room<Schema.World> {
     this.setState(new Schema.World());
     this.maxClients = 10;
     this.state.id = options.worldID;
+    let traitFetcher : AavegotchiTraitFetcher = new AavegotchiTraitFetcher()
+    traitFetcher.getAavegotchiOwner(22536).then(owner => {
+      console.log(owner)
+    })
+    traitFetcher.getAavegotchiTraits(22536).then(traits => {
+      console.log(traits)
+    })
 
     //Generate blocks for world
     var self = this;
@@ -24,6 +32,7 @@ export class Classic extends Room<Schema.World> {
         this.game.mainScene.clientManager.handleClientJoined(client, null)
       }, this)
       //Start running the engine loop
+      self.setPatchRate(0)
       self.setSimulationInterval((deltaTime) => this.update(deltaTime))
     })
 
@@ -31,6 +40,7 @@ export class Classic extends Room<Schema.World> {
 
   update(delta : number): void {
     this.game.headlessStep(Date.now(), delta)
+    this.broadcastPatch()
   }
 
   onAuth(client: Client, options: object, request: http.IncomingMessage) {

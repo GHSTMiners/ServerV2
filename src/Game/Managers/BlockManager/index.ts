@@ -1,6 +1,6 @@
 import { World } from "../../../Rooms/shared/schemas/World/World";
 import { ArraySchema, type } from "@colyseus/schema"
-import * as Schema from "../../../Rooms/shared/schemas/Schemas";
+import * as Schema from "../../../Rooms/shared/schemas";
 import Config from "../../../Config";
 import PlayerManager from "../PlayerManager";
 import Player from "../../Objects/Player";

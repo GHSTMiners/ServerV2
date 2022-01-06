@@ -1,6 +1,6 @@
 import Phaser from "phaser"
 import * as Colyseus from "colyseus";
-import * as Schema from "../Rooms/shared/schemas/Schemas";
+import * as Schema from "../Rooms/shared/schemas";
 import MainScene from "./Scenes/MainScene";
 import PlayerManager from "./Managers/PlayerManager";
 

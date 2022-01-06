@@ -1,5 +1,5 @@
 import {ChangeDirection} from "gotchiminer-multiplayer-protocol";
-import { PlayerState } from "../../../Rooms/shared/schemas/Player/Player";
+import * as Schema from "../../../Rooms/shared/schemas"
 import ClientWrapper from "../../Objects/ClientWrapper";
 import Player from "../../Objects/Player";
 import PlayerExcavationManager from "../PlayerExcavationManager";
@@ -25,10 +25,10 @@ export default class PlayerMovementManager extends Phaser.GameObjects.GameObject
             //First, see if we are gonna drill
             this.excavationManager.processDirection(this.lastDirection)
             //Update playerstate
-            if(this.excavationManager.isDrilling()) this.player.playerSchema.playerState = PlayerState.Drilling
-            else if (this.lastDirection.y < 0) this.player.playerSchema.playerState = PlayerState.Flying 
-            else if (this.lastDirection.x != null) this.player.playerSchema.playerState = PlayerState.Moving
-            else this.player.playerSchema.playerState = PlayerState.Stationary 
+            if(this.excavationManager.isDrilling()) this.player.playerSchema.playerState = Schema.PlayerState.Drilling
+            else if (this.lastDirection.y < 0) this.player.playerSchema.playerState = Schema.PlayerState.Flying 
+            else if (this.lastDirection.x != null) this.player.playerSchema.playerState = Schema.PlayerState.Moving
+            else this.player.playerSchema.playerState = Schema.PlayerState.Stationary 
             //Apply acceleration to player body
             if(this.player.body instanceof Phaser.Physics.Arcade.Body && !this.excavationManager.isDrilling()) {
                 this.player.body.setAcceleration(this.lastDirection.x *400, (this.lastDirection.y < 0) ? this.lastDirection.y * 400 : 600)

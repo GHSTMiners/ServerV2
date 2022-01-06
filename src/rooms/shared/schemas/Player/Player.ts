@@ -1,19 +1,8 @@
-import { Schema, ArraySchema, type } from "@colyseus/schema"
+import { Schema, MapSchema, type } from "@colyseus/schema"
 import { Block } from "../World/Block";
-
-export enum PlayerState {
-    Stationary = 0,
-    Moving = 1,
-    Flying = 2,
-    Drilling = 3
-}
-
-export enum DrillingDirection {
-    Down = 1,
-    Left = 2,
-    Right = 3,
-    None = 4
-}
+import { PlayerState, DrillingDirection } from "./PlayerStates";
+import { WalletEntry } from "./WalletEntry";
+import { CargoEntry } from "./CargoEntry";
 
 export class Player extends Schema {
     @type ("string") name: string = "aavegotchi";
@@ -23,4 +12,7 @@ export class Player extends Schema {
     @type ("number") gotchiID: number = 0;
     @type ("number") playerState : PlayerState = PlayerState.Stationary
     @type ("number") drillingDirection : DrillingDirection = DrillingDirection.Down
+    @type ({ map: WalletEntry }) wallet = new MapSchema<WalletEntry>();
+    @type ({ map: CargoEntry }) cargo = new MapSchema<CargoEntry>();
+
 }

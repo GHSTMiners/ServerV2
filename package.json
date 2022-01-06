@@ -47,6 +47,8 @@
     "gotchiminer-multiplayer-protocol": "^1.0.0",
     "node-navigator": "^1.0.1",
     "node-worker-threads-pool": "^1.5.1",
-    "phaser": "^3.55.2"
+    "phaser": "^3.55.2",
+    "solc": "^0.8.11",
+    "web3": "^1.6.1"
   }
 }

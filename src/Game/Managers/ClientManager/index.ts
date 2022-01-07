@@ -1,5 +1,6 @@
 import {Client} from "colyseus"
 import ClientWrapper from "../../Objects/ClientWrapper"
+import * as Protocol from "gotchiminer-multiplayer-protocol"
 
 export default class ClientManager extends Phaser.GameObjects.GameObject{
     constructor(scene : Phaser.Scene) {
@@ -7,7 +8,7 @@ export default class ClientManager extends Phaser.GameObjects.GameObject{
         this.clientWrappers = new Map<Client, ClientWrapper>()
     }
 
-    public handleClientJoined(client: Client, options : any) {
+    public handleClientJoined(client: Client, options : Protocol.AuthenticationInfo) {
         console.log(`New client was registered with clientManager`)
         let clientWrapper : ClientWrapper = new ClientWrapper(client);
         this.clientWrappers.set(client, clientWrapper)

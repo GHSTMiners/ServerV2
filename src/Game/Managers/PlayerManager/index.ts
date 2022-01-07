@@ -4,6 +4,8 @@ import Player from "../../Objects/Player";
 import ClientManager from "../ClientManager";
 import { Client } from "colyseus";
 import ClientWrapper from "../../Objects/ClientWrapper";
+import * as Protocol from "gotchiminer-multiplayer-protocol"
+
 export default class PlayerManager extends Phaser.GameObjects.GameObject{
     constructor(scene: Scene, clientManager : ClientManager, worldSchema : Schema.World) {
         super(scene, "PlayerManager")
@@ -13,9 +15,10 @@ export default class PlayerManager extends Phaser.GameObjects.GameObject{
         clientManager.on(ClientManager.CLIENT_LEFT, this.handleClientLeave.bind(this))
     }
 
-    private handleClientJoined(client : ClientWrapper, options : any) {
+    private handleClientJoined(client : ClientWrapper, options : Protocol.AuthenticationInfo) {
         //Create new objects
         let newPlayerSchema : Schema.Player = new Schema.Player()
+        newPlayerSchema.gotchiID = options.gotchiId
         let newPlayerSprite : Player = new Player(this.scene, newPlayerSchema, client)
         newPlayerSchema.playerSessionID = client.client.sessionId
         //Add new object to game server logic

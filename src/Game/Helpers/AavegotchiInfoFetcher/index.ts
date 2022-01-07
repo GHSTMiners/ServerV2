@@ -3,16 +3,27 @@ import { Contract } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils/types'
 import diamondABI from '../../../../contracts/aavegotchiFacet.json';
 
-interface AavegotchiTraits {
-    energy : number,
-    aggression : number,
-    spookiness : number,
-    brain_size : number,
-    eye_shape : number,
-    eye_color : number
+class AavegotchiTraits {
+    constructor(traits : number[]) {
+        this.traits = traits
+        this.energy = traits[0]
+        this.aggression = traits[1]
+        this.spookiness = traits[2]
+        this.brain_size = traits[3]
+        this.eye_shape = traits[4]
+        this.eye_color = traits[5]
+    }
+
+    readonly energy : number
+    readonly aggression : number
+    readonly spookiness : number
+    readonly brain_size : number
+    readonly eye_shape : number
+    readonly eye_color : number
+    readonly traits : number[]
 }
 
-export default class AavegotchiTraitFetcher {
+export default class AavegotchiInfoFetcher {
 
     constructor() {
         //Initialize web3 using polygon rpc
@@ -22,13 +33,14 @@ export default class AavegotchiTraitFetcher {
         this.aavegotchiFacet = new this.web3.eth.Contract(diamondABI as AbiItem[], diamondAddress);
     }
 
-
     public async getAavegotchiOwner(gotchiID : number) : Promise<string> {
         return await this.aavegotchiFacet.methods.ownerOf(gotchiID).call()
     }
 
     public async getAavegotchiTraits(gotchiID : number) : Promise<AavegotchiTraits> {
-        return await this.aavegotchiFacet.methods.modifiedTraitsAndRarityScore(gotchiID).call()
+        let result : any = await this.aavegotchiFacet.methods.modifiedTraitsAndRarityScore(gotchiID).call()
+        let traits : AavegotchiTraits = new AavegotchiTraits(result.numericTraits_)
+        return traits
     }
 
 

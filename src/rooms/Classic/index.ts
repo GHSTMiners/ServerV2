@@ -1,10 +1,10 @@
-import { Room, Client } from "colyseus";
+import { Room, Client, ServerError } from "colyseus";
 import WorldGenerator from "../../Generators/WorldGenerator";
 import * as Schema from "../shared/schemas";
-
+import * as Protocol from "gotchiminer-multiplayer-protocol"
 import http from 'http';
 import Game from "../../Game";
-import AavegotchiTraitFetcher from "../../Game/Helpers/AavegotchiTraitFetcher";
+import AavegotchiInfoFetcher from "../../Game/Helpers/AavegotchiInfoFetcher";
 
 export class Classic extends Room<Schema.World> {
 
@@ -12,13 +12,7 @@ export class Classic extends Room<Schema.World> {
     this.setState(new Schema.World());
     this.maxClients = 10;
     this.state.id = options.worldID;
-    let traitFetcher : AavegotchiTraitFetcher = new AavegotchiTraitFetcher()
-    traitFetcher.getAavegotchiOwner(22536).then(owner => {
-      console.log(owner)
-    })
-    traitFetcher.getAavegotchiTraits(22536).then(traits => {
-      console.log(traits)
-    })
+
 
     //Generate blocks for world
     var self = this;
@@ -27,10 +21,6 @@ export class Classic extends Room<Schema.World> {
       self.game = new Game(this.state)
       //Register message handler 
       this.onMessage("*", (client: Client, type: string | number, message: string) => this.game.mainScene.clientManager.handleMessage(client, type as string, message))
-      //Register clients with clientmanager
-      this.clients.forEach(client => {
-        this.game.mainScene.clientManager.handleClientJoined(client, null)
-      }, this)
       //Start running the engine loop
       self.setPatchRate(0)
       self.setSimulationInterval((deltaTime) => this.update(deltaTime))
@@ -43,22 +33,35 @@ export class Classic extends Room<Schema.World> {
     this.broadcastPatch()
   }
 
-  onAuth(client: Client, options: object, request: http.IncomingMessage) {
-    console.info(`User with IP ${request.socket.remoteAddress} authenticating`)
-    //Verify wallet authentication
-    // if(options.hasOwnProperty("wallet_address") && options.hasOwnProperty("wallet_auth_token")){
-
-    // }
-
-    // //Check for name and gotchiID
-    // if("gotchiID" in options && "name" in options ){
-      
-    // } else return false;
-    // return true;
-    return true;
+  onAuth(client: Client, options: Protocol.AuthenticationInfo, request: http.IncomingMessage) : Promise<any>{
+    return new Promise((resolve, reject) => {
+      let traitFetcher : AavegotchiInfoFetcher = new AavegotchiInfoFetcher()
+      //Check that both fields are filled
+      if(options.gotchiId  && options.walletAddress) { 
+        //Get owner for gotchi ID
+        traitFetcher.getAavegotchiOwner(options.gotchiId).then(owner => {
+          //Check if owner wallet matches authentication wallet address
+          if(owner == options.walletAddress) {
+            //Gotchi was now succesfull authenticated, we should also fetch its traits
+            traitFetcher.getAavegotchiTraits(options.gotchiId).then(traits => {
+              resolve(traits)
+            }).catch(error =>{
+              //Failed to fetch traits
+              reject(new ServerError(500, "Failed to fetch authentication information"))
+            })
+          } else {
+            console.warn(`Wallet ${options.walletAddress} tried to authenticate with an unowned aavegotchi ${options.gotchiId}, on IP ${request.socket.remoteAddress}`)
+            reject(new ServerError(400, "You're not the owner of this aavegotchi!"))
+          }
+        }).catch(error => {
+          //Failed to fetch traits
+          reject(new ServerError(500, "Failed get owner adress for aavegotchi"))
+        })
+      } else reject(new ServerError(400, "Authentication info is missing data"))
+    });
   }
   
-  onJoin (client: Client, options: any) {
+  onJoin (client: Client, options: Protocol.AuthenticationInfo) {
     if(this.game) {
       this.game.mainScene.clientManager.handleClientJoined(client, options)
     } else {

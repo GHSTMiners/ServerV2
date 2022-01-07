@@ -6,11 +6,12 @@ import * as Schema from "../Rooms/shared/schemas"
 export default class WorldGenerator {
 
     public static async generateWorld(worldID : number, worldSchema : Schema.World) {
-        const start = new Date().getTime();
         //Fetch world information
         let apiInterface = new APIInterface('https://chisel.gotchiminer.rocks/api')
         //When detailed world information was fetches, start generating world
         await apiInterface.world(worldID).then(world => {
+            const start = new Date().getTime();
+
             //Write fetched world info to world schema
             worldSchema.width = world.width
             worldSchema.height = world.height

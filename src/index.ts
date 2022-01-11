@@ -11,9 +11,6 @@ import { listen } from "@colyseus/arena";
 const globalJsdom = require('global-jsdom')
 globalJsdom('', {pretendToBeVisual: true})
 
-
-
-
 document.body.innerHTML = 'hello'
 
 

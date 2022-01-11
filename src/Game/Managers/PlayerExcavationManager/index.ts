@@ -8,6 +8,7 @@ import { CargoEntry } from "../../../Rooms/shared/schemas";
 import Player from "../../Objects/Player";
 import MainScene from "../../Scenes/MainScene";
 import BlockManager from "../BlockManager";
+import { DefaultSkills } from "../PlayerSkillManager";
 export default class PlayerExcavationManager extends Phaser.GameObjects.GameObject {
     constructor(scene : Phaser.Scene, player : Player) {
         super(scene, "PlayerExcavationManager")
@@ -82,15 +83,22 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
 
     protected drillInDirection(drillingDirection : Schema.DrillingDirection) {
         //Calculate drillduration
-        let drillDuration : number = 200
+        let drillDuration : number = 1000 / this.player.skillManager.get(DefaultSkills.DIGGING_SPEED).value()
         //Mint block
         let targetBlock : Schema.Block | undefined = this.blockInDirectionRelativeToPlayer(drillingDirection)
         //Process block on player inventory manager
         this.player.getCargoManager().processBlock(targetBlock)
+        //Disable updates on body
+        if(this.player.body instanceof Phaser.Physics.Arcade.Body) {
+            this.player.body.enable = false
+        }
         //Remove block when digging is complete
-        setTimeout(function() {
+        setTimeout(function(player : Player) {
+            if(player.body instanceof Phaser.Physics.Arcade.Body) {
+                player.body.enable = true
+            }
             targetBlock.spawnType = SpawnType.None
-        }, drillDuration)        
+        }, drillDuration, this.player)        
         //Move player to block position
         let targetBlockPosition : Phaser.Geom.Point = this.targetBlockPosition(drillingDirection)
         this.player.moveToLocation(targetBlockPosition.x * Config.blockWidth + Config.blockWidth/2, targetBlockPosition.y * Config.blockHeight + Config.blockHeight/2, drillDuration)

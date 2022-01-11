@@ -1,12 +1,14 @@
 import Config from "../../../Config";
 import * as Schema from "../../../Rooms/shared/schemas/Player/Player";
+import { AavegotchiTraits } from "../../Helpers/AavegotchiInfoFetcher";
 import PlayerCargoManager from "../../Managers/PlayerCargoManager";
 import PlayerMovementManager from "../../Managers/PlayerMovementManager";
+import PlayerSkillManager from "../../Managers/PlayerSkillManager";
 import ClientWrapper from "../ClientWrapper";
 
 export default class Player extends Phaser.GameObjects.Rectangle {
     
-    constructor(scene : Phaser.Scene, playerSchema : Schema.Player, client: ClientWrapper) {
+    constructor(scene : Phaser.Scene, playerSchema : Schema.Player, traits : AavegotchiTraits, client: ClientWrapper) {
         super(scene, playerSchema.x, playerSchema.y)
         this.playerSchema = playerSchema
         this.lastBlockPosition = new Phaser.Geom.Point()
@@ -28,6 +30,7 @@ export default class Player extends Phaser.GameObjects.Rectangle {
         this.setPosition(playerSchema.x, playerSchema.y)
         this.setSize(Config.blockWidth*0.5, Config.blockHeight)
         //Create managers
+        this.skillManager = new PlayerSkillManager(scene, traits)
         this.movementManager = new PlayerMovementManager(scene, this, client)
         this.cargoManager = new PlayerCargoManager(scene, this)
     }
@@ -55,17 +58,25 @@ export default class Player extends Phaser.GameObjects.Rectangle {
     }
 
     protected preUpdate(willStep: boolean, delta: number): void {
-        //Check if player's block position has changed
-        let newBlockPosition : Phaser.Geom.Point = this.blockPosition()
-        if(!Phaser.Geom.Point.Equals(this.lastBlockPosition, newBlockPosition)) {
-            this.lastBlockPosition = newBlockPosition
-            this.emit(Player.BLOCK_POSITION_CHANGED, newBlockPosition)
+        if(willStep) {
+            //Check if player's block position has changed
+            let newBlockPosition : Phaser.Geom.Point = this.blockPosition()
+            if(!Phaser.Geom.Point.Equals(this.lastBlockPosition, newBlockPosition)) {
+                this.lastBlockPosition = newBlockPosition
+                this.emit(Player.BLOCK_POSITION_CHANGED, newBlockPosition)
+            }
+            //Sync player position with colyseus schema
+            if(this.playerSchema.x != Math.round(this.x * 100) / 100) this.playerSchema.x = Math.round(this.x * 100) / 100
+            if(this.playerSchema.y != Math.round(this.y * 100) / 100) this.playerSchema.y = Math.round(this.y * 100) / 100
+            if(this.body instanceof Phaser.Physics.Arcade.Body) {
+                if(this.playerSchema.velocityX != this.body.velocity.x) this.playerSchema.velocityX = this.body.velocity.x
+                if(this.playerSchema.velocityY != this.body.velocity.x) this.playerSchema.velocityY = this.body.velocity.y
+            }
         }
-        //Sync player position with colyseus schema
-        if(this.playerSchema.x != this.x) this.playerSchema.x = this.x
-        if(this.playerSchema.y != this.y) this.playerSchema.y = this.y
     }
 
+    private gotchiTraits : AavegotchiTraits
+    public skillManager : PlayerSkillManager
     private cargoManager : PlayerCargoManager
     private movementManager : PlayerMovementManager
     private lastBlockPosition : Phaser.Geom.Point

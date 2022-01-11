@@ -5,55 +5,51 @@ import * as Schema from "../Rooms/shared/schemas"
 
 export default class WorldGenerator {
 
-    public static async generateWorld(worldID : number, worldSchema : Schema.World) {
-        //Fetch world information
-        let apiInterface = new APIInterface('https://chisel.gotchiminer.rocks/api')
-        //When detailed world information was fetches, start generating world
-        await apiInterface.world(worldID).then(world => {
-            const start = new Date().getTime();
+    public static async generateWorld(worldInfo : DetailedWorld, worldSchema : Schema.World) {
 
-            //Write fetched world info to world schema
-            worldSchema.width = world.width
-            worldSchema.height = world.height
-            console.log("Generating new world of type: %s, with size %dx%d", world.name, world.width, world.height)
-            //Put all spawns in array, maddness
-            let sortedSoil : Soil[] = world.soil.sort(WorldGenerator.sortSoil)
-            let spawns : (CryptoSpawn|RockSpawn|WhiteSpace) [] = []
-            world.crypto.forEach(element=> {spawns = spawns.concat(element.spawns)})
-            world.rocks.forEach(element=> {spawns = spawns.concat(element.spawns)})
-            spawns = spawns.concat(world.white_spaces);
-            //Fetch all spawns for that layer, and also the soil
-            for (let layer = 0; layer < world.height; layer++) {
-                let filteredSpawns : (CryptoSpawn|RockSpawn|WhiteSpace)[] = spawns.filter(spawn => 
-                    (layer >= spawn.starting_layer && layer <= spawn.ending_layer))
-                let currentSoil : Soil = WorldGenerator.soilForLayer(sortedSoil, layer)
-                for (let x = 0; x < world.width; x++) {
-                    //Fetch current block
-                    let currentBlock : Schema.Block = new Schema.Block()
-                    //First write soil to blockSchema
-                    currentBlock.soilID = currentSoil.id;
-                    if(filteredSpawns.length > 0 ) {
-                        //Then set spawn type and spawn id
-                        let spawn : (CryptoSpawn|RockSpawn|WhiteSpace) = WorldGenerator.getRandomSpawn(filteredSpawns)
-                        currentBlock.spawnType = spawn.type;
-                        switch (spawn.type) {
-                            case SpawnType.Crypto:
-                                currentBlock.spawnID = (spawn as CryptoSpawn).crypto_id
-                                break;
-                            case SpawnType.Rock:
-                                currentBlock.spawnID = (spawn as RockSpawn).rock_id
-                                break;
-                            case SpawnType.WhiteSpace:
-                                currentBlock.spawnType = (spawn as WhiteSpace).background_only ? SpawnType.None : SpawnType.WhiteSpace
-                                break;
-                        } 
+        const start = new Date().getTime();
 
-                    } else currentBlock.spawnType = SpawnType.None
-                    worldSchema.blocks.push(currentBlock)
-                }
+        //Write fetched world info to world schema
+        worldSchema.width = worldInfo.width
+        worldSchema.height = worldInfo.height
+        console.log("Generating new world of type: %s, with size %dx%d", worldInfo.name, worldInfo.width, worldInfo.height)
+        //Put all spawns in array, maddness
+        let sortedSoil : Soil[] = worldInfo.soil.sort(WorldGenerator.sortSoil)
+        let spawns : (CryptoSpawn|RockSpawn|WhiteSpace) [] = []
+        worldInfo.crypto.forEach(element=> {spawns = spawns.concat(element.spawns)})
+        worldInfo.rocks.forEach(element=> {spawns = spawns.concat(element.spawns)})
+        spawns = spawns.concat(worldInfo.white_spaces);
+        //Fetch all spawns for that layer, and also the soil
+        for (let layer = 0; layer < worldInfo.height; layer++) {
+            let filteredSpawns : (CryptoSpawn|RockSpawn|WhiteSpace)[] = spawns.filter(spawn => 
+                (layer >= spawn.starting_layer && layer <= spawn.ending_layer))
+            let currentSoil : Soil = WorldGenerator.soilForLayer(sortedSoil, layer)
+            for (let x = 0; x < worldInfo.width; x++) {
+                //Fetch current block
+                let currentBlock : Schema.Block = new Schema.Block()
+                //First write soil to blockSchema
+                currentBlock.soilID = currentSoil.id;
+                if(filteredSpawns.length > 0 ) {
+                    //Then set spawn type and spawn id
+                    let spawn : (CryptoSpawn|RockSpawn|WhiteSpace) = WorldGenerator.getRandomSpawn(filteredSpawns)
+                    currentBlock.spawnType = spawn.type;
+                    switch (spawn.type) {
+                        case SpawnType.Crypto:
+                            currentBlock.spawnID = (spawn as CryptoSpawn).crypto_id
+                            break;
+                        case SpawnType.Rock:
+                            currentBlock.spawnID = (spawn as RockSpawn).rock_id
+                            break;
+                        case SpawnType.WhiteSpace:
+                            currentBlock.spawnType = (spawn as WhiteSpace).background_only ? SpawnType.None : SpawnType.WhiteSpace
+                            break;
+                    } 
+
+                } else currentBlock.spawnType = SpawnType.None
+                worldSchema.blocks.push(currentBlock)
             }
-            console.log("Finished generating world, took:", new Date().getTime() - start);
-        });
+        }
+        console.log("Finished generating world, took:", new Date().getTime() - start);
     }
 
     private static sortSoil(a : Soil, b : Soil) {

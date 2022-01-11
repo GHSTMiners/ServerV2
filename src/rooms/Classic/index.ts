@@ -5,6 +5,7 @@ import * as Protocol from "gotchiminer-multiplayer-protocol"
 import http from 'http';
 import Game from "../../Game";
 import AavegotchiInfoFetcher from "../../Game/Helpers/AavegotchiInfoFetcher";
+import { APIInterface } from "chisel-api-interface";
 
 export class Classic extends Room<Schema.World> {
 
@@ -12,25 +13,22 @@ export class Classic extends Room<Schema.World> {
     this.setState(new Schema.World());
     this.maxClients = 10;
     this.state.id = options.worldID;
-
-
     //Generate blocks for world
     var self = this;
-    WorldGenerator.generateWorld(options.worldID, this.state).then(nothing =>{
-      //Create game
-      self.game = new Game(this.state)
-      //Register message handler 
-      this.onMessage("*", (client: Client, type: string | number, message: string) => this.game.mainScene.clientManager.handleMessage(client, type as string, message))
-      //Start running the engine loop
-      self.setPatchRate(0)
-      self.setSimulationInterval((deltaTime) => this.update(deltaTime))
+    let apiInterface = new APIInterface('https://chisel.gotchiminer.rocks/api')
+    //Fetch world information
+    apiInterface.world(options.worldID).then(worldInfo => {
+      //Generate a random map
+      WorldGenerator.generateWorld(worldInfo, this.state).then((nothing) =>{
+        //Create game
+        self.game = new Game(this.state, worldInfo)
+        //Register message handler 
+        this.onMessage("*", (client: Client, type: string | number, message: string) => this.game.mainScene.clientManager.handleMessage(client, type as string, message))
+        //Start running the engine loop
+        self.setPatchRate(0)
+        self.game.mainScene.events.on(Phaser.Scenes.Events.POST_UPDATE, self.broadcastPatch.bind(this))
     })
-
-  }
-
-  update(delta : number): void {
-    this.game.headlessStep(Date.now(), delta)
-    this.broadcastPatch()
+  })
   }
 
   onAuth(client: Client, options: Protocol.AuthenticationInfo, request: http.IncomingMessage) : Promise<any>{
@@ -42,13 +40,7 @@ export class Classic extends Room<Schema.World> {
         traitFetcher.getAavegotchiOwner(options.gotchiId).then(owner => {
           //Check if owner wallet matches authentication wallet address
           if(owner == options.walletAddress) {
-            //Gotchi was now succesfull authenticated, we should also fetch its traits
-            traitFetcher.getAavegotchiTraits(options.gotchiId).then(traits => {
-              resolve(traits)
-            }).catch(error =>{
-              //Failed to fetch traits
-              reject(new ServerError(500, "Failed to fetch authentication information"))
-            })
+            resolve(true)
           } else {
             console.warn(`Wallet ${options.walletAddress} tried to authenticate with an unowned aavegotchi ${options.gotchiId}, on IP ${request.socket.remoteAddress}`)
             reject(new ServerError(400, "You're not the owner of this aavegotchi!"))

@@ -3,7 +3,7 @@ import { Contract } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils/types'
 import diamondABI from '../../../../contracts/aavegotchiFacet.json';
 
-class AavegotchiTraits {
+export class AavegotchiTraits {
     constructor(traits : number[]) {
         this.traits = traits
         this.energy = traits[0]

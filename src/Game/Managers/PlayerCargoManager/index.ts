@@ -25,7 +25,9 @@ export default class PlayerCargoManager extends Phaser.GameObjects.GameObject {
         }
     }
 
-
+    public empty() {
+        this.playerSchema.cargo.clear()
+    }
     
     private playerSchema : Schema.Player
 }

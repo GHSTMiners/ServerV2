@@ -1049,7 +1049,7 @@
     "ansi-styles" "^4.1.0"
     "supports-color" "^7.1.0"
 
-"chisel-api-interface@^1.0.0":
+"chisel-api-interface@^1.11.0":
   "integrity" "sha512-kXsEJlmzMLY4HpLj3ZR1uitNPgcj/Bi1MS2XBCkPfjlTaxIJDtzI+YARddoBjFXYsRQawImYqF22OpO1XNNnRA=="
   "resolved" "https://registry.npmjs.org/chisel-api-interface/-/chisel-api-interface-1.11.0.tgz"
   "version" "1.11.0"

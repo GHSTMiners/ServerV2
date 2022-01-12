@@ -2,6 +2,7 @@ import Web3 from 'web3';
 import { Contract } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils/types'
 import diamondABI from '../../../../contracts/aavegotchiFacet.json';
+import Config from '../../../Config';
 
 export class AavegotchiTraits {
     constructor(traits : number[]) {
@@ -27,7 +28,7 @@ export default class AavegotchiInfoFetcher {
 
     constructor() {
         //Initialize web3 using polygon rpc
-        this.web3 = new Web3("https://polygon-rpc.com/")
+        this.web3 = new Web3(Config.rpcURL)
         //Load our smart contract
         const diamondAddress = '0x86935F11C86623deC8a25696E1C19a8659CbF95d';
         this.aavegotchiFacet = new this.web3.eth.Contract(diamondABI as AbiItem[], diamondAddress);

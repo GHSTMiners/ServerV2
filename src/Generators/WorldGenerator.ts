@@ -52,7 +52,7 @@ export default class WorldGenerator {
         console.log("Finished generating world, took:", new Date().getTime() - start);
     }
 
-    private static sortSoil(a : Soil, b : Soil) {
+    public static sortSoil(a : Soil, b : Soil) {
         if ( a.order < b.order ){
             return -1;
           }
@@ -62,7 +62,7 @@ export default class WorldGenerator {
           return 0;
     }
 
-    private static soilForLayer(sortedSoil: Soil[], layer: number) {
+    public static soilForLayer(sortedSoil: Soil[], layer: number) {
         let currentLayer : number = 0;
 
         for (let index = 0; index < sortedSoil.length; index++) {

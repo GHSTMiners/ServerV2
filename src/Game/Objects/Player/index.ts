@@ -4,20 +4,21 @@ import { AavegotchiTraits } from "../../Helpers/AavegotchiInfoFetcher";
 import PlayerCargoManager from "../../Managers/PlayerCargoManager";
 import PlayerMovementManager from "../../Managers/PlayerMovementManager";
 import PlayerSkillManager from "../../Managers/PlayerSkillManager";
+import PlayerVitalsManager, { DefaultVitals, PlayerVital } from "../../Managers/PlayerVitalsManager";
 import ClientWrapper from "../ClientWrapper";
 
 export default class Player extends Phaser.GameObjects.Rectangle {
     
     constructor(scene : Phaser.Scene, playerSchema : Schema.Player, traits : AavegotchiTraits, client: ClientWrapper) {
-        super(scene, playerSchema.x, playerSchema.y)
+        super(scene, playerSchema.playerState.x, playerSchema.playerState.y)
         this.playerSchema = playerSchema
         this.lastBlockPosition = new Phaser.Geom.Point()
         //Create a body for the rectangle
         this.scene.physics.add.existing(this, false)
         if(this.body instanceof Phaser.Physics.Arcade.Body) {
             this.body.setCollideWorldBounds(true)
-            this.body.x = playerSchema.x;
-            this.body.y = playerSchema.y;
+            this.body.x = playerSchema.playerState.x;
+            this.body.y = playerSchema.playerState.y;
             this.body.setMaxVelocity(2500, 2500)
             this.body.setDamping(true)
             this.body.setBounce(0.2, 0.2)
@@ -27,12 +28,22 @@ export default class Player extends Phaser.GameObjects.Rectangle {
         }
         
         //Configure size and position
-        this.setPosition(playerSchema.x, playerSchema.y)
+        this.setPosition(playerSchema.playerState.x, playerSchema.playerState.y)
         this.setSize(Config.blockWidth*0.5, Config.blockHeight)
         //Create managers
-        this.skillManager = new PlayerSkillManager(scene, traits)
+        this.vitalsManager = new PlayerVitalsManager(scene, traits, playerSchema)
+        this.skillManager = new PlayerSkillManager(scene, traits, playerSchema)
         this.movementManager = new PlayerMovementManager(scene, this, client)
         this.cargoManager = new PlayerCargoManager(scene, this)
+        //Create kill conditions
+        this.vitalsManager.get(DefaultVitals.FUEL).on(PlayerVital.EMPTY, this.respawn.bind(this))
+    }
+
+    public respawn() {
+        this.movementManager.excavationManager.cancelDrilling()
+        this.cargoManager.empty()
+        this.vitalsManager.resetAll()
+        this.movementManager.moveToSurface()
     }
 
     public blockPosition() : Phaser.Geom.Point {
@@ -41,17 +52,7 @@ export default class Player extends Phaser.GameObjects.Rectangle {
         return new Phaser.Geom.Point(Math.floor(x), Math.floor(currentLayer))
     }
 
-    public moveToLocation(x: number, y: number, duration: number) { 
-        if(this.moveTween) this.scene.tweens.remove(this.moveTween)
-        this.moveTween = this.scene.tweens.add({
-            targets: this,
-            y: y,
-            x: x,
-            duration: duration,
-            ease: Phaser.Math.Easing.Linear,
-            loop: 0,
-        })
-    }
+
 
     public getCargoManager() : PlayerCargoManager {
         return this.cargoManager
@@ -66,22 +67,22 @@ export default class Player extends Phaser.GameObjects.Rectangle {
                 this.emit(Player.BLOCK_POSITION_CHANGED, newBlockPosition)
             }
             //Sync player position with colyseus schema
-            if(this.playerSchema.x != Math.round(this.x * 100) / 100) this.playerSchema.x = Math.round(this.x * 100) / 100
-            if(this.playerSchema.y != Math.round(this.y * 100) / 100) this.playerSchema.y = Math.round(this.y * 100) / 100
+            if(this.playerSchema.playerState.x != Math.round(this.x * 100) / 100) this.playerSchema.playerState.x = Math.round(this.x * 100) / 100
+            if(this.playerSchema.playerState.y != Math.round(this.y * 100) / 100) this.playerSchema.playerState.y = Math.round(this.y * 100) / 100
             if(this.body instanceof Phaser.Physics.Arcade.Body) {
-                if(this.playerSchema.velocityX != this.body.velocity.x) this.playerSchema.velocityX = this.body.velocity.x
-                if(this.playerSchema.velocityY != this.body.velocity.x) this.playerSchema.velocityY = this.body.velocity.y
+                if(this.playerSchema.playerState.velocityX != this.body.velocity.x) this.playerSchema.playerState.velocityX = this.body.velocity.x
+                if(this.playerSchema.playerState.velocityY != this.body.velocity.x) this.playerSchema.playerState.velocityY = this.body.velocity.y
             }
         }
     }
 
     private gotchiTraits : AavegotchiTraits
     public skillManager : PlayerSkillManager
+    public vitalsManager : PlayerVitalsManager
     private cargoManager : PlayerCargoManager
-    private movementManager : PlayerMovementManager
+    public  movementManager : PlayerMovementManager
     private lastBlockPosition : Phaser.Geom.Point
     public readonly playerSchema : Schema.Player
-    private moveTween : Phaser.Tweens.Tween
     static readonly BLOCK_POSITION_CHANGED: unique symbol = Symbol();
 
 }

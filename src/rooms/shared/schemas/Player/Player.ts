@@ -1,20 +1,16 @@
-import { Schema, MapSchema, type } from "@colyseus/schema"
-import { Block } from "../World/Block";
-import { PlayerState, DrillingDirection } from "./PlayerStates";
+import { Schema, MapSchema, ArraySchema, type } from "@colyseus/schema"
+import { PlayerState, DrillingDirection } from "./PlayerState";
 import { WalletEntry } from "./WalletEntry";
 import { CargoEntry } from "./CargoEntry";
+import { Vital } from "./Vital";
+import { Skill } from "./Skill";
 
 export class Player extends Schema {
     @type ("string") name: string = "aavegotchi";
     @type ("string") playerSessionID: string = "";
-    @type ("int32") x: number = Math.random() * 10 * 300;
-    @type ("int32") y: number = -300;
-    @type ("int32") velocityX: number = 0;
-    @type ("int32") velocityY: number = 0;
-    @type ("number") gotchiID: number = 0;
-    @type ("number") playerState : PlayerState = PlayerState.Stationary
-    @type ("number") drillingDirection : DrillingDirection = DrillingDirection.Down
-    @type ({ map: WalletEntry }) wallet = new MapSchema<WalletEntry>();
+    @type (PlayerState) playerState : PlayerState = new PlayerState();
+    @type ( [Vital] ) vitals = new ArraySchema<Vital>();
+    @type ( [Skill] ) skills = new ArraySchema<Skill>();
     @type ({ map: CargoEntry }) cargo = new MapSchema<CargoEntry>();
-
+    @type ({ map: WalletEntry }) wallet = new MapSchema<WalletEntry>();
 }

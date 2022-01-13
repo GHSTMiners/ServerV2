@@ -23,6 +23,7 @@ export default class PlayerManager extends Phaser.GameObjects.GameObject{
             console.log(`Player joined with gotchi: ${options.gotchiId}`)
             //Create new objects
             let newPlayerSchema : Schema.Player = new Schema.Player()
+            client.client.userData = newPlayerSchema
             newPlayerSchema.gotchiID = options.gotchiId
             let newPlayerSprite : Player = new Player(this.scene, newPlayerSchema, traits, client)
             newPlayerSchema.playerSessionID = client.client.sessionId

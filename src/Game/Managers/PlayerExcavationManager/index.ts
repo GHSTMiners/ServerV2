@@ -54,7 +54,7 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
     }
 
     protected targetBlockPosition(drillingDirection : Schema.DrillingDirection) : Phaser.Geom.Point {
-        let playerPosition : Phaser.Geom.Point = this.player.blockPosition()
+        let playerPosition : Phaser.Geom.Point = this.player.movementManager().blockPosition()
         switch(drillingDirection) {
             case Schema.DrillingDirection.Down:
                 return new Phaser.Geom.Point(playerPosition.x, playerPosition.y+1)
@@ -67,7 +67,7 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
 
     protected canDrillInDirection(direction : Schema.DrillingDirection) : boolean {
         //Check if there actually is a block below the player
-        let blockBelowPlayer : Schema.Block | undefined =  this.blockManager.blockAt(this.player.blockPosition().x, this.player.blockPosition().y+1)
+        let blockBelowPlayer : Schema.Block | undefined =  this.blockManager.blockAt(this.player.movementManager().blockPosition().x, this.player.movementManager().blockPosition().y+1)
         if(!blockBelowPlayer) return false
         if(blockBelowPlayer.spawnType == Chisel.SpawnType.None) return false
         //Check if there is a block to drill in the direction we want to drill
@@ -105,7 +105,7 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
             let digMultiplier : number = 1
             let targetSoil : Chisel.Soil | undefined = this.soilMap.get(targetBlock.soilID)
             if(targetSoil) digMultiplier = targetSoil.dig_multiplier
-            let drillDuration : number = 1000 / this.player.skillManager.get(DefaultSkills.DIGGING_SPEED).value() * digMultiplier
+            let drillDuration : number = 1000 / this.player.skillManager().get(DefaultSkills.DIGGING_SPEED).value() * digMultiplier
             //Disable updates on body
             if(this.player.body instanceof Phaser.Physics.Arcade.Body) {
                 this.player.body.enable = false
@@ -113,7 +113,7 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
             //Remove block when digging is complete
             this.digTimeout = setTimeout(function(player : Player) {
                 //Process block on player inventory manager
-                player.getCargoManager().processBlock(targetBlock)
+                player.cargoManager().processBlock(targetBlock)
                 //Stop movement on body
                 if(player.body instanceof Phaser.Physics.Arcade.Body) {
                     player.body.enable = true
@@ -122,9 +122,9 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
             }, drillDuration-10, this.player)        
             //Move player to block position
             let targetBlockPosition : Phaser.Geom.Point = this.targetBlockPosition(drillingDirection)
-            this.player.movementManager.moveToLocation(targetBlockPosition.x * Config.blockWidth + Config.blockWidth/2, targetBlockPosition.y * Config.blockHeight + Config.blockHeight/2, drillDuration)
+            this.player.movementManager().moveToLocation(targetBlockPosition.x * Config.blockWidth + Config.blockWidth/2, targetBlockPosition.y * Config.blockHeight + Config.blockHeight/2, drillDuration)
             //Take some fuel
-            this.player.vitalsManager.get(DefaultVitals.FUEL).takeAmount(this.player.skillManager.get(DefaultSkills.DIGGING_FUEL_USAGE).value() * digMultiplier)
+            this.player.vitalsManager().get(DefaultVitals.FUEL).takeAmount(this.player.skillManager().get(DefaultSkills.DIGGING_FUEL_USAGE).value() * digMultiplier)
             //Update drilling time
             this.nextDrillTime = Date.now() + drillDuration
         }

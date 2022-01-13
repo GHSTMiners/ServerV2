@@ -1,6 +1,8 @@
-import { Schema, ArraySchema, type } from "@colyseus/schema"
+import { Schema, ArraySchema, type, filterChildren} from "@colyseus/schema"
+import { Client } from "colyseus";
+import Config from "../../../../Config";
 import { Player } from "../Player/Player";
-import { Block } from "./Block";
+import { Layer } from "./Layer";
 
 export class World extends Schema {
     @type ("number") id: number = 0;
@@ -8,6 +10,15 @@ export class World extends Schema {
     @type ("number") height: number = 1000;
     @type ("number") gravity: number = 900;
     @type ("boolean") ready: boolean = false;
-    @type ([Block]) blocks = new ArraySchema<Block>();
     @type ([Player]) players = new ArraySchema<Player>();
+
+    @filterChildren(function(client: Client, layerIndex: number, layer: Layer, root: World) {
+        let player : Player  | undefined = client.userData
+        if (player) {
+            let playerlayer : number = player.playerState.y / Config.blockHeight
+            return (Phaser.Math.Within(playerlayer, layerIndex, Config.layerRevealRadius)) 
+        } else return false
+    })
+    @type ([Layer]) layers = new ArraySchema<Layer>();
 }
+

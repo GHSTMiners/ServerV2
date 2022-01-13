@@ -69,10 +69,20 @@
     "@colyseus/core" "^0.14.20"
     "redis" "^2.8.0"
 
-"@colyseus/schema@^1.0.15", "@colyseus/schema@^1.0.22":
-  "integrity" "sha512-dm8piBTWKt8MR4bwtJmkmzRYR0ucbtUfWuo86Uu+ew3ogv2o+5JKvhxRLJKS+SH36C1f1+cYQbZViYAwscJpQA=="
-  "resolved" "https://registry.npmjs.org/@colyseus/schema/-/schema-1.0.31.tgz"
-  "version" "1.0.31"
+"@colyseus/schema@^1.0.15":
+  "integrity" "sha512-JpIhaeN/m2PT50skfOWZjRy4z0u8Yezh1wT7kFgApS7dDeMSuUgeSuU7SGcXnTO4xAmw0zwR4mpSGHU4K4Jshg=="
+  "resolved" "https://registry.npmjs.org/@colyseus/schema/-/schema-1.0.32.tgz"
+  "version" "1.0.32"
+
+"@colyseus/schema@^1.0.22":
+  "integrity" "sha512-JpIhaeN/m2PT50skfOWZjRy4z0u8Yezh1wT7kFgApS7dDeMSuUgeSuU7SGcXnTO4xAmw0zwR4mpSGHU4K4Jshg=="
+  "resolved" "https://registry.npmjs.org/@colyseus/schema/-/schema-1.0.32.tgz"
+  "version" "1.0.32"
+
+"@colyseus/schema@^2.0.3":
+  "integrity" "sha512-rVjyWDbEa+hU03OfEuZbSsNnTvnqz52Hd3O4CwWms9gtTu/PakFQbILujXMZk5+UWfOdQYjwoClbgpFD1yhniQ=="
+  "resolved" "https://registry.npmjs.org/@colyseus/schema/-/schema-2.0.3.tgz"
+  "version" "2.0.3"
 
 "@colyseus/testing@^0.14.21":
   "integrity" "sha512-9wyrTLd96tYYqRIQge4igGulfuaFDqjTn0CjlSEaoqFnsj+q9ziRdWGggG4yDXStuqU1zWRIp3+2C93fAFfiRw=="
@@ -468,6 +478,11 @@
     "@types/node" "*"
     "@types/parse5" "*"
     "@types/tough-cookie" "*"
+
+"@types/lodash@^4.14.178":
+  "integrity" "sha512-0d5Wd09ItQWH1qFbEyQ7oTQ3GZrMfth5JkbN3EvTKLXcHLRDSXeLnlvlOn0wvxVIwK5o2M8JzP/OWz7T3NRsbw=="
+  "resolved" "https://registry.npmjs.org/@types/lodash/-/lodash-4.14.178.tgz"
+  "version" "4.14.178"
 
 "@types/long@^4.0.1":
   "integrity" "sha512-5tXH6Bx/kNGd3MgffdmP4dy2Z+G4eaXw0SE81Tq3BNadtnMR5/ySMzX4SLEzHJzSmPNn4HIdpQsBvXMUykr58w=="
@@ -2795,6 +2810,11 @@
   "version" "6.0.0"
   dependencies:
     "p-locate" "^5.0.0"
+
+"lodash@^4.17.21":
+  "integrity" "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="
+  "resolved" "https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz"
+  "version" "4.17.21"
 
 "log-symbols@4.1.0":
   "integrity" "sha512-8XPvpAA8uyhfteu8pIvQxpJZ7SYYdpUivZpGy6sFsBuKRY/7rQGavedeB8aK+Zkyq6upMFVL/9AW6vOYzfRyLg=="

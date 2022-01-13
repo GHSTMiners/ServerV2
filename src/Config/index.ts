@@ -10,5 +10,6 @@ export default class Config {
     public static skyHeight : number = Config.blockHeight * Config.skyLayers
     public static blockWidthOffset = Config.blockWidth / 2
     public static blockHeightOffset = Config.blockHeight / 2
-    public static blockLoadingRadius = 4
+    public static blockCollisionRadio = 4
+    public static layerRevealRadius = 8
 }

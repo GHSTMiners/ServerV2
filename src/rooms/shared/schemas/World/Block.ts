@@ -1,7 +1,6 @@
 import { Schema, type } from "@colyseus/schema"
 import { SpawnType } from "chisel-api-interface";
 import { Crypto } from "../Crypto";
-import { Rock } from "./Rock";
 
 export class Block extends Schema {
     @type("int16") soilID : number = 0;

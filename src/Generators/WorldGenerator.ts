@@ -21,6 +21,7 @@ export default class WorldGenerator {
         spawns = spawns.concat(worldInfo.white_spaces);
         //Fetch all spawns for that layer, and also the soil
         for (let layer = 0; layer < worldInfo.height; layer++) {
+            let newLayer : Schema.Layer = new Schema.Layer()
             let filteredSpawns : (CryptoSpawn|RockSpawn|WhiteSpace)[] = spawns.filter(spawn => 
                 (layer >= spawn.starting_layer && layer <= spawn.ending_layer))
             let currentSoil : Soil = WorldGenerator.soilForLayer(sortedSoil, layer)
@@ -46,8 +47,9 @@ export default class WorldGenerator {
                     } 
 
                 } else currentBlock.spawnType = SpawnType.None
-                worldSchema.blocks.push(currentBlock)
+                newLayer.blocks.push(currentBlock)
             }
+            worldSchema.layers.push(newLayer)
         }
         console.log("Finished generating world, took:", new Date().getTime() - start);
     }

@@ -29,8 +29,7 @@ export default class PlayerVitalsManager extends Phaser.GameObjects.GameObject {
     private createvitals () {
         this.worldInfo.vitals.forEach(vital => {
             let newSchema : Schema.Vital = new Schema.Vital()
-            newSchema.name = vital.name
-            this.schema.vitals.push(newSchema)
+            // this.schema.vitals.push(newSchema)
             this.vitals.set(vital.name, new PlayerVital(this.scene, vital, newSchema, this.traits))
         }, this)
     }

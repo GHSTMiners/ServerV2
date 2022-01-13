@@ -23,7 +23,7 @@ export default class PlayerSkillManager extends Phaser.GameObjects.GameObject {
     private createSkills () {
         this.worldInfo.skills.forEach(skill => {
             let newSchema : Schema.Skill = new Schema.Skill()
-            this.schema.skills.push(newSchema)
+            // this.schema.skills.push(newSchema)
             this.skills.set(skill.name, new PlayerSkill(this.scene, skill, newSchema, this.traits))
         }, this)
     }

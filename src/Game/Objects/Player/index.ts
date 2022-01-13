@@ -12,7 +12,6 @@ export default class Player extends Phaser.GameObjects.Rectangle {
     constructor(scene : Phaser.Scene, playerSchema : Schema.Player, traits : AavegotchiTraits, client: ClientWrapper) {
         super(scene, playerSchema.playerState.x, playerSchema.playerState.y)
         this.playerSchema = playerSchema
-        this.lastBlockPosition = new Phaser.Geom.Point()
         //Create a body for the rectangle
         this.scene.physics.add.existing(this, false)
         if(this.body instanceof Phaser.Physics.Arcade.Body) {
@@ -26,63 +25,46 @@ export default class Player extends Phaser.GameObjects.Rectangle {
             this.body.setSize(Config.blockWidth*0.85, Config.blockHeight*0.90)
             this.body.setOffset(0, Config.blockHeight*0.1)
         }
-        
         //Configure size and position
         this.setPosition(playerSchema.playerState.x, playerSchema.playerState.y)
         this.setSize(Config.blockWidth*0.5, Config.blockHeight)
         //Create managers
-        this.vitalsManager = new PlayerVitalsManager(scene, traits, playerSchema)
-        this.skillManager = new PlayerSkillManager(scene, traits, playerSchema)
-        this.movementManager = new PlayerMovementManager(scene, this, client)
-        this.cargoManager = new PlayerCargoManager(scene, this)
+        this.m_vitalsManager = new PlayerVitalsManager(scene, traits, playerSchema)
+        this.m_skillManager = new PlayerSkillManager(scene, traits, playerSchema)
+        this.m_movementManager = new PlayerMovementManager(scene, this, client)
+        this.m_cargoManager = new PlayerCargoManager(scene, this)
         //Create kill conditions
-        this.vitalsManager.get(DefaultVitals.FUEL).on(PlayerVital.EMPTY, this.respawn.bind(this))
+        this.m_vitalsManager.get(DefaultVitals.FUEL).on(PlayerVital.EMPTY, this.respawn.bind(this))
     }
 
     public respawn() {
-        this.movementManager.excavationManager.cancelDrilling()
-        this.cargoManager.empty()
-        this.vitalsManager.resetAll()
-        this.movementManager.moveToSurface()
+        this.m_movementManager.excavationManager.cancelDrilling()
+        this.m_cargoManager.empty()
+        this.m_vitalsManager.resetAll()
+        this.m_movementManager.moveToSurface()
     }
 
-    public blockPosition() : Phaser.Geom.Point {
-        let currentLayer : number = this.y / Config.blockHeight
-        let x : number = this.x / Config.blockWidth
-        return new Phaser.Geom.Point(Math.floor(x), Math.floor(currentLayer))
+    public skillManager() : PlayerSkillManager {
+        return this.m_skillManager
+    }
+
+    public vitalsManager() : PlayerVitalsManager {
+        return this.m_vitalsManager
+    }
+
+    public cargoManager() : PlayerCargoManager {
+        return this.m_cargoManager
+    }
+
+    public movementManager() : PlayerMovementManager {
+        return this.m_movementManager
     }
 
 
-
-    public getCargoManager() : PlayerCargoManager {
-        return this.cargoManager
-    }
-
-    protected preUpdate(willStep: boolean, delta: number): void {
-        if(willStep) {
-            //Check if player's block position has changed
-            let newBlockPosition : Phaser.Geom.Point = this.blockPosition()
-            if(!Phaser.Geom.Point.Equals(this.lastBlockPosition, newBlockPosition)) {
-                this.lastBlockPosition = newBlockPosition
-                this.emit(Player.BLOCK_POSITION_CHANGED, newBlockPosition)
-            }
-            //Sync player position with colyseus schema
-            if(this.playerSchema.playerState.x != Math.round(this.x * 100) / 100) this.playerSchema.playerState.x = Math.round(this.x * 100) / 100
-            if(this.playerSchema.playerState.y != Math.round(this.y * 100) / 100) this.playerSchema.playerState.y = Math.round(this.y * 100) / 100
-            if(this.body instanceof Phaser.Physics.Arcade.Body) {
-                if(this.playerSchema.playerState.velocityX != this.body.velocity.x) this.playerSchema.playerState.velocityX = this.body.velocity.x
-                if(this.playerSchema.playerState.velocityY != this.body.velocity.x) this.playerSchema.playerState.velocityY = this.body.velocity.y
-            }
-        }
-    }
-
-    private gotchiTraits : AavegotchiTraits
-    public skillManager : PlayerSkillManager
-    public vitalsManager : PlayerVitalsManager
-    private cargoManager : PlayerCargoManager
-    public  movementManager : PlayerMovementManager
-    private lastBlockPosition : Phaser.Geom.Point
+    public m_skillManager : PlayerSkillManager
+    public m_vitalsManager : PlayerVitalsManager
+    private m_cargoManager : PlayerCargoManager
+    public  m_movementManager : PlayerMovementManager
     public readonly playerSchema : Schema.Player
-    static readonly BLOCK_POSITION_CHANGED: unique symbol = Symbol();
 
 }

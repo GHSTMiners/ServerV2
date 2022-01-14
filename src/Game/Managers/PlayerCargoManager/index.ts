@@ -1,12 +1,14 @@
 import { SpawnType } from "chisel-api-interface"
 import * as Schema from "../../../Rooms/shared/schemas"
 import Player from "../../Objects/Player"
+import { DefaultVitals } from "../PlayerVitalsManager"
 
 export default class PlayerCargoManager extends Phaser.GameObjects.GameObject {
 
     constructor(scene : Phaser.Scene, player : Player) {
         super(scene, "PlayerCargoManager")
         this.playerSchema = player.playerSchema
+        this.player = player
     }
 
     public processBlock(block : Schema.Block) {
@@ -23,11 +25,13 @@ export default class PlayerCargoManager extends Phaser.GameObjects.GameObject {
                 this.playerSchema.cargo.set(block.spawnID.toString(), targetCargoSpace)
             }
         }
+        //Take some space from cargo vital
+        this.player.vitalsManager().get(DefaultVitals.CARGO).takeAmount(1)
     }
 
     public empty() {
         this.playerSchema.cargo.clear()
     }
-    
+    private player : Player
     private playerSchema : Schema.Player
 }

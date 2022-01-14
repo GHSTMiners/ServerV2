@@ -1,11 +1,11 @@
 import * as Chisel from "chisel-api-interface"
 import * as mathjs from "mathjs"
-import * as Schema from "../../../rooms/shared/schemas"
+import { Player, Skill } from "../../../Rooms/shared/schemas"
 import { AavegotchiTraits } from "../../Helpers/AavegotchiInfoFetcher"
 import MainScene from "../../Scenes/MainScene"
 
 export default class PlayerSkillManager extends Phaser.GameObjects.GameObject {
-    constructor(scene : Phaser.Scene, traits : AavegotchiTraits, schema : Schema.Player) {
+    constructor(scene : Phaser.Scene, traits : AavegotchiTraits, schema : Player) {
         super(scene, "PlayerSkillManager")
         this.traits = traits
         this.schema = schema
@@ -22,27 +22,27 @@ export default class PlayerSkillManager extends Phaser.GameObjects.GameObject {
 
     private createSkills () {
         this.worldInfo.skills.forEach(skill => {
-            let newSchema : Schema.Skill = new Schema.Skill()
-            // this.schema.skills.push(newSchema)
+            let newSchema : Skill = new Skill()
+            this.schema.skills.push(newSchema)
             this.skills.set(skill.name, new PlayerSkill(this.scene, skill, newSchema, this.traits))
         }, this)
     }
 
-    private schema : Schema.Player
+    private schema : Player
     private skills : Map<string, PlayerSkill>
     private readonly traits : AavegotchiTraits
     private readonly worldInfo : Chisel.DetailedWorld
 }
 
 export class PlayerSkill extends Phaser.GameObjects.GameObject {
-    constructor(scene : Phaser.Scene, skill : Chisel.Skill, schema : Schema.Skill, traits : AavegotchiTraits) {
+    constructor(scene : Phaser.Scene, skill : Chisel.Skill, schema : Skill, traits : AavegotchiTraits) {
         super(scene, "PlayerSkill")
         this.skill = skill
         this.traits = traits
         this.schema = schema
         this.schema.name = skill.name
         this.generateValues()
-        scene.add.existing(this)
+        this.syncWithSchema()
     }
 
     private generateValues() {
@@ -59,13 +59,9 @@ export class PlayerSkill extends Phaser.GameObjects.GameObject {
         this.minimum = mathjs.evaluate(this.skill.minimum, scope)
         this.maximum = mathjs.evaluate(this.skill.maximum, scope)
         this.initial = mathjs.evaluate(this.skill.initial, scope)
-        } catch(exception : any) {
+        } catch(exception) {
             console.log(exception)
         }
-    }
-
-    protected preUpdate(willStep: boolean, delta: number): void {
-        this.syncWithSchema()
     }
 
     private syncWithSchema() {
@@ -78,7 +74,7 @@ export class PlayerSkill extends Phaser.GameObjects.GameObject {
         return Phaser.Math.Clamp(this.initial, this.minimum, this.maximum)
     }
 
-    private schema : Schema.Skill
+    private schema : Skill
     private minimum : number
     private maximum : number
     private initial : number

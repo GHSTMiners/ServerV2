@@ -1,7 +1,7 @@
 import { Schema, ArraySchema, type, filterChildren} from "@colyseus/schema"
 import { Client } from "colyseus";
 import Config from "../../../../Config";
-import { Player } from "../Player/Player";
+import { Player } from "../Player";
 import { Layer } from "./Layer";
 
 export class World extends Schema {

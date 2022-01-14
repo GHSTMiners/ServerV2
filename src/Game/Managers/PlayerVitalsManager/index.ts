@@ -1,11 +1,11 @@
 import * as Chisel from "chisel-api-interface"
 import * as mathjs from "mathjs"
-import * as Schema from "../../../rooms/shared/schemas"
+import { Vital, Player } from "../../../Rooms/shared/schemas"
 import { AavegotchiTraits } from "../../Helpers/AavegotchiInfoFetcher"
 import MainScene from "../../Scenes/MainScene"
 
 export default class PlayerVitalsManager extends Phaser.GameObjects.GameObject {
-    constructor(scene : Phaser.Scene, traits : AavegotchiTraits, schema : Schema.Player) {
+    constructor(scene : Phaser.Scene, traits : AavegotchiTraits, schema : Player) {
         super(scene, "PlayerVitalsManager")
         this.traits = traits
         this.schema = schema
@@ -28,13 +28,13 @@ export default class PlayerVitalsManager extends Phaser.GameObjects.GameObject {
 
     private createvitals () {
         this.worldInfo.vitals.forEach(vital => {
-            let newSchema : Schema.Vital = new Schema.Vital()
-            // this.schema.vitals.push(newSchema)
+            let newSchema : Vital = new Vital()
+            this.schema.vitals.push(newSchema)
             this.vitals.set(vital.name, new PlayerVital(this.scene, vital, newSchema, this.traits))
         }, this)
     }
 
-    private schema : Schema.Player
+    private schema : Player
     private vitals : Map<string, PlayerVital>
     private readonly traits : AavegotchiTraits
     private readonly worldInfo : Chisel.DetailedWorld
@@ -42,14 +42,13 @@ export default class PlayerVitalsManager extends Phaser.GameObjects.GameObject {
 
 
 export class PlayerVital extends Phaser.GameObjects.GameObject{ 
-    constructor(scene : Phaser.Scene, vital : Chisel.Vital, schema : Schema.Vital, traits : AavegotchiTraits) {
+    constructor(scene : Phaser.Scene, vital : Chisel.Vital, schema : Vital, traits : AavegotchiTraits) {
         super(scene, "PlayerVital")
         this.vital = vital
         this.traits = traits
-        this.generateValues()
         this.schema = schema
-        this.scene.add.existing(this)
-
+        this.generateValues()
+        this.reset()
     }
 
     private generateValues() {
@@ -63,20 +62,16 @@ export class PlayerVital extends Phaser.GameObjects.GameObject{
             eye_color: this.traits.eye_color
         }
         try {
-        this.m_minimum = mathjs.evaluate(this.vital.minimum, scope)
-        this.m_maximum = mathjs.evaluate(this.vital.maximum, scope)
-        this.m_initial = mathjs.evaluate(this.vital.initial, scope)
-        } catch(exception : any) {
+            this.m_minimum = mathjs.evaluate(this.vital.minimum, scope)
+            this.m_maximum = mathjs.evaluate(this.vital.maximum, scope)
+            this.m_initial = mathjs.evaluate(this.vital.initial, scope)
+        } catch(exception) {
             console.log(exception)
         }
-        this.reset()
-    }
-
-    protected preUpdate(willStep: boolean, delta: number): void {
-        this.syncWithSchema()
     }
 
     private syncWithSchema() {
+        if(this.schema.name != this.vital.name) this.schema.name = this.vital.name
         if(this.schema.minimum != this.m_minimum) this.schema.minimum = this.m_minimum
         if(this.schema.maximum != this.m_maximum) this.schema.maximum = this.m_maximum
         if(this.schema.currentValue != this.currentValue()) this.schema.currentValue = this.currentValue()
@@ -88,16 +83,23 @@ export class PlayerVital extends Phaser.GameObjects.GameObject{
         this.m_currentValue = Phaser.Math.Clamp(this.m_currentValue - amount, 0, this.m_maximum)
         this.emit(PlayerVital.VALUE_CHANGED)
         if(this.m_currentValue <= 0) this.emit(PlayerVital.EMPTY)
+        this.syncWithSchema()
+    }
+
+    public canTakeAmount(amount : number) : boolean {
+        return this.m_currentValue > amount
     }
 
     public addAmount(amount : number) {
         this.m_currentValue  = Phaser.Math.Clamp(this.m_currentValue + amount, 0, this.m_maximum)
         this.emit(PlayerVital.VALUE_CHANGED)
         if(this.m_currentValue == this.m_minimum) this.emit(PlayerVital.FULL)
+        this.syncWithSchema()
     }
 
     public reset() {
         this.m_currentValue = this.filledValue()
+        this.syncWithSchema()
     }
 
     public filledValue() : number {
@@ -112,7 +114,11 @@ export class PlayerVital extends Phaser.GameObjects.GameObject{
         return this.m_currentValue
     }
 
-    private schema : Schema.Vital
+    public isDepleted() : boolean {
+        return this.m_currentValue <= 0
+    }
+
+    private schema : Vital
     private m_minimum : number
     private m_maximum : number
     private m_initial : number

@@ -114,7 +114,7 @@ export default class PlayerMovementManager extends Phaser.GameObjects.GameObject
         if(this.player.playerSchema.playerState.y != Math.round(this.player.y * 100) / 100) this.player.playerSchema.playerState.y = Math.round(this.player.y * 100) / 100
         if(this.body instanceof Phaser.Physics.Arcade.Body) {
             if(this.player.playerSchema.playerState.velocityX != this.body.velocity.x) this.player.playerSchema.playerState.velocityX = this.body.velocity.x
-            if(this.player.playerSchema.playerState.velocityY != this.body.velocity.x.to) this.player.playerSchema.playerState.velocityY = this.body.velocity.y
+            if(this.player.playerSchema.playerState.velocityY != this.body.velocity.x) this.player.playerSchema.playerState.velocityY = this.body.velocity.y
         }
     }
 

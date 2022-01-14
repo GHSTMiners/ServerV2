@@ -1,5 +1,5 @@
 export * from "./Crypto"
-export * from "./Player/Player"
+export * from "./Player"
 export * from "./Player/Skill"
 export * from "./Player/Vital"
 export * from "./Player/PlayerState"

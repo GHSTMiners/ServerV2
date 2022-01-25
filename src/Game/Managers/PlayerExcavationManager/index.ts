@@ -1,4 +1,5 @@
 import * as Chisel from "chisel-api-interface";
+import { SpawnType, World } from "chisel-api-interface";
 import { ChangeDirection } from "gotchiminer-multiplayer-protocol";
 import { Scene } from "phaser";
 import Config from "../../../Config";
@@ -20,10 +21,16 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
         }
         this.nextDrillTime = Date.now()
         this.player = player
+
         this.soilMap = new Map<number, Chisel.Soil>()
         this.worldInfo.soil.forEach(soil => {
             this.soilMap.set(soil.id, soil)
         }, this);
+
+        this.rockMap = new Map<number, Chisel.Rock>()
+        this.worldInfo.rocks.forEach(rock => {
+            this.rockMap.set(rock.id, rock)
+        })
         scene.add.existing(this)
     }
 
@@ -72,8 +79,12 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
         if(blockBelowPlayer.spawnType == Chisel.SpawnType.None) return false
         //Check if there is a block to drill in the direction we want to drill
         if(!this.blockExistsInDiretion(direction)) return false
-        //Check if the target block is not a rock
-        if(this.blockInDirectionRelativeToPlayer(direction).spawnType == Chisel.SpawnType.Rock) return false
+        //Check if the target block is not a rock, if so check if we can drill into the block
+        let targetBlock : Schema.Block = this.blockInDirectionRelativeToPlayer(direction)
+        if(targetBlock.spawnType == Chisel.SpawnType.Rock) {
+            let rockType : Chisel.Rock = this.rockMap.get(targetBlock.spawnID)
+            if (!(rockType.digable || rockType.lava)) return false
+        }
         if(this.player.body instanceof Phaser.Physics.Arcade.Body) {
             //Player can only drill if resting on floor
             if(!this.player.body.onFloor()) return false
@@ -123,6 +134,10 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
             //Move player to block position
             let targetBlockPosition : Phaser.Geom.Point = this.targetBlockPosition(drillingDirection)
             this.player.movementManager().moveToLocation(targetBlockPosition.x * Config.blockWidth + Config.blockWidth/2, targetBlockPosition.y * Config.blockHeight + Config.blockHeight/2, drillDuration)
+            //If digging lava, take some health
+            if(targetBlock.spawnType == SpawnType.Rock) {
+                if(this.rockMap.get(targetBlock.spawnID).lava) this.player.vitalsManager().get(DefaultVitals.HEALTH).takeAmount(25)
+            }
             //Take some fuel
             this.player.vitalsManager().get(DefaultVitals.FUEL).takeAmount(this.player.skillManager().get(DefaultSkills.DIGGING_FUEL_USAGE).value() * digMultiplier)
             //Update drilling time
@@ -143,6 +158,7 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
     }
 
     private digTimeout : NodeJS.Timeout
+    private rockMap : Map<number, Chisel.Rock>
     private soilMap : Map<number, Chisel.Soil>
     private worldInfo : Chisel.DetailedWorld
     private blockManager : BlockManager

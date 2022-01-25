@@ -41,6 +41,7 @@
     "@types/jsdom": "^16.2.13",
     "@types/lodash": "^4.14.178",
     "@types/mathjs": "^9.4.2",
+    "@types/simple-peer": "^9.11.4",
     "browserenv": "^1.0.0",
     "canvas": "^2.8.0",
     "chisel-api-interface": "^1.11.0",
@@ -54,6 +55,7 @@
     "node-worker-threads-pool": "^1.5.1",
     "phaser": "^3.55.2",
     "solc": "^0.8.11",
-    "web3": "^1.6.1"
+    "web3": "^1.6.1",
+    "werift": "^0.14.4"
   }
 }

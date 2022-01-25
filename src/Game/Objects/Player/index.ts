@@ -35,6 +35,8 @@ export default class Player extends Phaser.GameObjects.Rectangle {
         this.m_cargoManager = new PlayerCargoManager(scene, this)
         //Create kill conditions
         this.m_vitalsManager.get(DefaultVitals.FUEL).on(PlayerVital.EMPTY, this.respawn.bind(this))
+        this.m_vitalsManager.get(DefaultVitals.HEALTH).on(PlayerVital.EMPTY, this.respawn.bind(this))
+
     }
 
     public respawn() {
@@ -59,7 +61,6 @@ export default class Player extends Phaser.GameObjects.Rectangle {
     public movementManager() : PlayerMovementManager {
         return this.m_movementManager
     }
-
 
     public m_skillManager : PlayerSkillManager
     public m_vitalsManager : PlayerVitalsManager

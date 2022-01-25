@@ -84,7 +84,7 @@ export default class BlockManager extends Phaser.GameObjects.GameObject {
                 for (let x = renderRectangle.x; x < (renderRectangle.x + renderRectangle.width); x++) {
                     if(x >=0 && this.world.width >= x && y >= 0 && this.world.height >= y) {
                         let blockSchema : Schema.Block = this.blockAt(x, y)
-                        if(blockSchema.spawnType != SpawnType.None) {
+                        if(blockSchema && blockSchema.spawnType != SpawnType.None) {
                             staticGroup.add(new Block(this.scene, blockSchema, x*Config.blockWidth+Config.blockWidth/2, y*Config.blockHeight+Config.blockHeight/2, Config.blockWidth, Config.blockHeight))
                         }
                     }

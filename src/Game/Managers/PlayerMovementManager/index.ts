@@ -9,7 +9,7 @@ import { DefaultVitals, PlayerVital } from "../PlayerVitalsManager";
 
 
 export default class PlayerMovementManager extends Phaser.GameObjects.GameObject {
-    constructor(scene : Phaser.Scene, player : Player, client: ClientWrapper) {
+    constructor(scene : Phaser.Scene, player : Player) {
         super(scene, "PlayerMovementManager")
         scene.add.existing(this)
         this.player = player
@@ -17,7 +17,7 @@ export default class PlayerMovementManager extends Phaser.GameObjects.GameObject
         this.lastBlockPosition = new Phaser.Geom.Point()
         this.excavationManager = new PlayerExcavationManager(scene, player)
         //Register message handler
-        client.messageRouter.addRoute(ChangeDirection, this.handleChangeDirection.bind(this))
+        player.client().messageRouter.addRoute(ChangeDirection, this.handleChangeDirection.bind(this))
         //Set maximum speed
         if(this.player.body instanceof Phaser.Physics.Arcade.Body && !this.excavationManager.isDrilling()) {
             this.player.body.setMaxVelocityX(this.player.skillManager().get(DefaultSkills.MOVING_SPEED).value() * Config.blockWidth)

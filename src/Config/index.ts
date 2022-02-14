@@ -12,4 +12,5 @@ export default class Config {
     public static blockHeightOffset = Config.blockHeight / 2
     public static blockCollisionRadio = 4
     public static layerRevealRadius = 8
+    public static layerBuildingRadius = 4
 }

@@ -8,6 +8,8 @@ import Block from "../../Objects/Block";
 import { SpawnType } from "chisel-api-interface";
 import PlayerExcavationManager from "../PlayerExcavationManager";
 import PlayerMovementManager from "../PlayerMovementManager";
+import { DefaultSkills } from "../PlayerSkillManager";
+import { DefaultVitals } from "../PlayerVitalsManager";
 
 export default class BlockManager extends Phaser.GameObjects.GameObject {
     constructor(scene : Phaser.Scene, world : World, playerManager : PlayerManager) {
@@ -35,7 +37,20 @@ export default class BlockManager extends Phaser.GameObjects.GameObject {
     }
 
     private processCollision(player : Phaser.Types.Physics.Arcade.GameObjectWithBody, block : Phaser.Types.Physics.Arcade.GameObjectWithBody) : boolean {
-        if(block instanceof Block) {
+        //Check if player should collide with collision object
+        if(block instanceof Block && player instanceof Player && player.body instanceof Phaser.Physics.Arcade.Body) {
+            //Process damage
+            let maxSpeedBeforeDamage : number = Config.blockHeight * player.skillManager().get(DefaultSkills.MAX_SPEED_BEFORE_DAMAGE).value();
+            if(player.body.speed > maxSpeedBeforeDamage) {
+                //if player is moving walking fast, ignore events
+                    if(player.body.y < block.body.y) {
+                        if(Math.abs(player.body.velocity.y) > Math.abs(player.body.velocity.x)) {
+                        let healthToTake : number = 25 * (player.body.speed - maxSpeedBeforeDamage) / Config.blockHeight
+                        // player.vitalsManager().get(DefaultVitals.HEALTH).takeAmount(healthToTake)
+                    }
+                    
+                }
+            }
             return(block.blockSchema.spawnType != SpawnType.None)
         } else return true
     }

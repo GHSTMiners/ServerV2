@@ -5,7 +5,7 @@ import { Scene } from "phaser";
 import Config from "../../../Config";
 import * as Schema from "../../../Rooms/shared/schemas";
 import { CargoEntry } from "../../../Rooms/shared/schemas";
-
+import * as Protocol from "gotchiminer-multiplayer-protocol"
 import Player from "../../Objects/Player";
 import MainScene from "../../Scenes/MainScene";
 import BlockManager from "../BlockManager";
@@ -124,7 +124,15 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
             //Remove block when digging is complete
             this.digTimeout = setTimeout(function(player : Player) {
                 //Process block on player inventory manager
-                player.cargoManager().processBlock(targetBlock)
+                if(player.cargoManager().processBlock(targetBlock)) {
+                    //Notify the client that a block has been minted
+                    if(targetBlock.spawnType == Chisel.SpawnType.Crypto) {
+                        let cryptoMinedMessage : Protocol.NotifyPlayerMinedCrypto = new Protocol.NotifyPlayerMinedCrypto()
+                        cryptoMinedMessage.cryptoId = targetBlock.spawnID
+                        let serializedMessage : Protocol.Message = Protocol.MessageSerializer.serialize(cryptoMinedMessage)
+                        player.client().client.send(serializedMessage.name, serializedMessage.data)
+                    }
+                }
                 //Stop movement on body
                 if(player.body instanceof Phaser.Physics.Arcade.Body) {
                     player.body.enable = true

@@ -1,6 +1,7 @@
 import Config from "../../../Config";
 import * as Schema from "../../../Rooms/shared/schemas";
 import { AavegotchiTraits } from "../../Helpers/AavegotchiInfoFetcher";
+import PlayerBuildingManager from "../../Managers/PlayerBuildingManager";
 import PlayerCargoManager from "../../Managers/PlayerCargoManager";
 import PlayerMovementManager from "../../Managers/PlayerMovementManager";
 import PlayerSkillManager from "../../Managers/PlayerSkillManager";
@@ -11,6 +12,7 @@ export default class Player extends Phaser.GameObjects.Rectangle {
     
     constructor(scene : Phaser.Scene, playerSchema : Schema.Player, traits : AavegotchiTraits, client: ClientWrapper) {
         super(scene, playerSchema.playerState.x, playerSchema.playerState.y)
+        this.m_client = client
         this.playerSchema = playerSchema
         //Create a body for the rectangle
         this.scene.physics.add.existing(this, false)
@@ -22,16 +24,17 @@ export default class Player extends Phaser.GameObjects.Rectangle {
             this.body.setDamping(true)
             this.body.setBounce(0.2, 0.2)
             this.body.setDrag(0.01, 0.01)
-            this.body.setSize(Config.blockWidth*0.85, Config.blockHeight*0.90)
+            this.body.setSize(Config.blockWidth * 0.85, Config.blockHeight * 0.90)
             this.body.setOffset(0, Config.blockHeight*0.1)
         }
         //Configure size and position
         this.setPosition(playerSchema.playerState.x, playerSchema.playerState.y)
         this.setSize(Config.blockWidth*0.5, Config.blockHeight)
         //Create managers
+        this.m_buildingManager = new PlayerBuildingManager(scene, this)
         this.m_vitalsManager = new PlayerVitalsManager(scene, traits, playerSchema)
         this.m_skillManager = new PlayerSkillManager(scene, traits, playerSchema)
-        this.m_movementManager = new PlayerMovementManager(scene, this, client)
+        this.m_movementManager = new PlayerMovementManager(scene, this)
         this.m_cargoManager = new PlayerCargoManager(scene, this)
         //Create kill conditions
         this.m_vitalsManager.get(DefaultVitals.FUEL).on(PlayerVital.EMPTY, this.respawn.bind(this))
@@ -62,10 +65,20 @@ export default class Player extends Phaser.GameObjects.Rectangle {
         return this.m_movementManager
     }
 
-    public m_skillManager : PlayerSkillManager
-    public m_vitalsManager : PlayerVitalsManager
+    public BuildingManager() : PlayerBuildingManager {
+        return this.m_buildingManager
+    }
+    
+    public client() : ClientWrapper {
+        return this.m_client
+    }
+
+    private m_client : ClientWrapper
+    private m_skillManager : PlayerSkillManager
+    private m_vitalsManager : PlayerVitalsManager
     private m_cargoManager : PlayerCargoManager
-    public  m_movementManager : PlayerMovementManager
+    private m_buildingManager : PlayerBuildingManager
+    private  m_movementManager : PlayerMovementManager
     public readonly playerSchema : Schema.Player
 
 }

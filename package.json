@@ -48,7 +48,7 @@
     "colyseus": "^0.14.20",
     "cors": "^2.8.5",
     "express": "^4.16.4",
-    "gotchiminer-multiplayer-protocol": "^1.4.1",
+    "gotchiminer-multiplayer-protocol": "^1.5.0",
     "lodash": "^4.17.21",
     "mathjs": "^10.0.2",
     "node-navigator": "^1.0.1",

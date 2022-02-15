@@ -26,7 +26,7 @@ export default class PlayerMovementManager extends Phaser.GameObjects.GameObject
     }
 
     public moveToSurface() {
-        this.moveTween.stop()
+        if(this.moveTween) this.moveTween.stop()
         if(this.moveTween) this.scene.tweens.remove(this.moveTween)
         if(this.player.body instanceof Phaser.Physics.Arcade.Body && !this.excavationManager.isDrilling()) {
             this.player.setPosition(Math.random() * 10 * 300, -300)

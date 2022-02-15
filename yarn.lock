@@ -2417,10 +2417,10 @@
     "to-readable-stream" "^1.0.0"
     "url-parse-lax" "^3.0.0"
 
-"gotchiminer-multiplayer-protocol@^1.4.1":
-  "integrity" "sha512-hkbi/HygVqY3AdPBRjxig17Pxtl0J45D6Yc0lKvtO9Ow3IDXtFc5/MHitnM/vYTiOpeno4LeZxY+8seWfbZZXQ=="
-  "resolved" "https://registry.npmjs.org/gotchiminer-multiplayer-protocol/-/gotchiminer-multiplayer-protocol-1.4.1.tgz"
-  "version" "1.4.1"
+"gotchiminer-multiplayer-protocol@^1.5.0":
+  "integrity" "sha512-YLbyLl+5WxMxqJIOQVT6wy330JUW3bqCMPxaaVvwkM5b+FqBVNGrPIq6KR4YJVE2ImYvFqb4wnfwpGbwxY2NsA=="
+  "resolved" "https://registry.npmjs.org/gotchiminer-multiplayer-protocol/-/gotchiminer-multiplayer-protocol-1.5.0.tgz"
+  "version" "1.5.0"
   dependencies:
     "protobufjs" "^6.11.2"
 
@@ -4866,6 +4866,7 @@
   "version" "3.3.2"
 
 "uWebSockets.js@github:uNetworking/uWebSockets.js#v19.2.0":
+  "integrity" "sha512-e3plJlJkNsXd6d4F2rW/WOS4S7O7fDSuzhDbg5ANUK+wjDF+bGqtCRtsM6VwpNsWsf1V0lkwpL7W/ktiN7LpBg=="
   "resolved" "git+ssh://git@github.com/uNetworking/uWebSockets.js.git#77b1761c5a23ac6a5c2adf2bd808be0ae6b5000a"
   "version" "19.2.0"
 

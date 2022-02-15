@@ -121,6 +121,7 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
             if(this.player.body instanceof Phaser.Physics.Arcade.Body) {
                 this.player.body.enable = false
             }
+            var self = this
             //Remove block when digging is complete
             this.digTimeout = setTimeout(function(player : Player) {
                 //Process block on player inventory manager
@@ -132,6 +133,14 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
                         let serializedMessage : Protocol.Message = Protocol.MessageSerializer.serialize(cryptoMinedMessage)
                         player.client().client.send(serializedMessage.name, serializedMessage.data)
                     }
+                }else if(targetBlock.spawnType == SpawnType.Rock) {
+                    //If digging lava, take some health and notify client
+                   if(self.rockMap.get(targetBlock.spawnID).lava) {
+                       let lavaMinedMessage : Protocol.NotifyPlayerMinedLava = new Protocol.NotifyPlayerMinedLava()
+                       let serializedMessage : Protocol.Message = Protocol.MessageSerializer.serialize(lavaMinedMessage)
+                       player.client().client.send(serializedMessage.name, serializedMessage.data)
+                       player.vitalsManager().get(DefaultVitals.HEALTH).takeAmount(25)
+                   }
                 }
                 //Stop movement on body
                 if(player.body instanceof Phaser.Physics.Arcade.Body) {
@@ -142,10 +151,6 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
             //Move player to block position
             let targetBlockPosition : Phaser.Geom.Point = this.targetBlockPosition(drillingDirection)
             this.player.movementManager().moveToLocation(targetBlockPosition.x * Config.blockWidth + Config.blockWidth/2, targetBlockPosition.y * Config.blockHeight + Config.blockHeight/2, drillDuration)
-            //If digging lava, take some health
-            if(targetBlock.spawnType == SpawnType.Rock) {
-                if(this.rockMap.get(targetBlock.spawnID).lava) this.player.vitalsManager().get(DefaultVitals.HEALTH).takeAmount(25)
-            }
             //Take some fuel
             this.player.vitalsManager().get(DefaultVitals.FUEL).takeAmount(this.player.skillManager().get(DefaultSkills.DIGGING_FUEL_USAGE).value() * digMultiplier)
             //Update drilling time

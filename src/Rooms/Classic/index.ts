@@ -21,7 +21,7 @@ export class Classic extends Room<Schema.World> {
       //Generate a random map
       WorldGenerator.generateWorld(worldInfo, this.state).then((nothing) =>{
         //Create game
-        self.game = new Game(this.state, worldInfo)
+        self.game = new Game(this, worldInfo)
         //Register message handler 
         this.onMessage("*", (client: Client, type: string | number, message: string) => this.game.mainScene.clientManager.handleMessage(client, type as string, message))
         //Start running the engine loop
@@ -36,19 +36,26 @@ export class Classic extends Room<Schema.World> {
       let traitFetcher : AavegotchiInfoFetcher = new AavegotchiInfoFetcher()
       //Check that both fields are filled
       if(options.gotchiId  && options.walletAddress) { 
-        //Get owner for gotchi ID
-        traitFetcher.getAavegotchiOwner(options.gotchiId).then(owner => {
-          //Check if owner wallet matches authentication wallet address
-          if(owner == options.walletAddress) {
-            resolve(true)
+        //Verify that gotchi is not already playing
+        
+          if(this.presence.get(`gotchi_${options.gotchiId.toString()}`)) {
+            console.warn(`Reject gotchi ${options.gotchiId}, on IP ${request.socket.remoteAddress} because it is already playing`)
+            reject(new ServerError(400, "This aavegotchi is already mining!"))
           } else {
-            console.warn(`Wallet ${options.walletAddress} tried to authenticate with an unowned aavegotchi ${options.gotchiId}, on IP ${request.socket.remoteAddress}`)
-            reject(new ServerError(400, "You're not the owner of this aavegotchi!"))
+            //Get owner for gotchi ID
+            traitFetcher.getAavegotchiOwner(options.gotchiId).then(owner => {
+              //Check if owner wallet matches authentication wallet address
+              if(owner == options.walletAddress) {
+                resolve(true)
+              } else {
+                console.warn(`Wallet ${options.walletAddress} tried to authenticate with an unowned aavegotchi ${options.gotchiId}, on IP ${request.socket.remoteAddress}`)
+                reject(new ServerError(400, "You're not the owner of this aavegotchi!"))
+              }
+            }).catch(error => {
+              //Failed to fetch traits
+              reject(new ServerError(500, "Failed get owner adress for aavegotchi"))
+            })
           }
-        }).catch(error => {
-          //Failed to fetch traits
-          reject(new ServerError(500, "Failed get owner adress for aavegotchi"))
-        })
       } else reject(new ServerError(400, "Authentication info is missing data"))
     });
   }

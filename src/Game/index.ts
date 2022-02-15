@@ -4,10 +4,11 @@ import * as Schema from "../Rooms/shared/schemas";
 import MainScene from "./Scenes/MainScene";
 import PlayerManager from "./Managers/PlayerManager";
 import { DetailedWorld } from "chisel-api-interface";
+import { Room } from "colyseus";
 
 export default class Game extends Phaser.Game {
-    constructor(world : Schema.World, worldInfo : DetailedWorld) {
-      const mainScene : MainScene = new MainScene(world, worldInfo)
+    constructor(room : Room<Schema.World>, worldInfo : DetailedWorld) {
+      const mainScene : MainScene = new MainScene(room, worldInfo)
        const config : Phaser.Types.Core.GameConfig = {
             type: Phaser.HEADLESS,
             fps: {

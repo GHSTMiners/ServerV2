@@ -12,13 +12,13 @@ export class World extends Schema {
     @type ("boolean") ready: boolean = false;
     @type ([Player]) players = new ArraySchema<Player>();
 
-    @filterChildren(function(client: Client, layerIndex: number, layer: Layer, root: World) {
-        let player : Player  | undefined = client.userData
-        if (player) {
-            let playerlayer : number = player.playerState.y / Config.blockHeight
-            return (Phaser.Math.Within(playerlayer, layerIndex, Config.layerRevealRadius)) 
-        } else return false
-    })
+    // @filterChildren(function(client: Client, layerIndex: number, layer: Layer, root: World) {
+    //     let player : Player  | undefined = client.userData
+    //     if (player) {
+    //         let playerlayer : number = player.playerState.y / Config.blockHeight
+    //         return (Phaser.Math.Within(playerlayer, layerIndex, Config.layerRevealRadius)) 
+    //     } else return false
+    // })
     @type ([Layer]) layers = new ArraySchema<Layer>();
 }
 

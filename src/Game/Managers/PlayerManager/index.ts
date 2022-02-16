@@ -35,7 +35,6 @@ export default class PlayerManager extends Phaser.GameObjects.GameObject{
             this.emit(PlayerManager.PLAYER_ADDED, newPlayerSprite)
         }).catch(error =>{
             console.log(error);
-            
             client.client.leave(500, "Could not fetch traits for this Aavegotchi")
         })
     }

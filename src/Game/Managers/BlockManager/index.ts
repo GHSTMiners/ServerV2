@@ -9,6 +9,8 @@ import PlayerMovementManager from "../PlayerMovementManager";
 import { DefaultSkills } from "../PlayerSkillManager";
 import { DefaultVitals } from "../PlayerVitalsManager";
 import * as Protocol from "gotchiminer-multiplayer-protocol"
+import MainScene from "../../Scenes/MainScene";
+import math from "mathjs";
 
 export default class BlockManager extends Phaser.GameObjects.GameObject {
     constructor(scene : Phaser.Scene, world : World, playerManager : PlayerManager) {
@@ -19,9 +21,17 @@ export default class BlockManager extends Phaser.GameObjects.GameObject {
         this.colliders = new Map<Player, Phaser.Physics.Arcade.Collider>()
         this.staticBodies = new Map<Player, Phaser.Physics.Arcade.StaticGroup>()
 
+        //Find top of world
+        let worldHeight : number = -Config.skyLayers
+        if(scene instanceof MainScene) {
+            scene.worldInfo.backgrounds.forEach(background =>{
+                if(background.ending_layer < worldHeight) worldHeight = background.ending_layer
+            })
+        }
+
         // Set world bounds
-        this.scene.physics.world.setBounds(0, -Config.skyHeight, 
-            world.width * Config.blockWidth, Config.skyHeight + world.height * Config.blockHeight, true, true, true, true)
+        this.scene.physics.world.setBounds(0, worldHeight * Config.blockHeight, 
+            world.width * Config.blockWidth, -worldHeight + world.height * Config.blockHeight, true, true, true, true)
         // Register event handlers
         playerManager.on(PlayerManager.PLAYER_ADDED, this.handlePlayerAdded.bind(this))
         playerManager.on(PlayerManager.PLAYER_REMOVED, this.handlePlayerDeleted.bind(this))

@@ -50,7 +50,7 @@ export default class PlayerCargoManager extends Phaser.GameObjects.GameObject {
     }
 
     public empty() {
-        this.playerSchema.cargo.clear()
+        this.playerSchema.cargo.forEach((elt,key) => {this.playerSchema.cargo.delete(key)});
         this.player.vitalsManager().get(DefaultVitals.CARGO).reset()
     }
     private player : Player

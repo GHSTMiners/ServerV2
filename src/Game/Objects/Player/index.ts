@@ -24,8 +24,8 @@ export default class Player extends Phaser.GameObjects.Rectangle {
             this.body.setDamping(true)
             this.body.setBounce(0.2, 0.2)
             this.body.setDrag(0.01, 0.01)
-            this.body.setSize(Config.blockWidth * 0.85, Config.blockHeight * 0.90)
-            this.body.setOffset(0, Config.blockHeight*0.1)
+            this.body.setSize(Config.blockWidth * 0.70, Config.blockHeight * 0.85)
+            this.body.setOffset(Config.blockWidth * 0.15, Config.blockHeight * 0.15)
         }
         //Configure size and position
         this.setPosition(playerSchema.playerState.x, playerSchema.playerState.y)
@@ -39,7 +39,6 @@ export default class Player extends Phaser.GameObjects.Rectangle {
         //Create kill conditions
         this.m_vitalsManager.get(DefaultVitals.FUEL).on(PlayerVital.EMPTY, this.respawn.bind(this))
         this.m_vitalsManager.get(DefaultVitals.HEALTH).on(PlayerVital.EMPTY, this.respawn.bind(this))
-
     }
 
     public respawn() {

@@ -74,8 +74,8 @@ export default class PlayerMovementManager extends Phaser.GameObjects.GameObject
         if(this.player.body instanceof Phaser.Physics.Arcade.Body) {
             //Apply acceleration to player body
             if(this.player.body instanceof Phaser.Physics.Arcade.Body && !this.excavationManager.isDrilling()) {
-                this.player.body.setAcceleration(this.lastDirection.x * this.player.skillManager().get(DefaultSkills.MOVING_SPEED).value() * Config.blockWidth, 
-                (this.lastDirection.y < 0) ? this.lastDirection.y * this.player.skillManager().get(DefaultSkills.FLYING_SPEED_ACCELLERATION).value() * Config.blockHeight : 600)
+                this.player.body.setAcceleration(Phaser.Math.Clamp(this.lastDirection.x, -1, 1) * this.player.skillManager().get(DefaultSkills.MOVING_SPEED).value() * Config.blockWidth, 
+                (this.lastDirection.y < 0) ? Phaser.Math.Clamp(this.lastDirection.y, -1, 0) * this.player.skillManager().get(DefaultSkills.FLYING_SPEED_ACCELLERATION).value() * Config.blockHeight : Config.gravity)
             }          
         }
     }

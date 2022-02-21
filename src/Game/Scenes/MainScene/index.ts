@@ -3,6 +3,7 @@ import { Room } from "colyseus"
 import { World } from "../../../Rooms/shared/schemas/World/World"
 import BlockManager from "../../Managers/BlockManager"
 import ClientManager from "../../Managers/ClientManager"
+import ExplosivesManager from "../../Managers/ExplosivesManager"
 import PlayerManager from "../../Managers/PlayerManager"
 
 export default class MainScene extends Phaser.Scene {
@@ -18,6 +19,7 @@ export default class MainScene extends Phaser.Scene {
         this.clientManager = new ClientManager(this)
         this.playerManager = new PlayerManager(this, this.clientManager, this.room)
         this.blockManager = new BlockManager(this, this.room.state, this.playerManager)
+        this.explosiveManager = new ExplosivesManager(this, this.blockManager, this.playerManager)
     }
 
     update(time: number, delta: number): void {
@@ -28,5 +30,6 @@ export default class MainScene extends Phaser.Scene {
     public blockManager : BlockManager
     public playerManager : PlayerManager
     public clientManager : ClientManager
+    public explosiveManager : ExplosivesManager
     public readonly worldInfo : DetailedWorld
 }

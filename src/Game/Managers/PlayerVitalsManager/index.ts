@@ -74,7 +74,7 @@ export class PlayerVital extends Phaser.GameObjects.GameObject{
         if(this.schema.name != this.vital.name) this.schema.name = this.vital.name
         if(this.schema.minimum != this.m_minimum) this.schema.minimum = this.m_minimum
         if(this.schema.maximum != this.m_maximum) this.schema.maximum = this.m_maximum
-        if(this.schema.currentValue != this.currentValue()) this.schema.currentValue = this.currentValue()
+        if(this.schema.currentValue != this.currentValue()) this.schema.currentValue = Math.round(this.currentValue())
         if(this.schema.filledValue != this.filledValue()) this.schema.filledValue = this.filledValue()
         if(this.schema.emptyValue != this.emptyValue()) this.schema.emptyValue = this.emptyValue()
     }

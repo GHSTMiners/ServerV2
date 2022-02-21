@@ -67,7 +67,7 @@ export class PlayerSkill extends Phaser.GameObjects.GameObject {
     private syncWithSchema() {
         if(this.schema.minimum != this.minimum) this.schema.minimum = this.minimum
         if(this.schema.maximum != this.maximum) this.schema.maximum = this.maximum
-        if(this.schema.currentValue != this.value()) this.schema.currentValue = this.value()
+        if(this.schema.currentValue != this.value()) this.schema.currentValue = Math.round(this.value())
     }
 
     public value() : number {

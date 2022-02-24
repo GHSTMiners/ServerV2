@@ -12,6 +12,7 @@ export default class Explosive extends Phaser.GameObjects.Rectangle {
     constructor(scene : Phaser.Scene, explosiveSchema : Schema.Explosive) {
         super(scene, explosiveSchema.x, explosiveSchema.y)
         this.explosiveSchema = explosiveSchema
+        this.lastBlockPosition = new Phaser.Geom.Point()
         //Create a body for the rectangle
         this.scene.physics.add.existing(this, false)
         if(this.body instanceof Phaser.Physics.Arcade.Body) {
@@ -19,7 +20,7 @@ export default class Explosive extends Phaser.GameObjects.Rectangle {
             this.body.x = explosiveSchema.x;
             this.body.y = explosiveSchema.y;
             this.body.setDamping(true)
-            this.body.setVelocityY(-Config.gravity)
+            this.body.setAccelerationY(Config.gravity)
             this.body.setBounce(0.2, 0.2)
             this.body.setSize(Config.blockWidth * 0.50, Config.blockHeight * 0.50)
         }
@@ -31,6 +32,12 @@ export default class Explosive extends Phaser.GameObjects.Rectangle {
         this.syncWithSchema()
     }
 
+    public blockPosition() : Phaser.Geom.Point {
+        let currentLayer : number = this.y / Config.blockHeight
+        let x : number = this.x / Config.blockWidth
+        return new Phaser.Geom.Point(Math.floor(x), Math.floor(currentLayer))
+    }
+
     private timerExpired() {
         //Notify all clients about the explosion
         this.emit(Explosive.EXPLODED, this)
@@ -38,6 +45,12 @@ export default class Explosive extends Phaser.GameObjects.Rectangle {
     }
 
     protected syncWithSchema(): void {
+        //Check if player's block position has changed
+        let newBlockPosition : Phaser.Geom.Point = this.blockPosition()
+        if(!Phaser.Geom.Point.Equals(this.lastBlockPosition, newBlockPosition)) {
+            this.lastBlockPosition = newBlockPosition
+            this.emit(Explosive.BLOCK_POSITION_CHANGED, this.lastBlockPosition, newBlockPosition)
+        }
         if(this.body instanceof Phaser.Physics.Arcade.Body) {
             this.explosiveSchema.x = this.body.x
             this.explosiveSchema.y = this.body.y
@@ -46,4 +59,6 @@ export default class Explosive extends Phaser.GameObjects.Rectangle {
     
     public explosiveSchema : Schema.Explosive
     static readonly EXPLODED: unique symbol = Symbol();
+    static readonly BLOCK_POSITION_CHANGED: unique symbol = Symbol();
+    private lastBlockPosition : Phaser.Geom.Point
 }

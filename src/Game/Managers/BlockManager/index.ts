@@ -18,8 +18,8 @@ export default class BlockManager extends Phaser.GameObjects.GameObject {
         this.world = world
 
         //Create maps
-        this.colliders = new Map<Player, Phaser.Physics.Arcade.Collider>()
-        this.staticBodies = new Map<Player, Phaser.Physics.Arcade.StaticGroup>()
+        this.playerColliders = new Map<Player, Phaser.Physics.Arcade.Collider>()
+        this.playerStaticBodies = new Map<Player, Phaser.Physics.Arcade.StaticGroup>()
 
         //Find top of world
         let worldHeight : number = -Config.skyLayers
@@ -40,8 +40,8 @@ export default class BlockManager extends Phaser.GameObjects.GameObject {
     private handlePlayerAdded(player : Player) {
         //Create staticgroup and collider
         let newStaticGroup : Phaser.Physics.Arcade.StaticGroup = this.scene.physics.add.staticGroup()
-        this.staticBodies.set(player, newStaticGroup)
-        this.colliders.set(player, this.scene.physics.add.collider(player, newStaticGroup, this.handleCollision, this.processCollision))
+        this.playerStaticBodies.set(player, newStaticGroup)
+        this.playerColliders.set(player, this.scene.physics.add.collider(player, newStaticGroup, this.handleCollision, this.processCollision))
         player.movementManager().on(PlayerMovementManager.BLOCK_POSITION_CHANGED, this.handlePlayerBlockPositionChanged.bind(this, player))
     }
 
@@ -87,14 +87,14 @@ export default class BlockManager extends Phaser.GameObjects.GameObject {
     }
 
     private handlePlayerDeleted(player : Player) {
-        let staticGroup : Phaser.Physics.Arcade.StaticGroup | undefined = this.staticBodies.get(player)
-        let collider : Phaser.Physics.Arcade.Collider | undefined = this.colliders.get(player)
+        let staticGroup : Phaser.Physics.Arcade.StaticGroup | undefined = this.playerStaticBodies.get(player)
+        let collider : Phaser.Physics.Arcade.Collider | undefined = this.playerColliders.get(player)
 
         if(staticGroup && collider) {
             staticGroup.destroy(true, true)
             collider.destroy()
-            this.staticBodies.delete(player)
-            this.colliders.delete(player)
+            this.playerStaticBodies.delete(player)
+            this.playerColliders.delete(player)
             staticGroup.destroy()
         }
     }
@@ -122,7 +122,7 @@ export default class BlockManager extends Phaser.GameObjects.GameObject {
             if(layer.y >= 0) this.world.layers[layer.y].setDirty(0)
         }, this)
         //Create new collision group
-        let staticGroup : Phaser.Physics.Arcade.StaticGroup | undefined = this.staticBodies.get(player)
+        let staticGroup : Phaser.Physics.Arcade.StaticGroup | undefined = this.playerStaticBodies.get(player)
         if(staticGroup) {
             staticGroup.clear(true, true)
             for (let y = renderRectangle.y; y < (renderRectangle.y + renderRectangle.height); y++) {
@@ -139,7 +139,8 @@ export default class BlockManager extends Phaser.GameObjects.GameObject {
         }
     }
 
-    private colliders : Map<Player, Phaser.Physics.Arcade.Collider>
-    private staticBodies : Map<Player, Phaser.Physics.Arcade.StaticGroup>
+
+    private playerColliders : Map<Player, Phaser.Physics.Arcade.Collider>
+    private playerStaticBodies : Map<Player, Phaser.Physics.Arcade.StaticGroup>
     private world : World
 }

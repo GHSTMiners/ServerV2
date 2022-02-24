@@ -64,7 +64,7 @@ export default class Player extends Phaser.GameObjects.Rectangle {
         return this.m_movementManager
     }
 
-    public BuildingManager() : PlayerBuildingManager {
+    public buildingManager() : PlayerBuildingManager {
         return this.m_buildingManager
     }
     

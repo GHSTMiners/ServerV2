@@ -4,6 +4,7 @@ import { World } from "../../../Rooms/shared/schemas/World/World"
 import BlockManager from "../../Managers/BlockManager"
 import ClientManager from "../../Managers/ClientManager"
 import ExplosivesManager from "../../Managers/ExplosivesManager"
+import PlayerCollisionManager from "../../Managers/PlayerCollisionManager"
 import PlayerManager from "../../Managers/PlayerManager"
 
 export default class MainScene extends Phaser.Scene {
@@ -18,8 +19,9 @@ export default class MainScene extends Phaser.Scene {
     create() {
         this.clientManager = new ClientManager(this)
         this.playerManager = new PlayerManager(this, this.clientManager, this.room)
-        this.blockManager = new BlockManager(this, this.room.state, this.playerManager)
-        this.explosiveManager = new ExplosivesManager(this, this.blockManager, this.playerManager)
+        this.blockManager = new BlockManager(this, this.room.state)
+        this.playerCollisionManager = new PlayerCollisionManager(this, this.playerManager, this.blockManager, this.worldSchema)
+        this.explosiveManager = new ExplosivesManager(this, this.blockManager, this.playerManager, this.playerCollisionManager)
     }
 
     update(time: number, delta: number): void {
@@ -31,5 +33,6 @@ export default class MainScene extends Phaser.Scene {
     public playerManager : PlayerManager
     public clientManager : ClientManager
     public explosiveManager : ExplosivesManager
+    public playerCollisionManager : PlayerCollisionManager
     public readonly worldInfo : DetailedWorld
 }

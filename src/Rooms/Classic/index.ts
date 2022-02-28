@@ -78,6 +78,7 @@ export class Classic extends Room<Schema.World> {
 
   onDispose() {
     console.log("Room", this.roomId, "disposing...");
+    this.game.destroy(false, false)
   }
   private game : Game
 }

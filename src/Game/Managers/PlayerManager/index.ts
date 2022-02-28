@@ -51,6 +51,19 @@ export default class PlayerManager extends Phaser.GameObjects.GameObject{
         }
     }
 
+    public players() : Player[] {
+        return Array.from(this.playerMap.values())
+    }
+
+    public playersAt(blockPosition : Phaser.Geom.Point) : Player[] {
+        let players : Player[] = []
+        for (let [key, value] of this.playerMap) {
+            let playerPosition : Phaser.Geom.Point = value.movementManager().blockPosition()
+            if(Phaser.Geom.Point.Equals(playerPosition, blockPosition)) players.push(value)
+        }
+        return players
+    }
+
     private traitFetcher : AavegotchiInfoFetcher
     private playerMap : Map<ClientWrapper, Player>
     private room : Room<Schema.World>

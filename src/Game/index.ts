@@ -11,19 +11,12 @@ export default class Game extends Phaser.Game {
       const mainScene : MainScene = new MainScene(room, worldInfo)
        const config : Phaser.Types.Core.GameConfig = {
             type: Phaser.HEADLESS,
-            fps: {
-              target: 30,
-              min: 30
-            },
             banner: false,
             audio: {
                 noAudio: true
             },
             scene: mainScene,
             physics: {
-              arcade: {
-                fps: 30,
-              },
               default: 'arcade',
             }
         }

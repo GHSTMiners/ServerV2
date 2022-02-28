@@ -19,10 +19,11 @@ export default class Explosive extends Phaser.GameObjects.Rectangle {
             this.body.setCollideWorldBounds(true)
             this.body.x = explosiveSchema.x;
             this.body.y = explosiveSchema.y;
+            this.body.setDrag(0.0075, 0.0075)
             this.body.setDamping(true)
             this.body.setAccelerationY(Config.gravity)
             this.body.setBounce(0.2, 0.2)
-            this.body.setSize(Config.blockWidth * 0.50, Config.blockHeight * 0.50)
+            this.body.setSize(Config.blockWidth * 0.75, Config.blockHeight * 0.75)
         }
         //Start the explosive timer
         this.scene.time.delayedCall(Config.explosiveTimeout, this.timerExpired.bind(this))

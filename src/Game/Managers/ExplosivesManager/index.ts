@@ -7,9 +7,11 @@ import { ExplosiveEntry } from "../../../Rooms/shared/schemas/Player/ExplosiveEn
 import Explosive from "../../Objects/Explosive";
 import * as Schema from "../../../Rooms/shared/schemas";
 import * as Chisel from "chisel-api-interface";
-import { SpawnType } from "chisel-api-interface";
+import { ExplosionCoordinate, SpawnType } from "chisel-api-interface";
 import Block from "../../Objects/Block";
 import Config from "../../../Config";
+import PlayerCollisionManager from "../PlayerCollisionManager";
+import PlayerVitalsManager, { DefaultVitals } from "../PlayerVitalsManager";
 
 export default class ExplosivesManager extends Phaser.GameObjects.GameObject {
     constructor(scene : Phaser.Scene, blockManager : BlockManager, playerManager : PlayerManager) {
@@ -17,11 +19,11 @@ export default class ExplosivesManager extends Phaser.GameObjects.GameObject {
         this.mainScene = scene as MainScene
         //Create maps
         this.explosiveColliders = new Map<Explosive, Phaser.Physics.Arcade.Collider>()
+        this.explosivePlayerColliders = new Map<Explosive, Phaser.Physics.Arcade.Collider>()
         this.explosiveStaticBodies = new Map<Explosive, Phaser.Physics.Arcade.StaticGroup>()
         this.blockManager = blockManager
         this.playerManager = playerManager
         this.playerManager.on(PlayerManager.PLAYER_ADDED, this.handlePlayerJoined.bind(this))
-
     }    
 
     private handlePlayerJoined(player : Player) {
@@ -58,6 +60,8 @@ export default class ExplosivesManager extends Phaser.GameObjects.GameObject {
                 this.explosiveStaticBodies.set(newExplosive, newStaticGroup)
                 this.explosiveColliders.set(newExplosive, this.scene.physics.add.collider(newExplosive, newStaticGroup, null, this.processCollision))
                 newExplosive.on(Explosive.BLOCK_POSITION_CHANGED, this.handleExplosiveBlockPositionChanged.bind(this, newExplosive))
+                //Create collision with players
+                this.explosivePlayerColliders.set(newExplosive, this.scene.physics.add.collider(this.playerManager.players(), newExplosive))
             }
         }
     }
@@ -96,6 +100,9 @@ export default class ExplosivesManager extends Phaser.GameObjects.GameObject {
     private handleExplosiveDetonated(explosive : Explosive) {
         //Notify all client of detonation
         let explosionNotification : Protocol.NotifyBombExploded = new Protocol.NotifyBombExploded()
+        explosionNotification.bombId = explosive.explosiveSchema.explosiveID
+        explosionNotification.x = explosive.blockPosition().x
+        explosionNotification.y = explosive.blockPosition().y
         let serializedMessage : Protocol.Message = Protocol.MessageSerializer.serialize(explosionNotification)
         this.mainScene.room.broadcast(serializedMessage.name, serializedMessage.data)
         //Remove explosive schema
@@ -105,12 +112,33 @@ export default class ExplosivesManager extends Phaser.GameObjects.GameObject {
         let blockPosition : Phaser.Geom.Point = explosive.blockPosition()
         let block : Schema.Block | undefined =  this.blockManager.blockAt(blockPosition.x , blockPosition.y)
         if(block) { block.spawnType = Chisel.SpawnType.None }
-        this.mainScene.worldInfo.explosives.find(({ id }) => id === explosive.explosiveSchema.explosiveID).explosion_coordinates.forEach(coordinate => {
-            let block : Schema.Block | undefined =  this.blockManager.blockAt(blockPosition.x + coordinate.x, blockPosition.y + coordinate.y)
+        let explosionCoordinates : ExplosionCoordinate[] = this.mainScene.worldInfo.explosives.find(({ id }) => id === explosive.explosiveSchema.explosiveID).explosion_coordinates
+        let ownCoordinate = {x : 0, y : 0, explosive_id: explosive.explosiveSchema.explosiveID} as ExplosionCoordinate;
+        explosionCoordinates.push(ownCoordinate)
+        explosionCoordinates.forEach(coordinate => {
+            //Calculate coordinates
+            let explosionPoint : Phaser.Geom.Point = new Phaser.Geom.Point(blockPosition.x + coordinate.y, blockPosition.y + coordinate.x)
+            //Take health from player
+            this.playerManager.playersAt(explosionPoint).forEach(player => {
+                player.vitalsManager().get(DefaultVitals.HEALTH).takeAmount(50)
+            })
+            //Destroy blocks
+            let block : Schema.Block | undefined =  this.blockManager.blockAt(explosionPoint.x, explosionPoint.y)
             if(block) {
                 block.spawnType = Chisel.SpawnType.None
             }
         })
+        //Hurt some players
+
+        //Remove static bodies
+        this.explosiveStaticBodies.get(explosive).destroy()
+        this.explosiveStaticBodies.delete(explosive)
+        //Remove colliders
+        this.explosiveColliders.get(explosive).destroy()
+        this.explosiveColliders.delete(explosive)
+        this.explosivePlayerColliders.get(explosive).destroy()
+        this.explosivePlayerColliders.delete(explosive)
+        
     }
 
 
@@ -118,5 +146,6 @@ export default class ExplosivesManager extends Phaser.GameObjects.GameObject {
     private blockManager : BlockManager
     private playerManager : PlayerManager
     private explosiveColliders : Map<Explosive, Phaser.Physics.Arcade.Collider>
+    private explosivePlayerColliders : Map<Explosive, Phaser.Physics.Arcade.Collider>
     private explosiveStaticBodies : Map<Explosive, Phaser.Physics.Arcade.StaticGroup>
 }

@@ -4,15 +4,17 @@ import * as Schema from "../shared/schemas";
 import * as Protocol from "gotchiminer-multiplayer-protocol"
 import http from 'http';
 import Game from "../../Game";
-import AavegotchiInfoFetcher from "../../Game/Helpers/AavegotchiInfoFetcher";
 import { APIInterface } from "chisel-api-interface";
+import Authenticator, { AuthenticatorState } from "../../Game/Helpers/Authenticator";
+import { result } from "lodash";
 
-export class Classic extends Room<Schema.World> {
+export class Classic extends Room<Schema.World, any> {
 
   onCreate (options:any) {
     this.setState(new Schema.World());
     this.maxClients = 10;
     this.state.id = options.worldID;
+    this.development_mode = options.development_mode
     //Generate blocks for world
     var self = this;
     let apiInterface = new APIInterface('https://chisel.gotchiminer.rocks/api')
@@ -33,30 +35,17 @@ export class Classic extends Room<Schema.World> {
 
   onAuth(client: Client, options: Protocol.AuthenticationInfo, request: http.IncomingMessage) : Promise<any>{
     return new Promise((resolve, reject) => {
-      let traitFetcher : AavegotchiInfoFetcher = new AavegotchiInfoFetcher()
-      //Check that both fields are filled
-      if(options.gotchiId  && options.walletAddress) { 
-        //Verify that gotchi is not already playing
-        
-          if(this.presence.get(`gotchi_${options.gotchiId.toString()}`)) {
-            console.warn(`Reject gotchi ${options.gotchiId}, on IP ${request.socket.remoteAddress} because it is already playing`)
-            reject(new ServerError(400, "This aavegotchi is already mining!"))
-          } else {
-            //Get owner for gotchi ID
-            traitFetcher.getAavegotchiOwner(options.gotchiId).then(owner => {
-              //Check if owner wallet matches authentication wallet address
-              if(owner == options.walletAddress) {
-                resolve(true)
-              } else {
-                console.warn(`Wallet ${options.walletAddress} tried to authenticate with an unowned aavegotchi ${options.gotchiId}, on IP ${request.socket.remoteAddress}`)
-                reject(new ServerError(400, "You're not the owner of this aavegotchi!"))
-              }
-            }).catch(error => {
-              //Failed to fetch traits
-              reject(new ServerError(500, "Failed get owner adress for aavegotchi"))
-            })
-          }
-      } else reject(new ServerError(400, "Authentication info is missing data"))
+      let authenticator : Authenticator = new Authenticator(this.presence, options)
+      authenticator.authenticate().then(result => {
+        if(result == AuthenticatorState.Authenticated) {
+          if(this.development_mode && authenticator.roles().developer) {
+            resolve(true)
+          } else reject(new ServerError(400, "You can only play maps in development mode if you are an developer"))
+        }
+        else {
+          reject(new ServerError(400, authenticator.failedReason()) )
+        }
+      })
     });
   }
   
@@ -81,4 +70,5 @@ export class Classic extends Room<Schema.World> {
     this.game.destroy(false, false)
   }
   private game : Game
+  private development_mode : boolean
 }

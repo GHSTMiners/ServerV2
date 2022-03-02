@@ -17,7 +17,8 @@ export default Arena({
             worlds.forEach(world => {
                 console.info(`Registering room with name ${world.name}_Classic for world with id: ${world.id}`);
                 gameServer.define(`${world.name}_Classic`, Classic, {
-                    worldID: world.id
+                    worldID: world.id,
+                    development_mode: world.development_mode
                 });
             })
         })

@@ -79,23 +79,29 @@ export default class Authenticator {
     }
 
     private async validateAuthenticationInfo() : Promise<AuthenticatorState> {
-        //Verify wallet address
-        if(this.m_options.walletAddress.match(/^0x[a-fA-F0-9]{40}$/g)) {
-            //Verify GotchiID
-            if(this.m_options.gotchiId >= 0) {
-                //Check chain ID
-                if ((this.m_options.chainId == "1") || (this.m_options.chainId == "137")) {
-                    return AuthenticatorState.AuthenticationInfoVerified
+        //Check if all fields are filled
+        if(this.m_options.walletAddress && this.m_options.chainId && this.m_options.gotchiId && this.m_options.authenticationToken) {
+            //Verify wallet address
+            if(this.m_options.walletAddress.match(/^0x[a-fA-F0-9]{40}$/g)) {
+                //Verify GotchiID
+                if(this.m_options.gotchiId >= 0) {
+                    //Check chain ID
+                    if ((this.m_options.chainId == "1") || (this.m_options.chainId == "137")) {
+                        return AuthenticatorState.AuthenticationInfoVerified
+                    } else {
+                        this.m_failedReason = "The chain you want to play on is not supported, only Polygon and Ethereum is supported"
+                        return AuthenticatorState.AuthenticationFailed
+                    }
                 } else {
-                    this.m_failedReason = "The chain you want to play on is not supported, only Polygon and Ethereum is supported"
+                    this.m_failedReason = "Aavegotchi ID is invalid"
                     return AuthenticatorState.AuthenticationFailed
                 }
             } else {
-                this.m_failedReason = "Aavegotchi ID is invalid"
+                this.m_failedReason = "Wallet address is malformed"
                 return AuthenticatorState.AuthenticationFailed
             }
         } else {
-            this.m_failedReason = "Wallet address is malformed"
+            this.m_failedReason = "Authentication request is missing data"
             return AuthenticatorState.AuthenticationFailed
         }
     }

@@ -4,8 +4,10 @@ import { AavegotchiTraits } from "../../Helpers/AavegotchiInfoFetcher";
 import PlayerBuildingManager from "../../Managers/PlayerBuildingManager";
 import PlayerCargoManager from "../../Managers/PlayerCargoManager";
 import PlayerMovementManager from "../../Managers/PlayerMovementManager";
+import PlayerPurchaseManager from "../../Managers/PlayerPurchaseManager";
 import PlayerSkillManager from "../../Managers/PlayerSkillManager";
 import PlayerVitalsManager, { DefaultVitals, PlayerVital } from "../../Managers/PlayerVitalsManager";
+import PlayerWalletManager from "../../Managers/PlayerWalletManager";
 import ClientWrapper from "../ClientWrapper";
 
 export default class Player extends Phaser.GameObjects.Rectangle {
@@ -31,9 +33,11 @@ export default class Player extends Phaser.GameObjects.Rectangle {
         this.setPosition(playerSchema.playerState.x, playerSchema.playerState.y)
         this.setSize(Config.blockWidth*0.5, Config.blockHeight)
         //Create managers
+        this.m_walletManager = new PlayerWalletManager(scene, this)
         this.m_buildingManager = new PlayerBuildingManager(scene, this)
         this.m_vitalsManager = new PlayerVitalsManager(scene, traits, playerSchema)
         this.m_skillManager = new PlayerSkillManager(scene, traits, playerSchema)
+        this.m_purchaseManager = new PlayerPurchaseManager(scene, this)
         this.m_movementManager = new PlayerMovementManager(scene, this)
         this.m_cargoManager = new PlayerCargoManager(scene, this)
         //Create kill conditions
@@ -46,6 +50,10 @@ export default class Player extends Phaser.GameObjects.Rectangle {
         this.m_cargoManager.empty()
         this.m_vitalsManager.resetAll()
         this.m_movementManager.moveToSurface()
+    }
+
+    public walletManager() : PlayerWalletManager {
+        return this.m_walletManager
     }
 
     public skillManager() : PlayerSkillManager {
@@ -73,11 +81,13 @@ export default class Player extends Phaser.GameObjects.Rectangle {
     }
 
     private m_client : ClientWrapper
+    private m_walletManager : PlayerWalletManager
     private m_skillManager : PlayerSkillManager
     private m_vitalsManager : PlayerVitalsManager
     private m_cargoManager : PlayerCargoManager
     private m_buildingManager : PlayerBuildingManager
-    private  m_movementManager : PlayerMovementManager
-    public readonly playerSchema : Schema.Player
+    private m_movementManager : PlayerMovementManager
+    private m_purchaseManager : PlayerPurchaseManager
+    public playerSchema : Schema.Player
 
 }

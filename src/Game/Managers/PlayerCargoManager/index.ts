@@ -36,15 +36,7 @@ export default class PlayerCargoManager extends Phaser.GameObjects.GameObject {
     public processCargo() {
         //Move cargo to wallet
         this.playerSchema.cargo.forEach(cargoEntry => {
-            let walletEntry : Schema.WalletEntry | undefined = this.playerSchema.wallet.get(cargoEntry.cryptoID.toString())
-            if(walletEntry) {
-                walletEntry.amount += cargoEntry.amount
-            } else {
-                walletEntry = new Schema.WalletEntry()
-                walletEntry.cryptoID = cargoEntry.cryptoID
-                walletEntry.amount = cargoEntry.amount
-                this.playerSchema.wallet.set(walletEntry.cryptoID.toString(), walletEntry)
-            }
+            this.player.walletManager().addAmount(cargoEntry.cryptoID, cargoEntry.amount)
         })
         this.empty()
     }

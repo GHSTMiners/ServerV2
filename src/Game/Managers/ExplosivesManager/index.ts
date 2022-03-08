@@ -27,12 +27,6 @@ export default class ExplosivesManager extends Phaser.GameObjects.GameObject {
     }    
 
     private handlePlayerJoined(player : Player) {
-        this.mainScene.worldInfo.explosives.forEach(explosive => {
-            let explosiveEntry : ExplosiveEntry = new ExplosiveEntry()
-            explosiveEntry.amount = 20
-            explosiveEntry.explosiveID = explosive.id
-            player.playerSchema.explosives.set(explosive.id.toString(), explosiveEntry)
-        })
         player.client().messageRouter.addRoute(Protocol.RequestDropExplosive, message => {
             this.playerRequestedDropExplosive(player, message)
         });

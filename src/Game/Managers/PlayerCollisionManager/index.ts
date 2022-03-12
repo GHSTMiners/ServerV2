@@ -104,9 +104,6 @@ export default class PlayerCollisionManager extends Phaser.GameObjects.GameObjec
         //Get a list of layers that are not revealed
         let newRevealLayers : Phaser.Types.Math.Vector2Like[] = []
         Phaser.Geom.Line.BresenhamPoints(revealLayers, 1, newRevealLayers)
-        newRevealLayers.forEach(layer => {
-            if(layer.y >= 0) this.world.layers[layer.y].setDirty(0)
-        }, this)
         //Create new collision group
         let staticGroup : Phaser.Physics.Arcade.StaticGroup | undefined = this.playerStaticBodies.get(player)
         if(staticGroup) {

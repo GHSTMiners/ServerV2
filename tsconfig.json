@@ -1,10 +1,15 @@
 {
   "compilerOptions": {
     "outDir": "lib",
-    "target": "es6",
+    "target": "esnext",
     "module": "commonjs",
+    "lib": ["ES6"],
     "strict": true,
+    "declaration": true,
     "allowJs": true,
+    "removeComments": true,
+    "noImplicitAny": true,
+    "sourceMap": false,
     "strictNullChecks": false,
     "esModuleInterop": true,
     "experimentalDecorators": true,

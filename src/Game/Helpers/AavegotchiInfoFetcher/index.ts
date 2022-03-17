@@ -38,6 +38,11 @@ export default class AavegotchiInfoFetcher {
         return await this.aavegotchiFacet.methods.ownerOf(gotchiID).call()
     }
 
+    public async getAavegotchi(gotchiID : number) : Promise<any> {
+        let result : any = await this.aavegotchiFacet.methods.getAavegotchi(gotchiID).call()
+        return result;
+    }
+
     public async getAavegotchiTraits(gotchiID : number) : Promise<AavegotchiTraits> {
         let result : any = await this.aavegotchiFacet.methods.modifiedTraitsAndRarityScore(gotchiID).call()
         let traits : AavegotchiTraits = new AavegotchiTraits(result.numericTraits_)

@@ -38,9 +38,11 @@ export class Classic extends Room<Schema.World, any> {
       let authenticator : Authenticator = new Authenticator(this.presence, options)
       authenticator.authenticate().then(result => {
         if(result == AuthenticatorState.Authenticated) {
-          if(this.development_mode && authenticator.roles().developer) {
-            resolve(true)
-          } else reject(new ServerError(400, "You can only play maps in development mode if you are an developer"))
+          if(this.development_mode) {
+            if(authenticator.roles().developer) {
+              resolve(true)
+            } else reject(new ServerError(400, "You can only play maps in development mode if you are an developer"))
+          } resolve(true)
         }
         else {
           reject(new ServerError(400, authenticator.failedReason()) )

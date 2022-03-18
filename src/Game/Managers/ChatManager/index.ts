@@ -1,6 +1,6 @@
 import MainScene from "../../Scenes/MainScene"
 import PlayerManager from "../PlayerManager"
-import * as Protocol "gotchiminer-multiplayer-protocol"
+import * as Protocol from "gotchiminer-multiplayer-protocol"
 import Player from "../../Objects/Player"
 
 export default class ChatManager extends Phaser.GameObjects.GameObject {

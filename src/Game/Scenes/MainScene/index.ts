@@ -20,6 +20,7 @@ export default class MainScene extends Phaser.Scene {
     create() {
         this.clientManager = new ClientManager(this)
         this.playerManager = new PlayerManager(this, this.clientManager, this.room)
+        this.chatManager = new ChatManager(this, this.playerManager)
         this.blockManager = new BlockManager(this, this.room.state)
         this.playerCollisionManager = new PlayerCollisionManager(this, this.playerManager, this.blockManager, this.worldSchema)
         this.explosiveManager = new ExplosivesManager(this, this.blockManager, this.playerManager)

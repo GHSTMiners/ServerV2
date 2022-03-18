@@ -5,7 +5,7 @@ import ClientManager from "../ClientManager";
 import { Client, Room } from "colyseus";
 import ClientWrapper from "../../Objects/ClientWrapper";
 import * as Protocol from "gotchiminer-multiplayer-protocol"
-import AavegotchiInfoFetcher from "../../Helpers/AavegotchiInfoFetcher";
+import AavegotchiInfoFetcher, { AavegotchiTraits } from "../../Helpers/AavegotchiInfoFetcher";
 
 export default class PlayerManager extends Phaser.GameObjects.GameObject{
     constructor(scene: Scene, clientManager : ClientManager, room : Room<Schema.World>) {
@@ -19,13 +19,14 @@ export default class PlayerManager extends Phaser.GameObjects.GameObject{
 
     private handleClientJoined(client : ClientWrapper, options : Protocol.AuthenticationInfo) {
         //Gotchi was now succesfull authenticated, we should also fetch its traits
-        this.traitFetcher.getAavegotchiTraits(options.gotchiId).then(traits => {
+        this.traitFetcher.getAavegotchi(options.gotchiId).then(gotchi => {
             console.log(`Player joined with gotchi: ${options.gotchiId}`)
             //Create new objects
             let newPlayerSchema : Schema.Player = new Schema.Player()
             client.client.userData = newPlayerSchema
             newPlayerSchema.gotchiID = options.gotchiId
-            let newPlayerSprite : Player = new Player(this.scene, newPlayerSchema, traits, client)
+            newPlayerSchema.name = gotchi.name
+            let newPlayerSprite : Player = new Player(this.scene, newPlayerSchema, new AavegotchiTraits(gotchi.modifiedNumericTraits), client)
             newPlayerSchema.playerSessionID = client.client.sessionId
             //Add new object to game server logic
             this.room.state.players.push(newPlayerSchema)

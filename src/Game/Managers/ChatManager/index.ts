@@ -2,12 +2,13 @@ import MainScene from "../../Scenes/MainScene"
 import PlayerManager from "../PlayerManager"
 import * as Protocol from "gotchiminer-multiplayer-protocol"
 import Player from "../../Objects/Player"
-
+import BadWordsFilter from "bad-words"
 export default class ChatManager extends Phaser.GameObjects.GameObject {
     constructor(scene : MainScene, playerManager : PlayerManager) {
         super(scene, "ChatManager") 
         this.mainScene = scene
         this.playerManager = playerManager
+        this.badWordsFilter = new BadWordsFilter({emptyList: false});
         this.playerManager.on(PlayerManager.PLAYER_ADDED, this.handlePlayerJoined.bind(this))
         this.playerManager.on(PlayerManager.PLAYER_REMOVED, this.handlePlayerExit.bind(this))
     }
@@ -36,7 +37,7 @@ export default class ChatManager extends Phaser.GameObjects.GameObject {
 
     private handleMessageToServer(player : Player, message : Protocol.MessageToServer) {
         let response : Protocol.MessageFromServer = new Protocol.MessageFromServer();
-        response.msg = message.msg;
+        response.msg = this.badWordsFilter.clean(message.msg);
         response.gotchiId = player.playerSchema.gotchiID;
         response.systemMessage = false;
         let serializedResponse : Protocol.Message = Protocol.MessageSerializer.serialize(response);
@@ -45,4 +46,5 @@ export default class ChatManager extends Phaser.GameObjects.GameObject {
 
     private mainScene : MainScene
     private playerManager : PlayerManager
+    private badWordsFilter : BadWordsFilter
 }

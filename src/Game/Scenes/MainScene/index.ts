@@ -2,6 +2,7 @@ import { DetailedWorld } from "chisel-api-interface"
 import { Room } from "colyseus"
 import { World } from "../../../Rooms/shared/schemas/World/World"
 import BlockManager from "../../Managers/BlockManager"
+import ChatManager from "../../Managers/ChatManager"
 import ClientManager from "../../Managers/ClientManager"
 import ExplosivesManager from "../../Managers/ExplosivesManager"
 import PlayerCollisionManager from "../../Managers/PlayerCollisionManager"
@@ -19,6 +20,7 @@ export default class MainScene extends Phaser.Scene {
     create() {
         this.clientManager = new ClientManager(this)
         this.playerManager = new PlayerManager(this, this.clientManager, this.room)
+        this.chatManager = new ChatManager(this, this.playerManager)
         this.blockManager = new BlockManager(this, this.room.state)
         this.playerCollisionManager = new PlayerCollisionManager(this, this.playerManager, this.blockManager, this.worldSchema)
         this.explosiveManager = new ExplosivesManager(this, this.blockManager, this.playerManager)
@@ -29,6 +31,7 @@ export default class MainScene extends Phaser.Scene {
 
     public room : Room<World>
     public worldSchema : World
+    public chatManager : ChatManager
     public blockManager : BlockManager
     public playerManager : PlayerManager
     public clientManager : ClientManager

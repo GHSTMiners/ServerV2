@@ -7,8 +7,23 @@
         "type": "pwa-node",
         "request": "launch",
         "runtimeExecutable": "node",
-        "runtimeArgs": ["--nolazy", "-r", "ts-node/register/transpile-only"],
+        "runtimeArgs": ["--nolazy", "--inspect", "-r", "ts-node/register/transpile-only"],
         "args": ["src/index.ts"],
+        "cwd": "${workspaceRoot}",
+        "internalConsoleOptions": "openOnSessionStart",
+        "resolveSourceMapLocations": [
+          "${workspaceFolder}/**",
+          "!**/node_modules/**"
+        ],
+        "skipFiles": ["<node_internals>/**", "node_modules/**"]
+      },
+      {
+        "name": "Debug Production",
+        "type": "pwa-node",
+        "request": "launch",
+        "runtimeExecutable": "node",
+        "runtimeArgs": ["--nolazy", "--inspect"],
+        "args": ["lib/src/index.js"],
         "cwd": "${workspaceRoot}",
         "internalConsoleOptions": "openOnSessionStart",
         "resolveSourceMapLocations": [

@@ -7,6 +7,8 @@ import Game from "../../Game";
 import { APIInterface } from "chisel-api-interface";
 import Authenticator, { AuthenticatorState } from "../../Game/Helpers/Authenticator";
 import { result } from "lodash";
+import Config from "../../Config";
+import Logging from "../../Game/Helpers/Logging";
 
 export class Classic extends Room<Schema.World, any> {
 
@@ -17,7 +19,7 @@ export class Classic extends Room<Schema.World, any> {
     this.development_mode = options.development_mode
     //Generate blocks for world
     var self = this;
-    let apiInterface = new APIInterface('https://chisel.gotchiminer.rocks/api')
+    let apiInterface = new APIInterface(Config.apiURL)
     //Fetch world information
     apiInterface.world(options.worldID).then(worldInfo => {
       //Generate a random map
@@ -35,9 +37,10 @@ export class Classic extends Room<Schema.World, any> {
 
   onAuth(client: Client, options: Protocol.AuthenticationInfo, request: http.IncomingMessage) : Promise<any>{
     return new Promise((resolve, reject) => {
-      let authenticator : Authenticator = new Authenticator(this.presence, options)
+      let authenticator : Authenticator = new Authenticator(this.presence, options, request)
       authenticator.authenticate().then(result => {
         if(result == AuthenticatorState.Authenticated) {
+          Logging.submitEvent("Player succesfully authenticated", 0, request.headers['x-forwarded-for'] as string || request.socket.remoteAddress, options.gotchiId, options.walletAddress);
           if(this.development_mode) {
             if(authenticator.roles().developer) {
               resolve(true)

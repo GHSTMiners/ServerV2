@@ -7,12 +7,13 @@ import { APIInterface } from "chisel-api-interface";
  * Import your Room files
  */
 import { Classic } from "./Rooms/Classic";
+import Config from "./Config";
 
 export default Arena({
     getId: () => "Gotchiminer",
 
     initializeGameServer: (gameServer) => {
-        let apiInterface : APIInterface = new APIInterface('https://chisel.gotchiminer.rocks/api');
+        let apiInterface : APIInterface = new APIInterface(Config.apiURL);
         apiInterface.worlds().then(worlds => {
             worlds.forEach(world => {
                 console.info(`Registering room with name ${world.name}_Classic for world with id: ${world.id}`);

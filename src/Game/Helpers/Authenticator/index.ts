@@ -4,11 +4,14 @@ import { Client, Presence } from "colyseus";
 import * as Protocol from "gotchiminer-multiplayer-protocol"
 import AavegotchiInfoFetcher from '../AavegotchiInfoFetcher';
 import { AuthenticationInfo } from 'gotchiminer-multiplayer-protocol';
+import Config from '../../../Config';
+import Logging from '../Logging';
 
 export default class Authenticator {
-    constructor(presence: Presence, options: Protocol.AuthenticationInfo) {
+    constructor(presence: Presence, options: Protocol.AuthenticationInfo, request : http.IncomingMessage) {
         this.m_options = options
         this.m_presence = presence
+        this.m_request = request
         this.m_failedReason = ""
     }
 
@@ -42,6 +45,7 @@ export default class Authenticator {
         if(!this.m_presence.get(`gotchi_${this.m_options.gotchiId.toString()}`)) {
             return AuthenticatorState.GotchiPresenceVerified
         } else {
+            Logging.submitEvent("Player tried to play with a Gotchi that already has a session", 1, this.m_request.headers['x-forwarded-for'] as string || this.m_request.socket.remoteAddress, this.m_options.gotchiId, this.m_options.walletAddress);
             this.m_failedReason = "This Aavegotchi is already playing"
             return  AuthenticatorState.AuthenticationFailed
         }
@@ -55,13 +59,14 @@ export default class Authenticator {
         if(owner == this.m_options.walletAddress) {
             return AuthenticatorState.VerifiedGotchiOwnership
         } else {
+            Logging.submitEvent("Player tried to play with a Gotchi that it doesn't own", 100, this.m_request.headers['x-forwarded-for'] as string || this.m_request.socket.remoteAddress, this.m_options.gotchiId, this.m_options.walletAddress);
             this.m_failedReason = "You are not the owner of this Aavegotchi"
             return AuthenticatorState.AuthenticationFailed
         }
     }
 
     private async validateWalletOwnership() : Promise<AuthenticatorState>{
-        const response = await axios.post("https://chisel.gotchiminer.rocks/api/token/validate", { wallet_address: this.m_options.walletAddress, token: this.m_options.authenticationToken })
+        const response = await axios.post(`${Config.apiURL}/token/validate`, { wallet_address: this.m_options.walletAddress, token: this.m_options.authenticationToken })
         //Check result status
         if (response.status == 200) {
             //Check that token is valid
@@ -69,6 +74,7 @@ export default class Authenticator {
                 this.m_roles = response.data.roles
                 return AuthenticatorState.ValidatedWalletOwnership
             } else {
+                Logging.submitEvent("Player tried to authenticate with an invalid wallet authentication token", 10, this.m_request.headers['x-forwarded-for'] as string || this.m_request.socket.remoteAddress, this.m_options.gotchiId, this.m_options.walletAddress);
                 this.m_failedReason = `Server rejected your authentication information`
                 return AuthenticatorState.AuthenticationFailed
             }
@@ -97,16 +103,19 @@ export default class Authenticator {
                     return AuthenticatorState.AuthenticationFailed
                 }
             } else {
+                Logging.submitEvent("Player tried to authenticate with an malformed wallet address", 100, this.m_request.headers['x-forwarded-for'] as string || this.m_request.socket.remoteAddress, this.m_options.gotchiId, this.m_options.walletAddress,);
                 this.m_failedReason = "Wallet address is malformed"
                 return AuthenticatorState.AuthenticationFailed
             }
         } else {
+            Logging.submitEvent("Player tried to authenticate malformed authentication data", 100, this.m_request.headers['x-forwarded-for'] as string || this.m_request.socket.remoteAddress, this.m_options.gotchiId, this.m_options.walletAddress);
             this.m_failedReason = "Authentication request is missing data"
             return AuthenticatorState.AuthenticationFailed
         }
     }
 
     private m_roles : any
+    private m_request: http.IncomingMessage
     private m_options : Protocol.AuthenticationInfo
     private m_presence : Presence
     private m_failedReason = ""

@@ -6,6 +6,7 @@ import { Client, Room } from "colyseus";
 import ClientWrapper from "../../Objects/ClientWrapper";
 import * as Protocol from "gotchiminer-multiplayer-protocol"
 import AavegotchiInfoFetcher, { AavegotchiTraits } from "../../Helpers/AavegotchiInfoFetcher";
+import chroma from "chroma-js"
 
 export default class PlayerManager extends Phaser.GameObjects.GameObject{
     constructor(scene: Scene, clientManager : ClientManager, room : Room<Schema.World>) {
@@ -26,6 +27,8 @@ export default class PlayerManager extends Phaser.GameObjects.GameObject{
             client.client.userData = newPlayerSchema
             newPlayerSchema.gotchiID = options.gotchiId
             newPlayerSchema.name = gotchi.name
+            const playerColor = chroma.random();
+            newPlayerSchema.chatColor = playerColor.hex();
             let newPlayerSprite : Player = new Player(this.scene, newPlayerSchema, new AavegotchiTraits(gotchi.modifiedNumericTraits), client)
             newPlayerSchema.playerSessionID = client.client.sessionId
             //Add new object to game server logic

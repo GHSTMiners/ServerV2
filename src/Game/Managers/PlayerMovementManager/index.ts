@@ -103,6 +103,8 @@ export default class PlayerMovementManager extends Phaser.GameObjects.GameObject
 
     
     protected syncWithSchema(): void {
+        //Sync drilldirection
+        this.player.playerSchema.playerState.drillingDirection = this.excavationManager.isDrilling() ? this.excavationManager.getDrillDirection() : Schema.DrillingDirection.None
         //Check if player's block position has changed
         let newBlockPosition : Phaser.Geom.Point = this.blockPosition()
         if(!Phaser.Geom.Point.Equals(this.lastBlockPosition, newBlockPosition)) {
@@ -112,9 +114,9 @@ export default class PlayerMovementManager extends Phaser.GameObjects.GameObject
         //Sync player position with colyseus schema
         if(this.player.playerSchema.playerState.x != Math.round(this.player.x * 100) / 100) this.player.playerSchema.playerState.x = Math.round(this.player.x * 100) / 100
         if(this.player.playerSchema.playerState.y != Math.round(this.player.y * 100) / 100) this.player.playerSchema.playerState.y = Math.round(this.player.y * 100) / 100
-        if(this.body instanceof Phaser.Physics.Arcade.Body) {
-            if(this.player.playerSchema.playerState.velocityX != this.body.velocity.x) this.player.playerSchema.playerState.velocityX = this.body.velocity.x
-            if(this.player.playerSchema.playerState.velocityY != this.body.velocity.x) this.player.playerSchema.playerState.velocityY = this.body.velocity.y
+        if(this.player.body instanceof Phaser.Physics.Arcade.Body) {
+            if(this.player.playerSchema.playerState.velocityX != this.player.body.velocity.x) this.player.playerSchema.playerState.velocityX = this.player.body.velocity.x
+            if(this.player.playerSchema.playerState.velocityY != this.player.body.velocity.x) this.player.playerSchema.playerState.velocityY = this.player.body.velocity.y
         }
     }
 

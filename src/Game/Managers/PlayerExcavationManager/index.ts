@@ -158,18 +158,23 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
         }
     }
 
+    public getDrillDirection() : Schema.DrillingDirection {
+        return this.drillDirection;
+    }
+
     public processDirection(direction : ChangeDirection) {
         //Get drilling direction
-        let drillDirection : Schema.DrillingDirection = this.drillDirectionFromChangeDirection(direction)
-        if(drillDirection != Schema.DrillingDirection.None) {
+        this.drillDirection = this.drillDirectionFromChangeDirection(direction)
+        if(this.drillDirection != Schema.DrillingDirection.None) {
             //Check if player can drill right now
-            if(this.canDrillInDirection(drillDirection) && !this.isDrilling()) {
+            if(this.canDrillInDirection(this.drillDirection) && !this.isDrilling()) {
                 //If we can drill, drill (H)
-                this.drillInDirection(drillDirection)
+                this.drillInDirection(this.drillDirection)
             }
         }        
     }
 
+    private drillDirection : Schema.DrillingDirection
     private digTimeout : NodeJS.Timeout
     private rockMap : Map<number, Chisel.Rock>
     private soilMap : Map<number, Chisel.Soil>

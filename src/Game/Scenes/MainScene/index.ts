@@ -4,6 +4,7 @@ import { World } from "../../../Rooms/shared/schemas/World/World"
 import BlockManager from "../../Managers/BlockManager"
 import ChatManager from "../../Managers/ChatManager"
 import ClientManager from "../../Managers/ClientManager"
+import ExchangeManager from "../../Managers/ExchangeManager"
 import ExplosivesManager from "../../Managers/ExplosivesManager"
 import PlayerCollisionManager from "../../Managers/PlayerCollisionManager"
 import PlayerManager from "../../Managers/PlayerManager"
@@ -19,6 +20,7 @@ export default class MainScene extends Phaser.Scene {
 
     create() {
         this.clientManager = new ClientManager(this)
+        this.exchangeManager = new ExchangeManager(this);
         this.playerManager = new PlayerManager(this, this.clientManager, this.room)
         this.chatManager = new ChatManager(this, this.playerManager)
         this.blockManager = new BlockManager(this, this.room.state)
@@ -35,6 +37,7 @@ export default class MainScene extends Phaser.Scene {
     public blockManager : BlockManager
     public playerManager : PlayerManager
     public clientManager : ClientManager
+    public exchangeManager : ExchangeManager
     public explosiveManager : ExplosivesManager
     public playerCollisionManager : PlayerCollisionManager
     public readonly worldInfo : DetailedWorld

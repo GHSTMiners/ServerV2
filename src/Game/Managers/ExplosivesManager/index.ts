@@ -122,8 +122,6 @@ export default class ExplosivesManager extends Phaser.GameObjects.GameObject {
                 block.spawnType = Chisel.SpawnType.None
             }
         })
-        //Hurt some players
-
         //Remove static bodies
         this.explosiveStaticBodies.get(explosive).destroy()
         this.explosiveStaticBodies.delete(explosive)

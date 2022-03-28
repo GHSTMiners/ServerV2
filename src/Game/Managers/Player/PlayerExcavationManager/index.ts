@@ -2,13 +2,13 @@ import * as Chisel from "chisel-api-interface";
 import { SpawnType, World } from "chisel-api-interface";
 import { ChangeDirection } from "gotchiminer-multiplayer-protocol";
 import { Scene } from "phaser";
-import Config from "../../../Config";
-import * as Schema from "../../../Rooms/shared/schemas";
-import { CargoEntry } from "../../../Rooms/shared/schemas";
+import Config from "../../../../Config";
+import * as Schema from "../../../../Rooms/shared/schemas";
+import { CargoEntry } from "../../../../Rooms/shared/schemas";
 import * as Protocol from "gotchiminer-multiplayer-protocol"
-import Player from "../../Objects/Player";
-import MainScene from "../../Scenes/MainScene";
-import BlockManager from "../BlockManager";
+import Player from "../../../Objects/Player";
+import MainScene from "../../../Scenes/MainScene";
+import BlockManager from "../../World/BlockManager";
 import { DefaultSkills } from "../PlayerSkillManager";
 import { DefaultVitals } from "../PlayerVitalsManager";
 export default class PlayerExcavationManager extends Phaser.GameObjects.GameObject {

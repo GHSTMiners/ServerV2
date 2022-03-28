@@ -1,8 +1,8 @@
-import Player from "../../Objects/Player";
+import Player from "../../../Objects/Player";
 import * as Protocol from "gotchiminer-multiplayer-protocol"
 import * as Chisel from "chisel-api-interface"
-import MainScene from "../../Scenes/MainScene";
-import { ExplosiveEntry } from "../../../Rooms/shared/schemas/Player/ExplosiveEntry";
+import MainScene from "../../../Scenes/MainScene";
+import { ExplosiveEntry } from "../../../../Rooms/shared/schemas/Player/ExplosiveEntry";
 import { MessageSerializer } from "gotchiminer-multiplayer-protocol";
 
 export default class PlayerPurchaseManager extends Phaser.GameObjects.GameObject {

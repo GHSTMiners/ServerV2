@@ -2,7 +2,7 @@ import MainScene from "../../../Scenes/MainScene";
 import axios from "axios"
 import * as Protocol from "gotchiminer-multiplayer-protocol"
 import *  as Schema from "../../../../Rooms/shared/schemas"
-import PlayerManager from "../../PlayerManager";
+import PlayerManager from "../PlayerManager";
 import Player from "../../../Objects/Player";
 
 

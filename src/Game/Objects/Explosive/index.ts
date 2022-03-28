@@ -1,11 +1,11 @@
 import Config from "../../../Config";
 import * as Schema from "../../../Rooms/shared/schemas";
 import { AavegotchiTraits } from "../../Helpers/AavegotchiInfoFetcher";
-import PlayerBuildingManager from "../../Managers/PlayerBuildingManager";
-import PlayerCargoManager from "../../Managers/PlayerCargoManager";
-import PlayerMovementManager from "../../Managers/PlayerMovementManager";
-import PlayerSkillManager from "../../Managers/PlayerSkillManager";
-import PlayerVitalsManager, { DefaultVitals, PlayerVital } from "../../Managers/PlayerVitalsManager";
+import PlayerBuildingManager from "../../Managers/Player/PlayerBuildingManager";
+import PlayerCargoManager from "../../Managers/Player/PlayerCargoManager";
+import PlayerMovementManager from "../../Managers/Player/PlayerMovementManager";
+import PlayerSkillManager from "../../Managers/Player/PlayerSkillManager";
+import PlayerVitalsManager, { DefaultVitals, PlayerVital } from "../../Managers/Player/PlayerVitalsManager";
 import ClientWrapper from "../ClientWrapper";
 
 export default class Explosive extends Phaser.GameObjects.Rectangle {

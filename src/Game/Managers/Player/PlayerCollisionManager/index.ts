@@ -1,16 +1,16 @@
-import { World } from "../../../Rooms/shared/schemas"
-import Player from "../../Objects/Player"
-import BlockManager from "../BlockManager"
-import PlayerManager from "../PlayerManager"
-import Block from "../../Objects/Block";
+import { World } from "../../../../Rooms/shared/schemas"
+import Player from "../../../Objects/Player"
+import BlockManager from "../../World/BlockManager"
+import PlayerManager from "../../World/PlayerManager"
+import Block from "../../../Objects/Block";
 import { SpawnType } from "chisel-api-interface";
 import PlayerMovementManager from "../PlayerMovementManager";
 import { DefaultSkills } from "../PlayerSkillManager";
 import { DefaultVitals } from "../PlayerVitalsManager";
 import * as Protocol from "gotchiminer-multiplayer-protocol"
-import * as Schema from "../../../Rooms/shared/schemas";
-import Config from "../../../Config";
-import MainScene from "../../Scenes/MainScene";
+import * as Schema from "../../../../Rooms/shared/schemas";
+import Config from "../../../../Config";
+import MainScene from "../../../Scenes/MainScene";
 
 export default class PlayerCollisionManager extends Phaser.GameObjects.GameObject {
     constructor(scene : Phaser.Scene, playerManager : PlayerManager, blockManager : BlockManager, world : World) {

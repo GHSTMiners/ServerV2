@@ -1,11 +1,11 @@
-import * as Schema from "../../../Rooms/shared/schemas"
+import * as Schema from "../../../../Rooms/shared/schemas"
 import { Scene } from "phaser";
-import Player from "../../Objects/Player";
-import ClientManager from "../World/ClientManager";
+import Player from "../../../Objects/Player";
+import ClientManager from "../../World/ClientManager";
 import { Client, Room } from "colyseus";
-import ClientWrapper from "../../Objects/ClientWrapper";
+import ClientWrapper from "../../../Objects/ClientWrapper";
 import * as Protocol from "gotchiminer-multiplayer-protocol"
-import AavegotchiInfoFetcher, { AavegotchiTraits } from "../../Helpers/AavegotchiInfoFetcher";
+import AavegotchiInfoFetcher, { AavegotchiTraits } from "../../../Helpers/AavegotchiInfoFetcher";
 import chroma from "chroma-js"
 
 export default class PlayerManager extends Phaser.GameObjects.GameObject{

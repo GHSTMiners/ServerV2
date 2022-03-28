@@ -1,5 +1,5 @@
-import * as Schema from "../../../Rooms/shared/schemas";
-import Player from "../../Objects/Player";
+import * as Schema from "../../../../Rooms/shared/schemas";
+import Player from "../../../Objects/Player";
 
 export default class PlayerWalletManager extends Phaser.GameObjects.GameObject {
     constructor(scene : Phaser.Scene, player : Player) {

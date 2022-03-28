@@ -1,7 +1,7 @@
-import MainScene from "../../Scenes/MainScene"
-import PlayerManager from "../PlayerManager"
+import MainScene from "../../../Scenes/MainScene"
+import PlayerManager from "../../World/PlayerManager"
 import * as Protocol from "gotchiminer-multiplayer-protocol"
-import Player from "../../Objects/Player"
+import Player from "../../../Objects/Player"
 import BadWordsFilter from "bad-words"
 export default class ChatManager extends Phaser.GameObjects.GameObject {
     constructor(scene : MainScene, playerManager : PlayerManager) {

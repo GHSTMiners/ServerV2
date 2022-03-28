@@ -1,10 +1,10 @@
 import * as Protocol from "gotchiminer-multiplayer-protocol";
-import ClientWrapper from "../../Objects/ClientWrapper";
+import ClientWrapper from "../../../Objects/ClientWrapper";
 import { DefaultVitals } from "../PlayerVitalsManager"
-import MainScene from "../../Scenes/MainScene"
-import Player from "../../Objects/Player";
+import MainScene from "../../../Scenes/MainScene"
+import Player from "../../../Objects/Player";
 import { Building } from "chisel-api-interface";
-import Config from "../../../Config";
+import Config from "../../../../Config";
 
 export default class PlayerBuildingManager extends Phaser.GameObjects.GameObject {
     constructor(scene : Phaser.Scene, player : Player) {

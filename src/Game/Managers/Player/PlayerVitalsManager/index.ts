@@ -1,8 +1,8 @@
 import * as Chisel from "chisel-api-interface"
 import * as mathjs from "mathjs"
-import { Vital, Player } from "../../../Rooms/shared/schemas"
-import { AavegotchiTraits } from "../../Helpers/AavegotchiInfoFetcher"
-import MainScene from "../../Scenes/MainScene"
+import { Vital, Player } from "../../../../Rooms/shared/schemas"
+import { AavegotchiTraits } from "../../../Helpers/AavegotchiInfoFetcher"
+import MainScene from "../../../Scenes/MainScene"
 
 export default class PlayerVitalsManager extends Phaser.GameObjects.GameObject {
     constructor(scene : Phaser.Scene, traits : AavegotchiTraits, schema : Player) {

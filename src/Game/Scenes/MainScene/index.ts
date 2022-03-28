@@ -6,8 +6,8 @@ import ChatManager from "../../Managers/World/ChatManager"
 import ClientManager from "../../Managers/World/ClientManager"
 import ExchangeManager from "../../Managers/World/ExchangeManager"
 import ExplosivesManager from "../../Managers/World/ExplosivesManager"
-import PlayerCollisionManager from "../../Managers/PlayerCollisionManager"
-import PlayerManager from "../../Managers/PlayerManager"
+import PlayerCollisionManager from "../../Managers/Player/PlayerCollisionManager"
+import PlayerManager from "../../Managers/World/PlayerManager"
 
 export default class MainScene extends Phaser.Scene {
 

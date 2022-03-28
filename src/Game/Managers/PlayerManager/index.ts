@@ -1,7 +1,7 @@
 import * as Schema from "../../../Rooms/shared/schemas"
 import { Scene } from "phaser";
 import Player from "../../Objects/Player";
-import ClientManager from "../ClientManager";
+import ClientManager from "../World/ClientManager";
 import { Client, Room } from "colyseus";
 import ClientWrapper from "../../Objects/ClientWrapper";
 import * as Protocol from "gotchiminer-multiplayer-protocol"

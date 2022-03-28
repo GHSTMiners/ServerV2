@@ -1,11 +1,11 @@
 import { DetailedWorld } from "chisel-api-interface"
 import { Room } from "colyseus"
 import { World } from "../../../Rooms/shared/schemas/World/World"
-import BlockManager from "../../Managers/BlockManager"
-import ChatManager from "../../Managers/ChatManager"
-import ClientManager from "../../Managers/ClientManager"
-import ExchangeManager from "../../Managers/ExchangeManager"
-import ExplosivesManager from "../../Managers/ExplosivesManager"
+import BlockManager from "../../Managers/World/BlockManager"
+import ChatManager from "../../Managers/World/ChatManager"
+import ClientManager from "../../Managers/World/ClientManager"
+import ExchangeManager from "../../Managers/World/ExchangeManager"
+import ExplosivesManager from "../../Managers/World/ExplosivesManager"
 import PlayerCollisionManager from "../../Managers/PlayerCollisionManager"
 import PlayerManager from "../../Managers/PlayerManager"
 
@@ -20,10 +20,10 @@ export default class MainScene extends Phaser.Scene {
 
     create() {
         this.clientManager = new ClientManager(this)
-        this.exchangeManager = new ExchangeManager(this);
         this.playerManager = new PlayerManager(this, this.clientManager, this.room)
         this.chatManager = new ChatManager(this, this.playerManager)
         this.blockManager = new BlockManager(this, this.room.state)
+        this.exchangeManager = new ExchangeManager(this, this.playerManager);
         this.playerCollisionManager = new PlayerCollisionManager(this, this.playerManager, this.blockManager, this.worldSchema)
         this.explosiveManager = new ExplosivesManager(this, this.blockManager, this.playerManager)
     }

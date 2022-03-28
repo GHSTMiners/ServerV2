@@ -1,7 +1,7 @@
-import { World } from "../../../Rooms/shared/schemas/World/World";
-import * as Schema from "../../../Rooms/shared/schemas";
-import Config from "../../../Config";
-import MainScene from "../../Scenes/MainScene";
+import { World } from "../../../../Rooms/shared/schemas/World/World";
+import * as Schema from "../../../../Rooms/shared/schemas";
+import Config from "../../../../Config";
+import MainScene from "../../../Scenes/MainScene";
 
 export default class BlockManager extends Phaser.GameObjects.GameObject {
     constructor(scene : Phaser.Scene, world : World) {

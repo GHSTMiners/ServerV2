@@ -1,9 +1,9 @@
-import MainScene from "../../Scenes/MainScene";
+import MainScene from "../../../Scenes/MainScene";
 import axios from "axios"
 import * as Protocol from "gotchiminer-multiplayer-protocol"
-import *  as Schema from "../../../Rooms/shared/schemas"
-import PlayerManager from "../PlayerManager";
-import Player from "../../Objects/Player";
+import *  as Schema from "../../../../Rooms/shared/schemas"
+import PlayerManager from "../../PlayerManager";
+import Player from "../../../Objects/Player";
 
 
 export default class ExchangeManager extends Phaser.GameObjects.GameObject {

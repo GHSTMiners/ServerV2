@@ -1,5 +1,5 @@
 import * as Protocol from "gotchiminer-multiplayer-protocol";
-import ClientWrapper from "../../../Objects/ClientWrapper";
+import ClientWrapper from "../../../Helpers/ClientWrapper";
 import { DefaultVitals } from "../PlayerVitalsManager"
 import MainScene from "../../../Scenes/MainScene"
 import Player from "../../../Objects/Player";

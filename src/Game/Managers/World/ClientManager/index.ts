@@ -1,5 +1,5 @@
 import {Client} from "colyseus"
-import ClientWrapper from "../../../Objects/ClientWrapper"
+import ClientWrapper from "../../../Helpers/ClientWrapper"
 import * as Protocol from "gotchiminer-multiplayer-protocol"
 
 export default class ClientManager extends Phaser.GameObjects.GameObject{

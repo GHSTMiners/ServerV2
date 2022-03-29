@@ -8,7 +8,7 @@ import PlayerPurchaseManager from "../../Managers/Player/PlayerPurchaseManager";
 import PlayerSkillManager from "../../Managers/Player/PlayerSkillManager";
 import PlayerVitalsManager, { DefaultVitals, PlayerVital } from "../../Managers/Player/PlayerVitalsManager";
 import PlayerWalletManager from "../../Managers/Player/PlayerWalletManager";
-import ClientWrapper from "../ClientWrapper";
+import ClientWrapper from "../../Helpers/ClientWrapper";
 
 export default class Player extends Phaser.GameObjects.Rectangle {
     

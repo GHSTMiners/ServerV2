@@ -7,6 +7,8 @@ export default class Logging {
             headers: {
                 'X-API-KEY': Config.apiKey
             }
+        }).catch(exception=> {
+            console.warn(exception);
         })
     }
 }

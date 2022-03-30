@@ -2,7 +2,7 @@ import Phaser from "phaser"
 import * as Colyseus from "colyseus";
 import * as Schema from "../Rooms/shared/schemas";
 import MainScene from "./Scenes/MainScene";
-import PlayerManager from "./Managers/PlayerManager";
+import PlayerManager from "./Managers/World/PlayerManager";
 import { DetailedWorld } from "chisel-api-interface";
 import { Room } from "colyseus";
 

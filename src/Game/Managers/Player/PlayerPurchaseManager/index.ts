@@ -41,6 +41,8 @@ export default class PlayerPurchaseManager extends Phaser.GameObjects.GameObject
                 transactionMessage.cryptoId = explosive.crypto_id
                 let serializedMessage : Protocol.Message = MessageSerializer.serialize(transactionMessage)
                 this.player.client().client.send(serializedMessage.name, serializedMessage.data)
+                //Emit event
+                this.emit(PlayerPurchaseManager.PURCHASED_EXPLOSIVE, explosive);
             } else {
                 //Notify player that transaction failed
                 let transactionMessage : Protocol.NotifyPlayerTransation = new Protocol.NotifyPlayerTransation()
@@ -53,7 +55,7 @@ export default class PlayerPurchaseManager extends Phaser.GameObjects.GameObject
         }
     }
     
-
+    static readonly PURCHASED_EXPLOSIVE: unique symbol = Symbol();
     private mainScene : MainScene
     private player : Player
 }

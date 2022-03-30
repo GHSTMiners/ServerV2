@@ -15,11 +15,11 @@ export default class PlayerMovementManager extends Phaser.GameObjects.GameObject
         this.player = player
         this.lastDirection = new ChangeDirection()
         this.lastBlockPosition = new Phaser.Geom.Point()
-        this.excavationManager = new PlayerExcavationManager(scene, player)
+        this.m_excavationManager = new PlayerExcavationManager(scene, player)
         //Register message handler
         player.client().messageRouter.addRoute(ChangeDirection, this.handleChangeDirection.bind(this))
         //Set maximum speed
-        if(this.player.body instanceof Phaser.Physics.Arcade.Body && !this.excavationManager.isDrilling()) {
+        if(this.player.body instanceof Phaser.Physics.Arcade.Body && !this.m_excavationManager.isDrilling()) {
             this.player.body.setMaxVelocityX(this.player.skillManager().get(DefaultSkills.MOVING_SPEED).value() * Config.blockWidth)
             this.player.body.setMaxVelocityY(this.player.skillManager().get(DefaultSkills.FLYING_SPEED).value() * Config.blockHeight) 
         }
@@ -28,7 +28,7 @@ export default class PlayerMovementManager extends Phaser.GameObjects.GameObject
     public moveToSurface() {
         if(this.moveTween) this.moveTween.stop()
         if(this.moveTween) this.scene.tweens.remove(this.moveTween)
-        if(this.player.body instanceof Phaser.Physics.Arcade.Body && !this.excavationManager.isDrilling()) {
+        if(this.player.body instanceof Phaser.Physics.Arcade.Body && !this.m_excavationManager.isDrilling()) {
             this.player.setPosition(Math.random() * 10 * 300, -300)
             this.player.body.setVelocity(0, 0)
             this.player.body.setAcceleration(0, 0)
@@ -61,7 +61,7 @@ export default class PlayerMovementManager extends Phaser.GameObjects.GameObject
         //Process fuel for previous action
         this.processFuelUsage(delta)
         //First, see if we are gonna drill
-        this.excavationManager.processDirection(this.lastDirection)
+        this.m_excavationManager.processDirection(this.lastDirection)
         //Update playerstate
         this.updateMovementState()
         //Apply player movement
@@ -73,7 +73,7 @@ export default class PlayerMovementManager extends Phaser.GameObjects.GameObject
     private applyUserInput() {
         if(this.player.body instanceof Phaser.Physics.Arcade.Body) {
             //Apply acceleration to player body
-            if(this.player.body instanceof Phaser.Physics.Arcade.Body && !this.excavationManager.isDrilling()) {
+            if(this.player.body instanceof Phaser.Physics.Arcade.Body && !this.m_excavationManager.isDrilling()) {
                 this.player.body.setAcceleration(Phaser.Math.Clamp(this.lastDirection.x, -1, 1) * this.player.skillManager().get(DefaultSkills.MOVING_SPEED).value() * Config.blockWidth, 
                 (this.lastDirection.y < 0) ? Phaser.Math.Clamp(this.lastDirection.y, -1, 0) * this.player.skillManager().get(DefaultSkills.FLYING_SPEED_ACCELLERATION).value() * Config.blockHeight : Config.gravity)
             }          
@@ -81,10 +81,14 @@ export default class PlayerMovementManager extends Phaser.GameObjects.GameObject
     }
 
     private updateMovementState() {
-        if(this.excavationManager.isDrilling()) this.player.playerSchema.playerState.movementState = Schema.MovementState.Drilling
+        if(this.m_excavationManager.isDrilling()) this.player.playerSchema.playerState.movementState = Schema.MovementState.Drilling
         else if (this.lastDirection.y < 0) this.player.playerSchema.playerState.movementState = Schema.MovementState.Flying 
         else if (this.lastDirection.x != null) this.player.playerSchema.playerState.movementState = Schema.MovementState.Moving
         else this.player.playerSchema.playerState.movementState = Schema.MovementState.Stationary 
+    }
+
+    public excavationManager() : PlayerExcavationManager {
+        return this.m_excavationManager;
     }
 
     private processFuelUsage(duration : number) {
@@ -104,7 +108,7 @@ export default class PlayerMovementManager extends Phaser.GameObjects.GameObject
     
     protected syncWithSchema(): void {
         //Sync drilldirection
-        this.player.playerSchema.playerState.drillingDirection = this.excavationManager.isDrilling() ? this.excavationManager.getDrillDirection() : Schema.DrillingDirection.None
+        this.player.playerSchema.playerState.drillingDirection = this.m_excavationManager.isDrilling() ? this.m_excavationManager.getDrillDirection() : Schema.DrillingDirection.None
         //Check if player's block position has changed
         let newBlockPosition : Phaser.Geom.Point = this.blockPosition()
         if(!Phaser.Geom.Point.Equals(this.lastBlockPosition, newBlockPosition)) {
@@ -123,7 +127,7 @@ export default class PlayerMovementManager extends Phaser.GameObjects.GameObject
     static readonly BLOCK_POSITION_CHANGED: unique symbol = Symbol();
     private lastBlockPosition : Phaser.Geom.Point
     private moveTween : Phaser.Tweens.Tween
-    public excavationManager : PlayerExcavationManager
+    public m_excavationManager : PlayerExcavationManager
     private lastDirection : ChangeDirection
     private player : Player
 }

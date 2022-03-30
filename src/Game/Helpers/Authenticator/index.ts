@@ -45,7 +45,7 @@ export default class Authenticator {
         if(!this.m_presence.get(`gotchi_${this.m_options.gotchiId.toString()}`)) {
             return AuthenticatorState.GotchiPresenceVerified
         } else {
-            Logging.submitEvent("Player tried to play with a Gotchi that already has a session", 1, this.m_request.headers['x-forwarded-for'] as string || this.m_request.socket.remoteAddress, this.m_options.gotchiId, this.m_options.walletAddress);
+            Logging.submitEvent("Player tried to play with a Gotchi that already has a session", 1, this.m_request.headers['cf-connecting-ip'] as string || this.m_request.socket.remoteAddress, this.m_options.gotchiId, this.m_options.walletAddress);
             this.m_failedReason = "This Aavegotchi is already playing"
             return  AuthenticatorState.AuthenticationFailed
         }
@@ -59,7 +59,7 @@ export default class Authenticator {
         if(owner == this.m_options.walletAddress) {
             return AuthenticatorState.VerifiedGotchiOwnership
         } else {
-            Logging.submitEvent("Player tried to play with a Gotchi that it doesn't own", 100, this.m_request.headers['x-forwarded-for'] as string || this.m_request.socket.remoteAddress, this.m_options.gotchiId, this.m_options.walletAddress);
+            Logging.submitEvent("Player tried to play with a Gotchi that it doesn't own", 100, this.m_request.headers['cf-connecting-ip'] as string || this.m_request.socket.remoteAddress, this.m_options.gotchiId, this.m_options.walletAddress);
             this.m_failedReason = "You are not the owner of this Aavegotchi"
             return AuthenticatorState.AuthenticationFailed
         }
@@ -74,7 +74,7 @@ export default class Authenticator {
                 this.m_roles = response.data.roles
                 return AuthenticatorState.ValidatedWalletOwnership
             } else {
-                Logging.submitEvent("Player tried to authenticate with an invalid wallet authentication token", 10, this.m_request.headers['x-forwarded-for'] as string || this.m_request.socket.remoteAddress, this.m_options.gotchiId, this.m_options.walletAddress);
+                Logging.submitEvent("Player tried to authenticate with an invalid wallet authentication token", 10, this.m_request.headers['cf-connecting-ip'] as string || this.m_request.socket.remoteAddress, this.m_options.gotchiId, this.m_options.walletAddress);
                 this.m_failedReason = `Server rejected your authentication information`
                 return AuthenticatorState.AuthenticationFailed
             }
@@ -103,12 +103,12 @@ export default class Authenticator {
                     return AuthenticatorState.AuthenticationFailed
                 }
             } else {
-                Logging.submitEvent("Player tried to authenticate with an malformed wallet address", 100, this.m_request.headers['x-forwarded-for'] as string || this.m_request.socket.remoteAddress, this.m_options.gotchiId, this.m_options.walletAddress,);
+                Logging.submitEvent("Player tried to authenticate with an malformed wallet address", 100, this.m_request.headers['cf-connecting-ip'] as string || this.m_request.socket.remoteAddress, this.m_options.gotchiId, this.m_options.walletAddress,);
                 this.m_failedReason = "Wallet address is malformed"
                 return AuthenticatorState.AuthenticationFailed
             }
         } else {
-            Logging.submitEvent("Player tried to authenticate malformed authentication data", 100, this.m_request.headers['x-forwarded-for'] as string || this.m_request.socket.remoteAddress, this.m_options.gotchiId, this.m_options.walletAddress);
+            Logging.submitEvent("Player tried to authenticate malformed authentication data", 100, this.m_request.headers['cf-connecting-ip'] as string || this.m_request.socket.remoteAddress, this.m_options.gotchiId, this.m_options.walletAddress);
             this.m_failedReason = "Authentication request is missing data"
             return AuthenticatorState.AuthenticationFailed
         }

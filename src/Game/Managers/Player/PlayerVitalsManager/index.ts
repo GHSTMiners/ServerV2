@@ -41,7 +41,7 @@ export default class PlayerVitalsManager extends Phaser.GameObjects.GameObject {
 }
 
 
-export class PlayerVital extends Phaser.GameObjects.GameObject{ 
+export class PlayerVital extends Phaser.GameObjects.GameObject { 
     constructor(scene : Phaser.Scene, vital : Chisel.Vital, schema : Vital, traits : AavegotchiTraits) {
         super(scene, "PlayerVital")
         this.vital = vital
@@ -82,6 +82,7 @@ export class PlayerVital extends Phaser.GameObjects.GameObject{
     public takeAmount(amount : number) {
         this.m_currentValue = Phaser.Math.Clamp(this.m_currentValue - amount, 0, this.m_maximum)
         this.emit(PlayerVital.VALUE_CHANGED)
+        this.emit(PlayerVital.DECREASED, amount)
         if(this.m_currentValue <= 0) this.emit(PlayerVital.EMPTY)
         this.syncWithSchema()
     }
@@ -125,6 +126,7 @@ export class PlayerVital extends Phaser.GameObjects.GameObject{
     private m_currentValue : number
     private readonly vital : Chisel.Vital
     private readonly traits : AavegotchiTraits
+    static readonly DECREASED: unique symbol = Symbol();
     static readonly VALUE_CHANGED: unique symbol = Symbol();
     static readonly EMPTY: unique symbol = Symbol();
     static readonly FULL: unique symbol = Symbol();

@@ -9,6 +9,9 @@ import PlayerSkillManager from "../../Managers/Player/PlayerSkillManager";
 import PlayerVitalsManager, { DefaultVitals, PlayerVital } from "../../Managers/Player/PlayerVitalsManager";
 import PlayerWalletManager from "../../Managers/Player/PlayerWalletManager";
 import ClientWrapper from "../../Helpers/ClientWrapper";
+import PlayerStatisticsManager, { DefaultStatistics } from "../../Managers/Player/PlayerStatisticsManager";
+import PlayerExcavationManager from "../../Managers/Player/PlayerExcavationManager";
+import * as Chisel from "chisel-api-interface"
 
 export default class Player extends Phaser.GameObjects.Rectangle {
     
@@ -33,6 +36,7 @@ export default class Player extends Phaser.GameObjects.Rectangle {
         this.setPosition(playerSchema.playerState.x, playerSchema.playerState.y)
         this.setSize(Config.blockWidth*0.5, Config.blockHeight)
         //Create managers
+        this.m_statisticsManager = new PlayerStatisticsManager(scene);
         this.m_walletManager = new PlayerWalletManager(scene, this)
         this.m_buildingManager = new PlayerBuildingManager(scene, this)
         this.m_vitalsManager = new PlayerVitalsManager(scene, traits, playerSchema)
@@ -43,13 +47,26 @@ export default class Player extends Phaser.GameObjects.Rectangle {
         //Create kill conditions
         this.m_vitalsManager.get(DefaultVitals.FUEL).on(PlayerVital.EMPTY, this.respawn.bind(this))
         this.m_vitalsManager.get(DefaultVitals.HEALTH).on(PlayerVital.EMPTY, this.respawn.bind(this))
+        //Bind statistics
+        this.purchaseManager().on(PlayerPurchaseManager.PURCHASED_EXPLOSIVE, (explosive : Chisel.Explosive) => {
+            this.statisticsManager().addAmount(DefaultStatistics.AMOUNT_SPENT_EXPLOSIVES, explosive.price)
+        })
+        this.movementManager().excavationManager().on(PlayerExcavationManager.BLOCK_MINED, () => this.statisticsManager().addAmount(DefaultStatistics.BLOCKS_MINED))
+        this.vitalsManager().get(DefaultVitals.HEALTH).on(PlayerVital.DECREASED, (amount : number) => {
+            this.statisticsManager().addAmount(DefaultStatistics.DAMAGE_TAKEN, amount)
+        })
+        this.vitalsManager().get(DefaultVitals.FUEL).on(PlayerVital.DECREASED, (amount : number) => {
+            this.statisticsManager().addAmount(DefaultStatistics.FUEL_CONSUMED, amount)
+        })
+        this.on(Player.RESPAWNED, () => this.statisticsManager().addAmount(DefaultStatistics.DEATHS))
     }
 
     public respawn() {
-        this.m_movementManager.excavationManager.cancelDrilling()
+        this.m_movementManager.m_excavationManager.cancelDrilling()
         this.m_cargoManager.empty()
         this.m_vitalsManager.resetAll()
         this.m_movementManager.moveToSurface()
+        this.emit(Player.RESPAWNED)
     }
 
     public walletManager() : PlayerWalletManager {
@@ -75,6 +92,14 @@ export default class Player extends Phaser.GameObjects.Rectangle {
     public buildingManager() : PlayerBuildingManager {
         return this.m_buildingManager
     }
+
+    public purchaseManager() : PlayerPurchaseManager {
+        return this.m_purchaseManager
+    }
+
+    public statisticsManager() : PlayerStatisticsManager {
+        return this.m_statisticsManager
+    }
     
     public client() : ClientWrapper {
         return this.m_client
@@ -88,6 +113,8 @@ export default class Player extends Phaser.GameObjects.Rectangle {
     private m_buildingManager : PlayerBuildingManager
     private m_movementManager : PlayerMovementManager
     private m_purchaseManager : PlayerPurchaseManager
+    private m_statisticsManager : PlayerStatisticsManager
     public playerSchema : Schema.Player
+    static readonly RESPAWNED: unique symbol = Symbol();
 
 }

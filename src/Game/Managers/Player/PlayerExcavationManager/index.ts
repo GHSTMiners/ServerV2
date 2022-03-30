@@ -11,6 +11,7 @@ import MainScene from "../../../Scenes/MainScene";
 import BlockManager from "../../World/BlockManager";
 import { DefaultSkills } from "../PlayerSkillManager";
 import { DefaultVitals } from "../PlayerVitalsManager";
+import { DefaultStatistics } from "../PlayerStatisticsManager";
 export default class PlayerExcavationManager extends Phaser.GameObjects.GameObject {
     constructor(scene : Phaser.Scene, player : Player) {
         super(scene, "PlayerExcavationManager")
@@ -124,6 +125,8 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
             var self = this
             //Remove block when digging is complete
             this.digTimeout = setTimeout(function(player : Player) {
+                //Emit event
+                self.emit(PlayerExcavationManager.BLOCK_MINED, targetBlock);
                 //Process block on player inventory manager
                 if(player.cargoManager().processBlock(targetBlock)) {
                     //Notify the client that a block has been minted
@@ -174,6 +177,7 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
         }        
     }
 
+    static readonly BLOCK_MINED: unique symbol = Symbol();
     private drillDirection : Schema.DrillingDirection
     private digTimeout : NodeJS.Timeout
     private rockMap : Map<number, Chisel.Rock>

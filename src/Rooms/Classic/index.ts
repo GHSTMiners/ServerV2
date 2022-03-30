@@ -40,7 +40,7 @@ export class Classic extends Room<Schema.World, any> {
       let authenticator : Authenticator = new Authenticator(this.presence, options, request)
       authenticator.authenticate().then(result => {
         if(result == AuthenticatorState.Authenticated) {
-          Logging.submitEvent("Player succesfully authenticated", 0, request.headers['x-forwarded-for'] as string || request.socket.remoteAddress, options.gotchiId, options.walletAddress);
+          Logging.submitEvent("Player succesfully authenticated", 0, request.headers['cf-connecting-ip'] as string || request.socket.remoteAddress, options.gotchiId, options.walletAddress);
           if(this.development_mode) {
             if(authenticator.roles().developer) {
               resolve(true)

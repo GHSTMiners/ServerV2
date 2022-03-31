@@ -108,7 +108,13 @@ export default class PlayerMovementManager extends Phaser.GameObjects.GameObject
     
     protected syncWithSchema(): void {
         //Sync drilldirection
-        this.player.playerSchema.playerState.drillingDirection = this.m_excavationManager.isDrilling() ? this.m_excavationManager.getDrillDirection() : Schema.DrillingDirection.None
+        if(this.m_excavationManager.isDrilling()) {
+            this.player.playerSchema.playerState.movementDirection = this.m_excavationManager.getDrillDirection() 
+        } else {
+            if (this.lastDirection.x < 0) this.player.playerSchema.playerState.movementDirection = Schema.MovementDirection.Left 
+            else if (this.lastDirection.x > 0) this.player.playerSchema.playerState.movementDirection = Schema.MovementDirection.Right
+            else this.player.playerSchema.playerState.movementDirection = Schema.MovementDirection.None
+        }
         //Check if player's block position has changed
         let newBlockPosition : Phaser.Geom.Point = this.blockPosition()
         if(!Phaser.Geom.Point.Equals(this.lastBlockPosition, newBlockPosition)) {

@@ -35,45 +35,45 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
         scene.add.existing(this)
     }
 
-    protected drillDirectionFromChangeDirection(direction : ChangeDirection) : Schema.DrillingDirection {
-        if (direction.x > 0) return Schema.DrillingDirection.Right
-        else if (direction.x < 0) return Schema.DrillingDirection.Left
-        else if(direction.y > 0) return Schema.DrillingDirection.Down
-        else return Schema.DrillingDirection.None
+    protected drillDirectionFromChangeDirection(direction : ChangeDirection) : Schema.MovementDirection {
+        if (direction.x > 0) return Schema.MovementDirection.Right
+        else if (direction.x < 0) return Schema.MovementDirection.Left
+        else if(direction.y > 0) return Schema.MovementDirection.Down
+        else return Schema.MovementDirection.None
     }
 
-    protected blockExistsInDiretion(drillingDirection : Schema.DrillingDirection) : boolean {
+    protected blockExistsInDiretion(drillingDirection : Schema.MovementDirection) : boolean {
         let targetBlock : Schema.Block | undefined = this.blockInDirectionRelativeToPlayer(drillingDirection)
         if(!targetBlock) return false
         if(targetBlock.spawnType == Chisel.SpawnType.None) return false
         return true
     }
 
-    protected blockInDirectionRelativeToPlayer(drillingDirection : Schema.DrillingDirection) : Schema.Block | undefined {
+    protected blockInDirectionRelativeToPlayer(drillingDirection : Schema.MovementDirection) : Schema.Block | undefined {
         let targetPosition : Phaser.Geom.Point = this.targetBlockPosition(drillingDirection)
         switch(drillingDirection) {
-            case Schema.DrillingDirection.Down:
+            case Schema.MovementDirection.Down:
                 return this.blockManager.blockAt(targetPosition.x, targetPosition.y)
-            case Schema.DrillingDirection.Left:
+            case Schema.MovementDirection.Left:
                 return this.blockManager.blockAt(targetPosition.x, targetPosition.y)
-            case Schema.DrillingDirection.Right:
+            case Schema.MovementDirection.Right:
                 return this.blockManager.blockAt(targetPosition.x, targetPosition.y)
         }
     }
 
-    protected targetBlockPosition(drillingDirection : Schema.DrillingDirection) : Phaser.Geom.Point {
+    protected targetBlockPosition(drillingDirection : Schema.MovementDirection) : Phaser.Geom.Point {
         let playerPosition : Phaser.Geom.Point = this.player.movementManager().blockPosition()
         switch(drillingDirection) {
-            case Schema.DrillingDirection.Down:
+            case Schema.MovementDirection.Down:
                 return new Phaser.Geom.Point(playerPosition.x, playerPosition.y+1)
-            case Schema.DrillingDirection.Left:
+            case Schema.MovementDirection.Left:
                 return new Phaser.Geom.Point(playerPosition.x-1, playerPosition.y)
-            case Schema.DrillingDirection.Right:
+            case Schema.MovementDirection.Right:
                 return new Phaser.Geom.Point(playerPosition.x+1, playerPosition.y)
         }
     }
 
-    protected canDrillInDirection(direction : Schema.DrillingDirection) : boolean {
+    protected canDrillInDirection(direction : Schema.MovementDirection) : boolean {
         //Check if there actually is a block below the player
         let blockBelowPlayer : Schema.Block | undefined =  this.blockManager.blockAt(this.player.movementManager().blockPosition().x, this.player.movementManager().blockPosition().y+1)
         if(!blockBelowPlayer) return false
@@ -109,7 +109,7 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
         this.nextDrillTime = Date.now()
     }
 
-    protected drillInDirection(drillingDirection : Schema.DrillingDirection) {
+    protected drillInDirection(drillingDirection : Schema.MovementDirection) {
         //Find target block
         let targetBlock : Schema.Block | undefined = this.blockInDirectionRelativeToPlayer(drillingDirection)
         if(targetBlock) {
@@ -161,14 +161,14 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
         }
     }
 
-    public getDrillDirection() : Schema.DrillingDirection {
+    public getDrillDirection() : Schema.MovementDirection {
         return this.drillDirection;
     }
 
     public processDirection(direction : ChangeDirection) {
         //Get drilling direction
         this.drillDirection = this.drillDirectionFromChangeDirection(direction)
-        if(this.drillDirection != Schema.DrillingDirection.None) {
+        if(this.drillDirection != Schema.MovementDirection.None) {
             //Check if player can drill right now
             if(this.canDrillInDirection(this.drillDirection) && !this.isDrilling()) {
                 //If we can drill, drill (H)
@@ -178,7 +178,7 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
     }
 
     static readonly BLOCK_MINED: unique symbol = Symbol();
-    private drillDirection : Schema.DrillingDirection
+    private drillDirection : Schema.MovementDirection
     private digTimeout : NodeJS.Timeout
     private rockMap : Map<number, Chisel.Rock>
     private soilMap : Map<number, Chisel.Soil>

@@ -1,5 +1,5 @@
 import { Schema, MapSchema, ArraySchema, type, filter } from "@colyseus/schema"
-import { PlayerState, DrillingDirection } from "./PlayerState";
+import { PlayerState } from "./PlayerState";
 import { WalletEntry } from "./WalletEntry";
 import { CargoEntry } from "./CargoEntry";
 import { Vital } from "./Vital";

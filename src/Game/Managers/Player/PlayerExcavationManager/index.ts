@@ -20,7 +20,6 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
             this.blockManager = scene.blockManager
             this.worldInfo = scene.worldInfo
         }
-        this.nextDrillTime = Date.now()
         this.player = player
 
         this.soilMap = new Map<number, Chisel.Soil>()
@@ -33,6 +32,7 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
             this.rockMap.set(rock.id, rock)
         })
         scene.add.existing(this)
+        this.drilling = false;
     }
 
     protected drillDirectionFromChangeDirection(direction : ChangeDirection) : Schema.MovementDirection {
@@ -75,9 +75,11 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
 
     protected canDrillInDirection(direction : Schema.MovementDirection) : boolean {
         //Check if there actually is a block below the player
-        let blockBelowPlayer : Schema.Block | undefined =  this.blockManager.blockAt(this.player.movementManager().blockPosition().x, this.player.movementManager().blockPosition().y+1)
+        let blockBelowPlayer : Schema.Block | undefined = this.blockManager.blockAt(this.player.movementManager().blockPosition().x, this.player.movementManager().blockPosition().y+1)
         if(!blockBelowPlayer) return false
         if(blockBelowPlayer.spawnType == Chisel.SpawnType.None) return false
+
+
         //Check if there is a block to drill in the direction we want to drill
         if(!this.blockExistsInDiretion(direction)) return false
         //Check if the target block is not a rock, if so check if we can drill into the block
@@ -96,7 +98,7 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
     }
 
     public isDrilling() : boolean {
-        return this.nextDrillTime > Date.now()
+        return this.drilling
     }
 
     public cancelDrilling() {
@@ -106,7 +108,7 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
         if(this.player.body instanceof Phaser.Physics.Arcade.Body) {
             this.player.body.enable = true
         }
-        this.nextDrillTime = Date.now()
+        this.drilling = false
     }
 
     protected drillInDirection(drillingDirection : Schema.MovementDirection) {
@@ -121,43 +123,46 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
             //Disable updates on body
             if(this.player.body instanceof Phaser.Physics.Arcade.Body) {
                 this.player.body.enable = false
-            }
+            } 
             var self = this
+            this.drilling = true;
+            //Move player to block position
+            let targetBlockPosition : Phaser.Geom.Point = this.targetBlockPosition(drillingDirection)
+            let movementTween : Phaser.Tweens.Tween = this.player.movementManager().moveToLocation(targetBlockPosition.x * Config.blockWidth + Config.blockWidth/2, targetBlockPosition.y * Config.blockHeight + Config.blockHeight/2, drillDuration)
+
             //Remove block when digging is complete
-            this.digTimeout = setTimeout(function(player : Player) {
+            movementTween.on(Phaser.Tweens.Events.TWEEN_COMPLETE, function() {
                 //Emit event
                 self.emit(PlayerExcavationManager.BLOCK_MINED, targetBlock);
                 //Process block on player inventory manager
-                if(player.cargoManager().processBlock(targetBlock)) {
+                if(self.player.cargoManager().processBlock(targetBlock)) {
                     //Notify the client that a block has been minted
                     if(targetBlock.spawnType == Chisel.SpawnType.Crypto) {
                         let cryptoMinedMessage : Protocol.NotifyPlayerMinedCrypto = new Protocol.NotifyPlayerMinedCrypto()
                         cryptoMinedMessage.cryptoId = targetBlock.spawnID
                         let serializedMessage : Protocol.Message = Protocol.MessageSerializer.serialize(cryptoMinedMessage)
-                        player.client().client.send(serializedMessage.name, serializedMessage.data)
+                        self.player.client().client.send(serializedMessage.name, serializedMessage.data)
                     }
                 }else if(targetBlock.spawnType == SpawnType.Rock) {
                     //If digging lava, take some health and notify client
                    if(self.rockMap.get(targetBlock.spawnID).lava) {
                        let lavaMinedMessage : Protocol.NotifyPlayerMinedLava = new Protocol.NotifyPlayerMinedLava()
                        let serializedMessage : Protocol.Message = Protocol.MessageSerializer.serialize(lavaMinedMessage)
-                       player.client().client.send(serializedMessage.name, serializedMessage.data)
-                       player.vitalsManager().get(DefaultVitals.HEALTH).takeAmount(25)
+                       self.player.client().client.send(serializedMessage.name, serializedMessage.data)
+                       self.player.vitalsManager().get(DefaultVitals.HEALTH).takeAmount(25)
                    }
                 }
                 //Stop movement on body
-                if(player.body instanceof Phaser.Physics.Arcade.Body) {
-                    player.body.enable = true
+                if(self.player.body instanceof Phaser.Physics.Arcade.Body) {
+                    self.player.body.enable = true
                 }
                 targetBlock.spawnType = Chisel.SpawnType.None
-            }, drillDuration-10, this.player)        
-            //Move player to block position
-            let targetBlockPosition : Phaser.Geom.Point = this.targetBlockPosition(drillingDirection)
-            this.player.movementManager().moveToLocation(targetBlockPosition.x * Config.blockWidth + Config.blockWidth/2, targetBlockPosition.y * Config.blockHeight + Config.blockHeight/2, drillDuration)
+                self .drilling = false
+            }, )        
+
             //Take some fuel
             this.player.vitalsManager().get(DefaultVitals.FUEL).takeAmount(this.player.skillManager().get(DefaultSkills.DIGGING_FUEL_USAGE).value() * digMultiplier)
             //Update drilling time
-            this.nextDrillTime = Date.now() + drillDuration
         }
     }
 
@@ -166,24 +171,26 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
     }
 
     public processDirection(direction : ChangeDirection) {
-        //Get drilling direction
-        this.drillDirection = this.drillDirectionFromChangeDirection(direction)
-        if(this.drillDirection != Schema.MovementDirection.None) {
-            //Check if player can drill right now
-            if(this.canDrillInDirection(this.drillDirection) && !this.isDrilling()) {
-                //If we can drill, drill (H)
-                this.drillInDirection(this.drillDirection)
-            }
-        }        
+        if(!this.isDrilling()) {
+            //Get drilling direction
+            this.drillDirection = this.drillDirectionFromChangeDirection(direction)
+            if(this.drillDirection != Schema.MovementDirection.None) {
+                //Check if player can drill right now
+                if(this.canDrillInDirection(this.drillDirection) && !this.isDrilling()) {
+                    //If we can drill, drill (H)
+                    this.drillInDirection(this.drillDirection)
+                } 
+            }        
+        }
     }
 
     static readonly BLOCK_MINED: unique symbol = Symbol();
     private drillDirection : Schema.MovementDirection
+    private drilling : boolean
     private digTimeout : NodeJS.Timeout
     private rockMap : Map<number, Chisel.Rock>
     private soilMap : Map<number, Chisel.Soil>
     private worldInfo : Chisel.DetailedWorld
     private blockManager : BlockManager
-    private nextDrillTime : number
     private player : Player
 }

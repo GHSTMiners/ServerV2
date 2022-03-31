@@ -35,8 +35,7 @@ export default class PlayerMovementManager extends Phaser.GameObjects.GameObject
         }
     }
 
-    public moveToLocation(x: number, y: number, duration: number) { 
-        if(this.moveTween) this.scene.tweens.remove(this.moveTween)
+    public moveToLocation(x: number, y: number, duration: number) : Phaser.Tweens.Tween { 
         this.moveTween = this.scene.tweens.add({
             targets: this.player,
             y: y,
@@ -45,6 +44,10 @@ export default class PlayerMovementManager extends Phaser.GameObjects.GameObject
             ease: Phaser.Math.Easing.Linear,
             loop: 0,
         })
+        this.moveTween.on(Phaser.Tweens.Events.TWEEN_COMPLETE, () => {
+            if(this.moveTween) this.scene.tweens.remove(this.moveTween)
+        }, this);
+        return this.moveTween
     }
 
     public blockPosition() : Phaser.Geom.Point {
@@ -68,6 +71,7 @@ export default class PlayerMovementManager extends Phaser.GameObjects.GameObject
         this.applyUserInput()
         //Synchronize with schema
         this.syncWithSchema()
+
     }
 
     private applyUserInput() {

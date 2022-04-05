@@ -8,6 +8,7 @@ import ExchangeManager from "../../Managers/World/ExchangeManager"
 import ExplosivesManager from "../../Managers/World/ExplosivesManager"
 import PlayerCollisionManager from "../../Managers/Player/PlayerCollisionManager"
 import PlayerManager from "../../Managers/World/PlayerManager"
+import PlayTimeManager from "../../Managers/World/PlayTimeManager"
 
 export default class MainScene extends Phaser.Scene {
 
@@ -26,6 +27,7 @@ export default class MainScene extends Phaser.Scene {
         this.exchangeManager = new ExchangeManager(this, this.playerManager);
         this.playerCollisionManager = new PlayerCollisionManager(this, this.playerManager, this.blockManager, this.worldSchema)
         this.explosiveManager = new ExplosivesManager(this, this.blockManager, this.playerManager)
+        this.playTimeManager = new PlayTimeManager(this, this.playerManager)
     }
 
     update(time: number, delta: number): void {
@@ -37,6 +39,7 @@ export default class MainScene extends Phaser.Scene {
     public blockManager : BlockManager
     public playerManager : PlayerManager
     public clientManager : ClientManager
+    public playTimeManager : PlayTimeManager
     public exchangeManager : ExchangeManager
     public explosiveManager : ExplosivesManager
     public playerCollisionManager : PlayerCollisionManager

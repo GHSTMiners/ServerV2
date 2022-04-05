@@ -11,6 +11,7 @@ export default class Config {
     public static skyLayers : number = 50
     public static skyHeight : number = Config.blockHeight * Config.skyLayers
     public static explosiveTimeout = 5000
+    public static gameDuration = 60 * 60 
     public static blockWidthOffset = Config.blockWidth / 2
     public static blockHeightOffset = Config.blockHeight / 2
     public static blockCollisionRadio = 4

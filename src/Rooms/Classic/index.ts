@@ -9,10 +9,12 @@ import Authenticator, { AuthenticatorState } from "../../Game/Helpers/Authentica
 import { result } from "lodash";
 import Config from "../../Config";
 import Logging from "../../Game/Helpers/Logging";
+import {v4 as uuidv4} from 'uuid';
 
 export class Classic extends Room<Schema.World, any> {
 
   onCreate (options:any) {
+    this.roomId = uuidv4();
     this.setState(new Schema.World());
     this.maxClients = 10;
     this.state.id = options.worldID;

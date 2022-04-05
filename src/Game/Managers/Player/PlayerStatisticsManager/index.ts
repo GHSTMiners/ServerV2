@@ -24,7 +24,7 @@ export enum DefaultStatistics {
     PLAYTIME = "Playtime",
     BLOCKS_MINED = "Blocks mined",
     ENDGAME_CRYPTO = "Endgame crypto",
-    DAMAGE_TAKEN = "Damage take",
+    DAMAGE_TAKEN = "Damage taken",
     DAMAGE_DEALT = "Damage dealt",
     DEATHS = "Deaths",
     AMOUNT_SPENT_EXPLOSIVES = "Amount spent on explosives",

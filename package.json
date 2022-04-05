@@ -46,6 +46,7 @@
     "@types/lodash": "^4.14.178",
     "@types/mathjs": "^9.4.2",
     "@types/simple-peer": "^9.11.4",
+    "@types/uuid": "^8.3.4",
     "bad-words": "^3.0.4",
     "browserenv": "^1.0.0",
     "canvas": "^2.9.0",
@@ -61,7 +62,7 @@
     "node-worker-threads-pool": "^1.5.1",
     "phaser": "^3.55.2",
     "solc": "^0.8.13",
-    "web3": "^1.7.1",
-    "werift": "^0.14.4"
+    "uuid": "^8.3.2",
+    "web3": "^1.7.1"
   }
 }

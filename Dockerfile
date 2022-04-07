@@ -1,5 +1,16 @@
 # Stage 1: Build application
-FROM node:17.8-bullseye as builder
+FROM node:17.8-alpine as builder
+RUN apk add --update --no-cache \
+    make \
+    g++ \
+    jpeg-dev \
+    cairo-dev \
+    giflib-dev \
+    pango-dev \
+    libtool \
+    autoconf \
+    automake
+
 
 # Create a directory to hold your service and relevant modules with owner being node and define the working directory of your Docker container.
 RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
@@ -21,14 +32,34 @@ RUN npm install
 COPY --chown=node:node . .
 RUN npm run build
 
-FROM node:17.8-bullseye-slim
+# Prepare runtime image
+FROM node:17.8-alpine
+RUN apk add --update --no-cache \
+    jpeg \
+    cairo \
+    giflib \
+    pango \
+    gcompat
+
 RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 WORKDIR /home/node/app
 COPY package*.json ./
 COPY arena.env ./
 RUN chown -R node:node /home/node/app
-USER root
-RUN npm install --production
+RUN apk add --no-cache --virtual .build-deps \
+    make \
+    g++ \
+    jpeg-dev \
+    cairo-dev \
+    giflib-dev \
+    pango-dev \
+    libtool \
+    autoconf \
+    automake \
+    && npm install --production \
+    && apk del .build-deps
+
+USER node
 COPY --from=builder /home/node/app/build ./build
 EXPOSE 2567
 ENV NODE_ENV production

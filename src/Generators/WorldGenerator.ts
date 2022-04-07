@@ -1,6 +1,6 @@
 import { ArraySchema } from "@colyseus/schema"
 import { APIInterface, DetailedWorld, Crypto, CryptoSpawn, RockSpawn, WhiteSpace, Soil, SpawnType } from "chisel-api-interface";
-import { StaticPool } from "node-worker-threads-pool"
+import { BlockSchemaWrapper, BlockInterface } from "../Game/Helpers/BlockSchemaWrapper";
 import * as Schema from "../Rooms/shared/schemas"
 
 export default class WorldGenerator {
@@ -27,7 +27,7 @@ export default class WorldGenerator {
             let currentSoil : Soil = WorldGenerator.soilForLayer(sortedSoil, layer)
             for (let x = 0; x < worldInfo.width; x++) {
                 //Fetch current block
-                let currentBlock : Schema.Block = new Schema.Block()
+                const currentBlock = {} as BlockInterface
                 //First write soil to blockSchema
                 currentBlock.soilID = currentSoil.id;
                 if(filteredSpawns.length > 0 ) {
@@ -47,7 +47,7 @@ export default class WorldGenerator {
                     } 
 
                 } else currentBlock.spawnType = SpawnType.None
-                newLayer.blocks.push(currentBlock)
+                newLayer.blocks.push(BlockSchemaWrapper.blockToString(currentBlock))
             }
             worldSchema.layers.push(newLayer)
         }

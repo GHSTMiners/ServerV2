@@ -11,9 +11,7 @@ export default class PlayTimeManager extends Phaser.GameObjects.GameObject {
         this.m_gameEndTime = new Date(Date.now() + Config.gameDuration * 1000)
         this.m_playerStartTimes = new Map<Player, Date>()
         playerManager.on(PlayerManager.PLAYER_ADDED, this.handlePlayerJoined.bind(this))
-        playerManager.on(PlayerManager.PLAYER_REMOVED, this.handlePlayerLeave.bind(this))
-        console.log(this.m_gameEndTime.getTime() - this.m_gameStartTime.getTime());
-        
+        playerManager.on(PlayerManager.PLAYER_REMOVED, this.handlePlayerLeave.bind(this))        
     }
 
     private handlePlayerJoined(player : Player) {

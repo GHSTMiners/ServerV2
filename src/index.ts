@@ -13,9 +13,17 @@ globalJsdom('', {pretendToBeVisual: true})
 
 document.body.innerHTML = 'hello'
 
+var env = process.env.NODE_ENV || 'development';
 
 // Import arena config
+import arenaDevConfig from "./arena.config.dev";
 import arenaConfig from "./arena.config";
 
 // Create and listen on 2567 (or PORT environment variable.)
-listen(arenaConfig);
+var env = process.env.NODE_ENV || 'development';
+
+if(env == "production") {
+    listen(arenaConfig);
+} else {
+    listen(arenaDevConfig);
+}

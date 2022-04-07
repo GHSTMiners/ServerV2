@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "outDir": "build",
-    "target": "es6",
+    "target": "es2016",
     "module": "commonjs",
-    "lib": ["ES6"],
+    "lib": ["es6"],
     "strict": true,
     "declaration": true,
     "allowJs": true,
@@ -14,7 +14,7 @@
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": false,
+    "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     

@@ -9,7 +9,6 @@ export default class ClientManager extends Phaser.GameObjects.GameObject{
     }
 
     public handleClientJoined(client: Client, options : Protocol.AuthenticationInfo) {
-        console.log(`New client was registered with clientManager`)
         let clientWrapper : ClientWrapper = new ClientWrapper(client);
         this.clientWrappers.set(client, clientWrapper)
         this.emit(ClientManager.CLIENT_JOINED, clientWrapper, options)

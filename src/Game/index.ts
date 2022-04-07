@@ -12,12 +12,16 @@ export default class Game extends Phaser.Game {
        const config : Phaser.Types.Core.GameConfig = {
             type: Phaser.HEADLESS,
             banner: false,
+            
             audio: {
                 noAudio: true
             },
             scene: mainScene,
             physics: {
               default: 'arcade',
+              arcade: {
+                
+              }
             }
         }
         super(config)

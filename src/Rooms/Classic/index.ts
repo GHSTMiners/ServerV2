@@ -6,7 +6,6 @@ import http from 'http';
 import Game from "../../Game";
 import { APIInterface } from "chisel-api-interface";
 import Authenticator, { AuthenticatorState } from "../../Game/Helpers/Authenticator";
-import { result } from "lodash";
 import Config from "../../Config";
 import Logging from "../../Game/Helpers/Logging";
 import {v4 as uuidv4} from 'uuid';
@@ -42,7 +41,7 @@ export class Classic extends Room<Schema.World, any> {
       let authenticator : Authenticator = new Authenticator(this.presence, options, request)
       authenticator.authenticate().then(result => {
         if(result == AuthenticatorState.Authenticated) {
-          Logging.submitEvent("Player succesfully authenticated", 0, request.headers['cf-connecting-ip'] as string || request.socket.remoteAddress, options.gotchiId, options.walletAddress);
+          Logging.submitEvent("Player succesfully authenticated", 0, request, options.gotchiId, options.walletAddress);
           if(this.development_mode) {
             if(authenticator.roles().developer) {
               resolve(true)

@@ -12,6 +12,7 @@ import Block from "../../../Objects/Block";
 import Config from "../../../../Config";
 import PlayerCollisionManager from "../../Player/PlayerCollisionManager";
 import PlayerVitalsManager, { DefaultVitals } from "../../Player/PlayerVitalsManager";
+import { BlockInterface } from "../../../Helpers/BlockSchemaWrapper";
 
 export default class ExplosivesManager extends Phaser.GameObjects.GameObject {
     constructor(scene : Phaser.Scene, blockManager : BlockManager, playerManager : PlayerManager) {
@@ -81,7 +82,7 @@ export default class ExplosivesManager extends Phaser.GameObjects.GameObject {
             for (let y = renderRectangle.y; y < (renderRectangle.y + renderRectangle.height); y++) {
                 for (let x = renderRectangle.x; x < (renderRectangle.x + renderRectangle.width); x++) {
                     if(x >=0 && this.mainScene.worldInfo.width >= x && y >= 0 && this.mainScene.worldInfo.height >= y) {
-                        let blockSchema : Schema.Block = this.blockManager.blockAt(x, y)
+                        let blockSchema : BlockInterface = this.blockManager.blockAt(x, y)
                         if(blockSchema && blockSchema.spawnType != SpawnType.None) {
                             staticGroup.add(new Block(this.scene, blockSchema, x*Config.blockWidth+Config.blockWidth/2, y*Config.blockHeight+Config.blockHeight/2, Config.blockWidth, Config.blockHeight))
                         }
@@ -104,8 +105,11 @@ export default class ExplosivesManager extends Phaser.GameObjects.GameObject {
         this.mainScene.worldSchema.explosives.deleteAt(explosiveIndex)
         //Remove blocks from the world
         let blockPosition : Phaser.Geom.Point = explosive.blockPosition()
-        let block : Schema.Block | undefined =  this.blockManager.blockAt(blockPosition.x , blockPosition.y)
-        if(block) { block.spawnType = Chisel.SpawnType.None }
+        let block : BlockInterface | undefined =  this.blockManager.blockAt(blockPosition.x , blockPosition.y)
+        if(block) { 
+            block.spawnType = Chisel.SpawnType.None 
+            this.blockManager.updateBlockAt(blockPosition.x, blockPosition.y, block)
+        }
         let explosionCoordinates : ExplosionCoordinate[] = this.mainScene.worldInfo.explosives.find(({ id }) => id === explosive.explosiveSchema.explosiveID).explosion_coordinates
         let ownCoordinate = {x : 0, y : 0, explosive_id: explosive.explosiveSchema.explosiveID} as ExplosionCoordinate;
         explosionCoordinates.push(ownCoordinate)
@@ -117,9 +121,10 @@ export default class ExplosivesManager extends Phaser.GameObjects.GameObject {
                 player.vitalsManager().get(DefaultVitals.HEALTH).takeAmount(50)
             })
             //Destroy blocks
-            let block : Schema.Block | undefined =  this.blockManager.blockAt(explosionPoint.x, explosionPoint.y)
+            let block : BlockInterface | undefined =  this.blockManager.blockAt(explosionPoint.x, explosionPoint.y)
             if(block) {
                 block.spawnType = Chisel.SpawnType.None
+                this.blockManager.updateBlockAt(explosionPoint.x, explosionPoint.y, block)
             }
         })
         //Remove static bodies

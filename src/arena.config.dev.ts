@@ -26,11 +26,32 @@ export default Arena({
 
     },
 
-    initializeTransport: function() {
-        return new uWebSocketsTransport({
-            
-        })
-      },
+    // initializeTransport: function() {
+    //     return new uWebSocketsTransport({
+    //         /* options */
+    //     })
+    //   },
 
-    
+    initializeExpress: (app) => {
+        /**
+         * Bind your custom express routes here:
+         */
+        app.get("/", (req, res) => {
+            res.send("Nothing here fren!");
+        });
+
+        /**
+         * Bind @colyseus/monitor
+         * It is recommended to protect this route with a password.
+         * Read more: https://docs.colyseus.io/tools/monitor/
+         */
+        app.use("/colyseus", monitor());
+    },
+
+
+    beforeListen: () => {
+        /**
+         * Before before gameServer.listen() is called.
+         */
+    }
 });

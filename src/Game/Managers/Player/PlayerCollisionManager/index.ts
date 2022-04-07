@@ -11,6 +11,7 @@ import * as Protocol from "gotchiminer-multiplayer-protocol"
 import * as Schema from "../../../../Rooms/shared/schemas";
 import Config from "../../../../Config";
 import MainScene from "../../../Scenes/MainScene";
+import { BlockInterface } from "../../../Helpers/BlockSchemaWrapper";
 
 export default class PlayerCollisionManager extends Phaser.GameObjects.GameObject {
     constructor(scene : Phaser.Scene, playerManager : PlayerManager, blockManager : BlockManager, world : World) {
@@ -111,7 +112,7 @@ export default class PlayerCollisionManager extends Phaser.GameObjects.GameObjec
             for (let y = renderRectangle.y; y < (renderRectangle.y + renderRectangle.height); y++) {
                 for (let x = renderRectangle.x; x < (renderRectangle.x + renderRectangle.width); x++) {
                     if(x >=0 && this.world.width >= x && y >= 0 && this.world.height >= y) {
-                        let blockSchema : Schema.Block = this.blockManager.blockAt(x, y)
+                        let blockSchema : BlockInterface = this.blockManager.blockAt(x, y)
                         if(blockSchema && blockSchema.spawnType != SpawnType.None) {
                             staticGroup.add(new Block(this.scene, blockSchema, x*Config.blockWidth+Config.blockWidth/2, y*Config.blockHeight+Config.blockHeight/2, Config.blockWidth, Config.blockHeight))
                         }

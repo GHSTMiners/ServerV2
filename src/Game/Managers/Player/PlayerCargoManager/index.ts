@@ -1,5 +1,6 @@
 import { SpawnType } from "chisel-api-interface"
 import * as Schema from "../../../../Rooms/shared/schemas"
+import { BlockInterface } from "../../../Helpers/BlockSchemaWrapper"
 import Player from "../../../Objects/Player"
 import { DefaultVitals } from "../PlayerVitalsManager"
 
@@ -11,7 +12,7 @@ export default class PlayerCargoManager extends Phaser.GameObjects.GameObject {
         this.player = player
     }
 
-    public processBlock(block : Schema.Block) : boolean {
+    public processBlock(block : BlockInterface) : boolean {
         //Only process block if is a crypto spawn
         if(block.spawnType == SpawnType.Crypto) {
             //Only process block if there is space left

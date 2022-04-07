@@ -1,7 +1,8 @@
 import Config from "../../../Config"
 import * as Schema from "../../../Rooms/shared/schemas"
+import { BlockInterface } from "../../Helpers/BlockSchemaWrapper"
 export default class Block extends Phaser.GameObjects.Rectangle {
-    constructor(scene: Phaser.Scene, blockSchema: Schema.Block, x: number, y: number, width?: number, height?: number) {
+    constructor(scene: Phaser.Scene, blockSchema: BlockInterface, x: number, y: number, width?: number, height?: number) {
         super(scene, x, y, width, height) 
         this.blockSchema = blockSchema
         //Create a body for the rectangle
@@ -11,5 +12,5 @@ export default class Block extends Phaser.GameObjects.Rectangle {
         this.setSize(Config.blockWidth, Config.blockWidth)
     }
 
-    public readonly blockSchema : Schema.Block
+    public readonly blockSchema : BlockInterface
 }

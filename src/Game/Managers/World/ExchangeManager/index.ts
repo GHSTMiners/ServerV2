@@ -34,7 +34,8 @@ export default class ExchangeManager extends Phaser.GameObjects.GameObject {
     private calculateExchangeAmount(sourceCrypto : number, targetCrypto : number, amount : number) : number{
         let sourceExchangeCrypto : Schema.ExchangeEntry | undefined = this.mainScene.worldSchema.exchange.get(sourceCrypto.toString())
         let targetExchangeCrypto : Schema.ExchangeEntry | undefined = this.mainScene.worldSchema.exchange.get(targetCrypto.toString())
-        return amount * (sourceExchangeCrypto.usd_value / targetExchangeCrypto.usd_value);
+        let exchangeAmount = Math.round( amount * (sourceExchangeCrypto.usd_value / targetExchangeCrypto.usd_value) * 10 ) / 10;
+        return  exchangeAmount
     }
 
     private handlePlayerJoined(player : Player) {
@@ -52,7 +53,8 @@ export default class ExchangeManager extends Phaser.GameObjects.GameObject {
         exchangeNotification.targetCryptoId = message.targetCryptoId
         exchangeNotification.amount = message.amount
         //Check if player has crypto if so take it
-        if(player.walletManager().takeAmount(message.sourceCryptoId, message.amount)) {
+        if(player.walletManager().hasAmount(message.sourceCryptoId, message.amount)) {
+            player.walletManager().takeAmount(message.sourceCryptoId, message.amount)
             player.walletManager().addAmount(message.targetCryptoId, this.calculateExchangeAmount(message.sourceCryptoId, message.targetCryptoId, message.amount));
             exchangeNotification.accepted = true
         }

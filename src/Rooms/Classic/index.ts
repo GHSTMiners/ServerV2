@@ -9,11 +9,26 @@ import Authenticator, { AuthenticatorState } from "../../Game/Helpers/Authentica
 import Config from "../../Config";
 import Logging from "../../Game/Helpers/Logging";
 import {v4 as uuidv4} from 'uuid';
+import axios from "axios"
 
 export class Classic extends Room<Schema.World, any> {
 
-  onCreate (options:any) {
-    this.roomId = uuidv4();
+  async generateRoomId(worldID:number): Promise<string> {
+    return axios.post(`${Config.apiURL}/game/create` , {world_id: worldID}, {
+      headers: {
+          'X-API-Key': Config.apiKey
+      }
+  }).then(value => {
+    return value.data.room_id as string;
+  })
+  .catch(exception=> {
+      console.warn(exception);
+      return "";
+  })
+}
+
+  async onCreate (options:any) {
+    this.roomId = await this.generateRoomId(options.worldID);
     this.setState(new Schema.World());
     this.maxClients = 10;
     this.state.id = options.worldID;

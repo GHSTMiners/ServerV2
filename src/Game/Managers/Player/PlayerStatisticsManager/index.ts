@@ -1,7 +1,8 @@
+import Player from "../../../Objects/Player";
 import MainScene from "../../../Scenes/MainScene";
 
 export default class PlayerStatisticsManager extends Phaser.GameObjects.GameObject {
-    constructor(scene : Phaser.Scene) {
+    constructor(scene : Phaser.Scene, player: Player) {
         super(scene, "PlayerStatisticsManager")
         this.statistics = new Map<DefaultStatistics, number>()
     }
@@ -15,6 +16,17 @@ export default class PlayerStatisticsManager extends Phaser.GameObjects.GameObje
     public get(stat: DefaultStatistics) : number{
         let statistic : number | undefined = this.statistics.get(stat)
         return statistic ? statistic : 0 
+    }
+
+    public submit() {
+        let categories : string[] = []
+        let values : number[] = []
+        for(let item in DefaultStatistics) {
+            categories.push(item)
+            values.push(this.get(item as DefaultStatistics))
+        }
+
+        
     }
 
     private statistics : Map<DefaultStatistics, number> 

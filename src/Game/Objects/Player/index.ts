@@ -36,7 +36,7 @@ export default class Player extends Phaser.GameObjects.Rectangle {
         this.setPosition(playerSchema.playerState.x, playerSchema.playerState.y)
         this.setSize(Config.blockWidth*0.5, Config.blockHeight)
         //Create managers
-        this.m_statisticsManager = new PlayerStatisticsManager(scene);
+        this.m_statisticsManager = new PlayerStatisticsManager(scene, this);
         this.m_walletManager = new PlayerWalletManager(scene, this)
         this.m_buildingManager = new PlayerBuildingManager(scene, this)
         this.m_vitalsManager = new PlayerVitalsManager(scene, traits, playerSchema)

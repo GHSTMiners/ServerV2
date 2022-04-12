@@ -46,19 +46,6 @@ WORKDIR /home/node/app
 COPY package*.json ./
 COPY arena.env ./
 RUN chown -R node:node /home/node/app
-RUN apk add --no-cache --virtual .build-deps \
-    make \
-    g++ \
-    jpeg-dev \
-    cairo-dev \
-    giflib-dev \
-    pango-dev \
-    libtool \
-    autoconf \
-    automake \
-    && npm install --production \
-    && apk del .build-deps
-
 USER node
 COPY --from=builder /home/node/app/build ./build
 EXPOSE 2567

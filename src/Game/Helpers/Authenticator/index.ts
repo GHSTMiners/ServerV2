@@ -3,7 +3,6 @@ import axios from "axios"
 import { Client, Presence } from "colyseus";
 import * as Protocol from "gotchiminer-multiplayer-protocol"
 import AavegotchiInfoFetcher from '../AavegotchiInfoFetcher';
-import { AuthenticationInfo } from 'gotchiminer-multiplayer-protocol';
 import Config from '../../../Config';
 import Logging from '../Logging';
 

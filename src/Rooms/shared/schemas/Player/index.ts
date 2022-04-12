@@ -11,6 +11,7 @@ export class Player extends Schema {
     @type ("string") name: string = "aavegotchi";
     @type ("string") playerSessionID: string = "";
     @type ("number") gotchiID: number = 0;
+    @type ("string") walletAddress: string = "";
     @type ("string") chatColor: string = "#ffffff";
     @filter(function(this: Player, client: Client, value: Player['peerID']) { return this.playerSessionID == client.sessionId})
     @type ("string") peerID : string = ""

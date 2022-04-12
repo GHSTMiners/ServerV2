@@ -26,6 +26,7 @@ export default class PlayerManager extends Phaser.GameObjects.GameObject{
             let newPlayerSchema : Schema.Player = new Schema.Player()
             client.client.userData = newPlayerSchema
             newPlayerSchema.gotchiID = options.gotchiId
+            newPlayerSchema.walletAddress = options.walletAddress
             newPlayerSchema.name = gotchi.name
             const playerColor = chroma.random();
             newPlayerSchema.chatColor = playerColor.hex();
@@ -43,9 +44,11 @@ export default class PlayerManager extends Phaser.GameObjects.GameObject{
         })
     }
 
-    private handleClientLeave(client : ClientWrapper) {
+    private async handleClientLeave(client : ClientWrapper) {
         let player : Player | undefined = this.playerMap.get(client)
         if(player) {
+            const result = await player.statisticsManager().submit();
+            console.log(`${result}`)
             let playerIndex : number = this.room.state.players.indexOf(player.playerSchema)
             this.room.state.players.deleteAt(playerIndex)
             this.room.presence.del(`gotchi_${player.playerSchema.gotchiID}`)

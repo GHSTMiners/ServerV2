@@ -37,11 +37,11 @@ export default class ChatManager extends Phaser.GameObjects.GameObject {
 
     private handleMessageToServer(player : Player, message : Protocol.MessageToServer) {
         let response : Protocol.MessageFromServer = new Protocol.MessageFromServer();
-        response.msg = this.badWordsFilter.clean(message.msg);
+        response.msg = message.msg; //this.badWordsFilter.clean(message.msg);
         response.gotchiId = player.playerSchema.gotchiID;
         response.systemMessage = false;
         let serializedResponse : Protocol.Message = Protocol.MessageSerializer.serialize(response);
-        this.mainScene.room.broadcast(serializedResponse.name, serializedResponse.data)
+        this.mainScene.room.broadcast(serializedResponse.name, serializedResponse.data);   
     }
 
     private mainScene : MainScene

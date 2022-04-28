@@ -4,6 +4,7 @@ import * as Chisel from "chisel-api-interface"
 import MainScene from "../../../Scenes/MainScene";
 import { ExplosiveEntry } from "../../../../Rooms/shared/schemas/Player/ExplosiveEntry";
 import { MessageSerializer } from "gotchiminer-multiplayer-protocol";
+import { UpgradeTier } from "../PlayerUpgradeManager";
 
 export default class PlayerPurchaseManager extends Phaser.GameObjects.GameObject {
     constructor(scene : Phaser.Scene, player : Player) {
@@ -12,7 +13,50 @@ export default class PlayerPurchaseManager extends Phaser.GameObjects.GameObject
             this.mainScene = scene
         }
         this.player = player
+        this.player.client().messageRouter.addRoute(Protocol.PurchaseUpgrade, this.handlePurchaseUpgrade.bind(this))
         this.player.client().messageRouter.addRoute(Protocol.PurchaseExplosive, this.handlePurchaseExplosive.bind(this))
+    }
+
+    private handlePurchaseUpgrade(message : Protocol.PurchaseUpgrade) {
+        //Get upgrade
+        let upgrade : Chisel.Upgrade | undefined = this.mainScene.worldInfo.upgrades.find(upgrade => upgrade.id == message.id)
+        if(upgrade) {
+            //Get current tier
+            let currentTier : UpgradeTier = this.player.upgradeManager().upgrade(upgrade.id).tier()
+            //Check if request is for next tier in line
+            if((currentTier+1) == message.tier) {
+                //Check if player has the dough for this upgrade
+                let hasAmounts : boolean = true
+                upgrade.prices.forEach(price => {
+                    //Get tier price amount
+                    let tierPrice : number = 0;
+                    if(message.tier == Protocol.PurchaseUpgrade.Tier.Uncommon) tierPrice = price.tier_1
+                    else if(message.tier == Protocol.PurchaseUpgrade.Tier.Rare) tierPrice = price.tier_2
+                    else if(message.tier == Protocol.PurchaseUpgrade.Tier.Legendary) tierPrice = price.tier_3
+                    else if(message.tier == Protocol.PurchaseUpgrade.Tier.Mythical) tierPrice = price.tier_4
+                    else if(message.tier == Protocol.PurchaseUpgrade.Tier.Godlike) tierPrice = price.tier_5
+                    hasAmounts = hasAmounts && this.player.walletManager().hasAmount(price.crypto_id, tierPrice)
+                }, this)
+                if(hasAmounts) {
+                    //Take the money and process the upgrade
+                    upgrade.prices.forEach(price => {
+                        //Get tier price amount
+                        let tierPrice : number = 0;
+                        if(message.tier == Protocol.PurchaseUpgrade.Tier.Uncommon) tierPrice = price.tier_1
+                        else if(message.tier == Protocol.PurchaseUpgrade.Tier.Rare) tierPrice = price.tier_2
+                        else if(message.tier == Protocol.PurchaseUpgrade.Tier.Legendary) tierPrice = price.tier_3
+                        else if(message.tier == Protocol.PurchaseUpgrade.Tier.Mythical) tierPrice = price.tier_4
+                        else if(message.tier == Protocol.PurchaseUpgrade.Tier.Godlike) tierPrice = price.tier_5
+                        hasAmounts && this.player.walletManager().takeAmount(price.crypto_id, tierPrice)
+                    }, this)
+                    this.player.upgradeManager().upgrade(upgrade.id).increaseTier()
+                } else {
+                    console.debug(`Player cannot afford this upgrade`)
+                }
+            } else {
+                console.debug(`Player tried to skip a tier`)
+            }
+        }
     }
 
     private handlePurchaseExplosive(message : Protocol.PurchaseExplosive) {

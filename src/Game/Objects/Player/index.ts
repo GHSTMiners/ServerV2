@@ -12,6 +12,7 @@ import ClientWrapper from "../../Helpers/ClientWrapper";
 import PlayerStatisticsManager, { DefaultStatistics } from "../../Managers/Player/PlayerStatisticsManager";
 import PlayerExcavationManager from "../../Managers/Player/PlayerExcavationManager";
 import * as Chisel from "chisel-api-interface"
+import PlayerUpgradeManager from "../../Managers/Player/PlayerUpgradeManager";
 
 export default class Player extends Phaser.GameObjects.Rectangle {
     
@@ -44,6 +45,7 @@ export default class Player extends Phaser.GameObjects.Rectangle {
         this.m_purchaseManager = new PlayerPurchaseManager(scene, this)
         this.m_movementManager = new PlayerMovementManager(scene, this)
         this.m_cargoManager = new PlayerCargoManager(scene, this)
+        this.m_upgradeManager = new PlayerUpgradeManager(scene, this)
         //Create kill conditions
         this.m_vitalsManager.get(DefaultVitals.FUEL).on(PlayerVital.EMPTY, this.respawn.bind(this))
         this.m_vitalsManager.get(DefaultVitals.HEALTH).on(PlayerVital.EMPTY, this.respawn.bind(this))
@@ -85,6 +87,10 @@ export default class Player extends Phaser.GameObjects.Rectangle {
         return this.m_cargoManager
     }
 
+    public upgradeManager() : PlayerUpgradeManager {
+        return this.m_upgradeManager
+    }
+
     public movementManager() : PlayerMovementManager {
         return this.m_movementManager
     }
@@ -110,10 +116,13 @@ export default class Player extends Phaser.GameObjects.Rectangle {
     private m_skillManager : PlayerSkillManager
     private m_vitalsManager : PlayerVitalsManager
     private m_cargoManager : PlayerCargoManager
+    private m_upgradeManager : PlayerUpgradeManager
     private m_buildingManager : PlayerBuildingManager
     private m_movementManager : PlayerMovementManager
     private m_purchaseManager : PlayerPurchaseManager
     private m_statisticsManager : PlayerStatisticsManager
+    
+
     public playerSchema : Schema.Player
     static readonly RESPAWNED: unique symbol = Symbol();
 

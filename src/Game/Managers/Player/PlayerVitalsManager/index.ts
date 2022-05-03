@@ -3,12 +3,14 @@ import * as mathjs from "mathjs"
 import { Vital, Player } from "../../../../Rooms/shared/schemas"
 import { AavegotchiTraits } from "../../../Helpers/AavegotchiInfoFetcher"
 import MainScene from "../../../Scenes/MainScene"
+import { PlayerUpgrade, PlayerUpgradeManager } from "../PlayerUpgradeManager"
 
 export default class PlayerVitalsManager extends Phaser.GameObjects.GameObject {
-    constructor(scene : Phaser.Scene, traits : AavegotchiTraits, schema : Player) {
+    constructor(scene : Phaser.Scene, traits : AavegotchiTraits, schema : Player, upgradeManager : PlayerUpgradeManager) {
         super(scene, "PlayerVitalsManager")
         this.traits = traits
         this.schema = schema
+        this.upgradeManager = upgradeManager
         this.vitals = new Map<string, PlayerVital>()
         if(this.scene instanceof MainScene) {
             this.worldInfo = this.scene.worldInfo
@@ -30,25 +32,34 @@ export default class PlayerVitalsManager extends Phaser.GameObjects.GameObject {
         this.worldInfo.vitals.forEach(vital => {
             let newSchema : Vital = new Vital()
             this.schema.vitals.push(newSchema)
-            this.vitals.set(vital.name, new PlayerVital(this.scene, vital, newSchema, this.traits))
+            this.vitals.set(vital.name, new PlayerVital(this.scene, vital, newSchema, this.traits, this.upgradeManager.upgrades_for_vital(vital.id)))
         }, this)
     }
 
     private schema : Player
     private vitals : Map<string, PlayerVital>
+    private upgradeManager : PlayerUpgradeManager
     private readonly traits : AavegotchiTraits
     private readonly worldInfo : Chisel.DetailedWorld
 }
 
 
 export class PlayerVital extends Phaser.GameObjects.GameObject { 
-    constructor(scene : Phaser.Scene, vital : Chisel.Vital, schema : Vital, traits : AavegotchiTraits) {
+    constructor(scene : Phaser.Scene, vital : Chisel.Vital, schema : Vital, traits : AavegotchiTraits, upgrades : PlayerUpgrade[]) {
         super(scene, "PlayerVital")
         this.vital = vital
         this.traits = traits
         this.schema = schema
+        this.upgrades = upgrades
+        this.bindUpgrades()
         this.generateValues()
         this.reset()
+    }
+
+    private bindUpgrades() {
+        this.upgrades.forEach(upgrade => {
+            upgrade.on(PlayerUpgrade.TIER_CHANGED, this.generateValues)
+        }, this);
     }
 
     private generateValues() {
@@ -124,6 +135,7 @@ export class PlayerVital extends Phaser.GameObjects.GameObject {
     private m_maximum : number
     private m_initial : number
     private m_currentValue : number
+    private upgrades : PlayerUpgrade[]
     private readonly vital : Chisel.Vital
     private readonly traits : AavegotchiTraits
     static readonly DECREASED: unique symbol = Symbol();

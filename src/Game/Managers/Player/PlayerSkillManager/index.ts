@@ -3,12 +3,14 @@ import * as mathjs from "mathjs"
 import { Player, Skill } from "../../../../Rooms/shared/schemas"
 import { AavegotchiTraits } from "../../../Helpers/AavegotchiInfoFetcher"
 import MainScene from "../../../Scenes/MainScene"
+import { PlayerUpgradeManager, PlayerUpgrade } from "../PlayerUpgradeManager"
 
 export default class PlayerSkillManager extends Phaser.GameObjects.GameObject {
-    constructor(scene : Phaser.Scene, traits : AavegotchiTraits, schema : Player) {
+    constructor(scene : Phaser.Scene, traits : AavegotchiTraits, schema : Player, upgradeManager : PlayerUpgradeManager) {
         super(scene, "PlayerSkillManager")
         this.traits = traits
         this.schema = schema
+        this.upgradeManager = upgradeManager
         this.skills = new Map<string, PlayerSkill>()
         if(this.scene instanceof MainScene) {
             this.worldInfo = this.scene.worldInfo
@@ -24,25 +26,34 @@ export default class PlayerSkillManager extends Phaser.GameObjects.GameObject {
         this.worldInfo.skills.forEach(skill => {
             let newSchema : Skill = new Skill()
             this.schema.skills.push(newSchema)
-            this.skills.set(skill.name, new PlayerSkill(this.scene, skill, newSchema, this.traits))
+            this.skills.set(skill.name, new PlayerSkill(this.scene, skill, newSchema, this.traits, this.upgradeManager.upgrades_for_skill(skill.id)))
         }, this)
     }
 
     private schema : Player
     private skills : Map<string, PlayerSkill>
     private readonly traits : AavegotchiTraits
+    private upgradeManager : PlayerUpgradeManager
     private readonly worldInfo : Chisel.DetailedWorld
 }
 
 export class PlayerSkill extends Phaser.GameObjects.GameObject {
-    constructor(scene : Phaser.Scene, skill : Chisel.Skill, schema : Skill, traits : AavegotchiTraits) {
+    constructor(scene : Phaser.Scene, skill : Chisel.Skill, schema : Skill, traits : AavegotchiTraits, upgrades : PlayerUpgrade[]) {
         super(scene, "PlayerSkill")
         this.skill = skill
         this.traits = traits
         this.schema = schema
+        this.upgrades = upgrades
         this.schema.name = skill.name
+        this.bindUpgrades()
         this.generateValues()
         this.syncWithSchema()
+    }
+
+    private bindUpgrades() {
+        this.upgrades.forEach(upgrade => {
+            upgrade.on(PlayerUpgrade.TIER_CHANGED, this.generateValues)
+        }, this);
     }
 
     private generateValues() {
@@ -56,9 +67,9 @@ export class PlayerSkill extends Phaser.GameObjects.GameObject {
             eye_color: this.traits.eye_color
         }
         try {
-        this.minimum = mathjs.evaluate(this.skill.minimum, scope)
-        this.maximum = mathjs.evaluate(this.skill.maximum, scope)
-        this.initial = mathjs.evaluate(this.skill.initial, scope)
+            this.minimum = mathjs.evaluate(this.skill.minimum, scope)
+            this.maximum = mathjs.evaluate(this.skill.maximum, scope)
+            this.initial = mathjs.evaluate(this.skill.initial, scope)
         } catch(exception) {
             console.log(exception)
         }
@@ -78,6 +89,7 @@ export class PlayerSkill extends Phaser.GameObjects.GameObject {
     private minimum : number
     private maximum : number
     private initial : number
+    private upgrades : PlayerUpgrade[]
     private readonly skill : Chisel.Skill
     private readonly traits : AavegotchiTraits
 }

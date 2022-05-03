@@ -34,13 +34,25 @@ export class PlayerUpgrade extends Phaser.GameObjects.GameObject {
         return this.m_upgrade
     }
 
+    public formula_for_skill(skillId : number) : string | undefined {
+        let skill_effect : Chisel.UpgradeSkillEffect | undefined = this.upgrade().skill_effects.find(effect => effect.skill_id = skillId)
+        if(skill_effect) return skill_effect.formula
+        else return null
+    }
+
+    public formula_for_vital(vitalId : number) : string | undefined {
+        let vital_effect : Chisel.UpgradeVitalEffect | undefined = this.upgrade().vital_effects.find(effect => effect.vital_id = vitalId)
+        if(vital_effect) return vital_effect.formula
+        else return null
+    }
+
     private m_tier : UpgradeTier
     private m_upgrade : Chisel.Upgrade
     static readonly TIER_CHANGED: unique symbol = Symbol();
 
 }
 
-export default class PlayerUpgradeManager extends Phaser.GameObjects.GameObject {
+export class PlayerUpgradeManager extends Phaser.GameObjects.GameObject {
     constructor(scene : Phaser.Scene, player : Player) {
         super(scene, "PlayerUpgradeManager")
         if(scene instanceof MainScene) {

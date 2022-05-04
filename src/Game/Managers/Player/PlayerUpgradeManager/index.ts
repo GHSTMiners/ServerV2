@@ -16,7 +16,7 @@ export  enum UpgradeTier {
 export class PlayerUpgrade extends Phaser.GameObjects.GameObject {
     constructor(scene : Phaser.Scene, upgrade : Chisel.Upgrade, player: Player) {
         super(scene, "PlayerUpgrade")
-        this.m_tier = UpgradeTier.Godlike
+        this.m_tier = UpgradeTier.Common
         this.m_upgrade = upgrade
         this.m_player = player
         this.createSchema()
@@ -24,7 +24,7 @@ export class PlayerUpgrade extends Phaser.GameObjects.GameObject {
 
     private createSchema() {
         this.m_schema = new Upgrade()
-        this.m_schema.tier = 1
+        this.m_schema.tier = this.m_tier
         this.m_schema.id = this.m_upgrade.id
         this.m_player.playerSchema.upgrades.set(this.m_upgrade.id.toString(), this.m_schema)
     }

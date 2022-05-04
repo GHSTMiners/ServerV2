@@ -6,6 +6,7 @@ import { Vital } from "./Vital";
 import { Skill } from "./Skill";
 import { Client } from "colyseus";
 import { ExplosiveEntry } from "./ExplosiveEntry";
+import { Upgrade } from "./Upgrade";
 
 export class Player extends Schema {
     @type ("string") name: string = "aavegotchi";
@@ -16,6 +17,8 @@ export class Player extends Schema {
     @filter(function(this: Player, client: Client, value: Player['peerID']) { return this.playerSessionID == client.sessionId})
     @type ("string") peerID : string = ""
     @type (PlayerState) playerState : PlayerState = new PlayerState();
+    @filter(function(this: Player, client: Client, value: Player['upgrades']) { return this.playerSessionID == client.sessionId})
+    @type ({ map: Upgrade}) upgrades = new MapSchema<Upgrade>();
     @filter(function(this: Player, client: Client, value: Player['vitals']) { return this.playerSessionID == client.sessionId})
     @type ( [Vital] ) vitals = new ArraySchema<Vital>();
     @filter(function(this: Player, client: Client, value: Player['skills']) { return this.playerSessionID == client.sessionId})
@@ -26,4 +29,5 @@ export class Player extends Schema {
     @type ({ map: WalletEntry }) wallet = new MapSchema<WalletEntry>();
     @filter(function(this: Player, client: Client, value: Player['explosives']) { return this.playerSessionID == client.sessionId})
     @type ({ map: ExplosiveEntry}) explosives = new MapSchema<ExplosiveEntry>();
+
 }

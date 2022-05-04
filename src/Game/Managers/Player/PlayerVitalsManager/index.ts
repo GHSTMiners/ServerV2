@@ -1,16 +1,17 @@
 import * as Chisel from "chisel-api-interface"
 import * as mathjs from "mathjs"
-import { Vital, Player } from "../../../../Rooms/shared/schemas"
+import Player from "../../../Objects/Player";
+
+import { Vital } from "../../../../Rooms/shared/schemas"
 import { AavegotchiTraits } from "../../../Helpers/AavegotchiInfoFetcher"
 import MainScene from "../../../Scenes/MainScene"
 import { PlayerUpgrade, PlayerUpgradeManager } from "../PlayerUpgradeManager"
 
 export default class PlayerVitalsManager extends Phaser.GameObjects.GameObject {
-    constructor(scene : Phaser.Scene, traits : AavegotchiTraits, schema : Player, upgradeManager : PlayerUpgradeManager) {
+    constructor(scene : Phaser.Scene, traits : AavegotchiTraits, player : Player) {
         super(scene, "PlayerVitalsManager")
         this.traits = traits
-        this.schema = schema
-        this.upgradeManager = upgradeManager
+        this.player = player
         this.vitals = new Map<string, PlayerVital>()
         if(this.scene instanceof MainScene) {
             this.worldInfo = this.scene.worldInfo
@@ -31,14 +32,13 @@ export default class PlayerVitalsManager extends Phaser.GameObjects.GameObject {
     private createvitals () {
         this.worldInfo.vitals.forEach(vital => {
             let newSchema : Vital = new Vital()
-            this.schema.vitals.push(newSchema)
-            this.vitals.set(vital.name, new PlayerVital(this.scene, vital, newSchema, this.traits, this.upgradeManager.upgrades_for_vital(vital.id)))
+            this.player.playerSchema.vitals.push(newSchema)
+            this.vitals.set(vital.name, new PlayerVital(this.scene, vital, newSchema, this.traits, this.player.upgradeManager().upgrades_for_vital(vital.id)))
         }, this)
     }
 
-    private schema : Player
+    private player : Player
     private vitals : Map<string, PlayerVital>
-    private upgradeManager : PlayerUpgradeManager
     private readonly traits : AavegotchiTraits
     private readonly worldInfo : Chisel.DetailedWorld
 }
@@ -62,9 +62,9 @@ export class PlayerVital extends Phaser.GameObjects.GameObject {
         }, this);
     }
 
-    private generateValues() {
-        //Create scope
-        let scope = {
+    private generateInitialValues() {
+           //Create scope
+           let scope = {
             energy: this.traits.energy,
             aggressiveness: this.traits.aggression,
             spookiness: this.traits.spookiness,
@@ -78,7 +78,42 @@ export class PlayerVital extends Phaser.GameObjects.GameObject {
             this.m_initial = mathjs.evaluate(this.vital.initial, scope)
         } catch(exception) {
             console.log(exception)
-        }
+        } 
+    }
+
+    private applyUpgrades() {
+        this.upgrades.forEach(upgrade => {
+            //Create scope
+            let scope = {
+                original: 0,
+                tier: upgrade.tier(),
+                energy: this.traits.energy,
+                aggressiveness: this.traits.aggression,
+                spookiness: this.traits.spookiness,
+                brain_size: this.traits.brain_size,
+                eye_shape: this.traits.eye_shape,
+                eye_color: this.traits.eye_color
+            }
+            try {
+                scope.original = this.m_minimum
+                this.m_minimum = mathjs.evaluate(upgrade.formula_for_vital(this.vital.id), scope)
+
+                scope.original = this.m_maximum
+                this.m_maximum = mathjs.evaluate(upgrade.formula_for_vital(this.vital.id), scope)
+
+                scope.original = this.m_initial
+                this.m_initial = mathjs.evaluate(upgrade.formula_for_vital(this.vital.id), scope)
+                
+            } catch(exception) {
+                console.log(exception)
+            }
+
+        }, this)
+    }
+
+    private generateValues() {
+        this.generateInitialValues()
+        this.applyUpgrades()
     }
 
     private syncWithSchema() {

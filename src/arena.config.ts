@@ -30,7 +30,8 @@ export default Arena({
         return new uWebSocketsTransport({
             
         })
-      },
+    },
 
+    
     
 });

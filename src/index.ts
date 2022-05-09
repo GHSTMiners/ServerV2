@@ -7,6 +7,8 @@
  * Colyseus Server as documented here: 👉 https://docs.colyseus.io/server/api/#constructor-options 
  */
 import { listen } from "@colyseus/arena";
+import { Server, RedisPresence, MongooseDriver } from "colyseus"
+import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
 
 const globalJsdom = require('global-jsdom')
 globalJsdom('', {pretendToBeVisual: true})
@@ -23,7 +25,32 @@ import arenaConfig from "./arena.config";
 var env = process.env.NODE_ENV || 'development';
 
 if(env == "production") {
-    listen(arenaConfig);
+    //Configure redis
+    var redisPresence = new RedisPresence(
+        {
+            host: process.env.REDIS_HOST || 'localhost',
+            port: parseInt(process.env.REDIS_PORT) || 6379,
+        }
+    )
+
+    //Configure Mongoose
+    var mongooseDrive = new MongooseDriver(process.env.MONGOOSE_URI || 'mongodb://localhost:27017/gotchiminer');
+
+    //Configure transport
+    var transport = new uWebSocketsTransport();
+
+    //Configure game server
+    const port = parseInt(process.env.PORT, 10) || 2567
+    const gameServer = new Server(
+        {
+            presence: redisPresence,
+            driver: mongooseDrive,
+            transport: transport,
+        }
+    )
+    gameServer.listen(port)
+
+    arenaConfig.initializeGameServer(gameServer)
 } else {
     listen(arenaDevConfig);
 }

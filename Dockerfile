@@ -62,5 +62,12 @@ RUN apk add --no-cache --virtual .build-deps \
 USER node
 COPY --from=builder /home/node/app/build ./build
 EXPOSE 2567
+
 ENV NODE_ENV production
+ENV REDIS_HOST localhost
+ENV REDIS_PORT 6379
+ENV MONGOOSE_URI mongodb://localhost:27017/gotchiminer
+
+ENV PORT 2567
+
 CMD [ "node", "build/src/index.js" ]

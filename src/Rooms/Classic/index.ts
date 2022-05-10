@@ -1,6 +1,6 @@
 import { Room, Client, ServerError } from "colyseus";
 import WorldGenerator from "../../Generators/WorldGenerator";
-import * as Schema from "../shared/schemas";
+import * as Schema from "../../Schemas";
 import * as Protocol from "gotchiminer-multiplayer-protocol"
 import http from 'http';
 import Game from "../../Game";

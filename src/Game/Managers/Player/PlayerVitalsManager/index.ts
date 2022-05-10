@@ -2,7 +2,7 @@ import * as Chisel from "chisel-api-interface"
 import * as mathjs from "mathjs"
 import Player from "../../../Objects/Player";
 
-import { Vital } from "../../../../Rooms/shared/schemas"
+import { Vital } from "../../../../Schemas"
 import { AavegotchiTraits } from "../../../Helpers/AavegotchiInfoFetcher"
 import MainScene from "../../../Scenes/MainScene"
 import { PlayerUpgrade, PlayerUpgradeManager } from "../PlayerUpgradeManager"

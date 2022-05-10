@@ -1,4 +1,4 @@
-import * as Schema from "../../../../Rooms/shared/schemas"
+import * as Schema from "../../../../Schemas"
 import Player from "../../../Objects/Player"
 
 export default class PlayerInventroyManager extends Phaser.GameObjects.GameObject {

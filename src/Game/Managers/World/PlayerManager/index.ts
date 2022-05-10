@@ -1,4 +1,4 @@
-import * as Schema from "../../../../Rooms/shared/schemas"
+import * as Schema from "../../../../Schemas"
 import { Scene } from "phaser";
 import Player from "../../../Objects/Player";
 import ClientManager from "../../World/ClientManager";

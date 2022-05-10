@@ -1,5 +1,5 @@
 import { SpawnType } from "chisel-api-interface"
-import * as Schema from "../../../../Rooms/shared/schemas"
+import * as Schema from "../../../../Schemas"
 import { BlockInterface } from "../../../Helpers/BlockSchemaWrapper"
 import Player from "../../../Objects/Player"
 import { DefaultVitals } from "../PlayerVitalsManager"

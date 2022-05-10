@@ -1,5 +1,5 @@
 import Config from "../../../Config";
-import * as Schema from "../../../Rooms/shared/schemas";
+import * as Schema from "../../../Schemas";
 import { AavegotchiTraits } from "../../Helpers/AavegotchiInfoFetcher";
 import PlayerBuildingManager from "../../Managers/Player/PlayerBuildingManager";
 import PlayerCargoManager from "../../Managers/Player/PlayerCargoManager";

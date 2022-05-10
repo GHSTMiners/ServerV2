@@ -1,4 +1,4 @@
-import { World } from "../../../../Rooms/shared/schemas"
+import { World } from "../../../../Schemas"
 import Player from "../../../Objects/Player"
 import BlockManager from "../../World/BlockManager"
 import PlayerManager from "../../World/PlayerManager"
@@ -8,7 +8,7 @@ import PlayerMovementManager from "../PlayerMovementManager";
 import { DefaultSkills } from "../PlayerSkillManager";
 import { DefaultVitals } from "../PlayerVitalsManager";
 import * as Protocol from "gotchiminer-multiplayer-protocol"
-import * as Schema from "../../../../Rooms/shared/schemas";
+import * as Schema from "../../../../Schemas";
 import Config from "../../../../Config";
 import MainScene from "../../../Scenes/MainScene";
 import { BlockInterface } from "../../../Helpers/BlockSchemaWrapper";

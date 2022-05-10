@@ -1,5 +1,5 @@
-import { World } from "../../../../Rooms/shared/schemas/World/World";
-import * as Schema from "../../../../Rooms/shared/schemas";
+import { World } from "../../../../Schemas/World/World";
+import * as Schema from "../../../../Schemas";
 import Config from "../../../../Config";
 import MainScene from "../../../Scenes/MainScene";
 import { BlockSchemaWrapper, BlockInterface } from "../../../Helpers/BlockSchemaWrapper";

@@ -3,9 +3,9 @@ import BlockManager from "../BlockManager";
 import PlayerManager from "../../World/PlayerManager";
 import * as Protocol from "gotchiminer-multiplayer-protocol"
 import MainScene from "../../../Scenes/MainScene";
-import { ExplosiveEntry } from "../../../../Rooms/shared/schemas/Player/ExplosiveEntry";
+import { ExplosiveEntry } from "../../../../Schemas/Player/ExplosiveEntry";
 import Explosive from "../../../Objects/Explosive";
-import * as Schema from "../../../../Rooms/shared/schemas";
+import * as Schema from "../../../../Schemas";
 import * as Chisel from "chisel-api-interface";
 import { ExplosionCoordinate, SpawnType } from "chisel-api-interface";
 import Block from "../../../Objects/Block";

@@ -2,7 +2,7 @@ import Player from "../../../Objects/Player";
 import * as Protocol from "gotchiminer-multiplayer-protocol"
 import * as Chisel from "chisel-api-interface"
 import MainScene from "../../../Scenes/MainScene";
-import { Upgrade } from "../../../../Rooms/shared/schemas/Player/Upgrade";
+import { Upgrade } from "../../../../Schemas/Player/Upgrade";
 
 export  enum UpgradeTier {
     Common = 0,

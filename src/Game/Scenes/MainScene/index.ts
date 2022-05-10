@@ -1,6 +1,6 @@
 import { DetailedWorld } from "chisel-api-interface"
 import { Room } from "colyseus"
-import { World } from "../../../Rooms/shared/schemas/World/World"
+import { World } from "../../../Schemas/World/World"
 import BlockManager from "../../Managers/World/BlockManager"
 import ChatManager from "../../Managers/World/ChatManager"
 import ClientManager from "../../Managers/World/ClientManager"

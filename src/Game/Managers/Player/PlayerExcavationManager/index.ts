@@ -3,8 +3,8 @@ import { SpawnType, World } from "chisel-api-interface";
 import { ChangeDirection } from "gotchiminer-multiplayer-protocol";
 import { Scene } from "phaser";
 import Config from "../../../../Config";
-import * as Schema from "../../../../Rooms/shared/schemas";
-import { CargoEntry } from "../../../../Rooms/shared/schemas";
+import * as Schema from "../../../../Schemas";
+import { CargoEntry } from "../../../../Schemas";
 import * as Protocol from "gotchiminer-multiplayer-protocol"
 import Player from "../../../Objects/Player";
 import MainScene from "../../../Scenes/MainScene";

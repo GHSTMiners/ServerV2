@@ -6,13 +6,16 @@ import { APIInterface } from "chisel-api-interface";
 /**
  * Import your Room files
  */
-import { Classic } from "./Rooms/Classic";
+import { Lobby, Classic } from "./Rooms";
 import Config from "./Config";
 
 export default Arena({
     getId: () => "Gotchiminer",
 
     initializeGameServer: (gameServer) => {
+        //Add lobby
+        gameServer.define(`Lobby`, Lobby);
+        //Add rooms for every map
         let apiInterface : APIInterface = new APIInterface(Config.apiURL);
         apiInterface.worlds().then(worlds => {
             worlds.forEach(world => {

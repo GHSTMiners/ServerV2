@@ -14,7 +14,7 @@ export default class Authenticator {
         this.m_failedReason = ""
     }
 
-    public async authenticate() : Promise<AuthenticatorState> {
+    public async authenticate_full() : Promise<AuthenticatorState> {
         let status : AuthenticatorState = await this.validateAuthenticationInfo()
         if(status != AuthenticatorState.AuthenticationFailed) {
             status = await this.validateWalletOwnership()

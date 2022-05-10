@@ -30,7 +30,7 @@ export class Classic extends Room<Schema.World, any> {
   async onCreate (options:any) {
     this.roomId = await this.generateRoomId(options.worldID);
     this.setState(new Schema.World());
-    this.maxClients = 10;
+    this.maxClients = 5;
     this.state.id = options.worldID;
     this.development_mode = options.development_mode
     //Generate blocks for world
@@ -54,7 +54,7 @@ export class Classic extends Room<Schema.World, any> {
   onAuth(client: Client, options: Protocol.AuthenticationInfo, request: http.IncomingMessage) : Promise<any>{
     return new Promise((resolve, reject) => {
       let authenticator : Authenticator = new Authenticator(this.presence, options, request)
-      authenticator.authenticate().then(result => {
+      authenticator.authenticate_full().then(result => {
         if(result == AuthenticatorState.Authenticated) {
           Logging.submitEvent("Player succesfully authenticated", 0, request, options.gotchiId, options.walletAddress);
           if(this.development_mode) {

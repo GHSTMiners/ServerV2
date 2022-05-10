@@ -1,9 +1,13 @@
 import http from "http";
+import * as Schema from "../../Schemas";
 import { Room, Client } from "colyseus";
 
-export class Lobby extends Room {
+export class Lobby extends Room<Schema.Lobby, any> {
     // When room is initialized
-    onCreate (options: any) { }
+    onCreate (options: any) { 
+        this.setState(new Schema.Lobby())
+        this.maxClients = 5
+    }
 
     // Authorize client based on provided options before WebSocket handshake is complete
     onAuth (client: Client, options: any, request: http.IncomingMessage) { }

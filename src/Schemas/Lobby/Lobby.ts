@@ -1,12 +1,16 @@
 import { Schema, ArraySchema, type, filterChildren, MapSchema} from "@colyseus/schema"
-import { Client } from "colyseus";
-import Config from "../../../../Config";
+import { PlayerState } from "./PlayerState";
 
 export class Lobby extends Schema {
-    @type ("number") id: number = 0;
-    @type ("number") clients: number = 40;
+    @type ("string") game_id : string = '';
+    @type ("number") countdown : number = 300
+    @type ("number") state : LobbyState = LobbyState.Open
+    @type ([PlayerState]) players = new ArraySchema<PlayerState>();
 }
 
-export class Player extends Schema {
-
+export enum LobbyState {
+    Open = 1,
+    Full = 2,
+    Starting = 3,
+    Started = 4,
 }

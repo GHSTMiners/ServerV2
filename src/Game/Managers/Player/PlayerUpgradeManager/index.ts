@@ -79,6 +79,25 @@ export class PlayerUpgradeManager extends Phaser.GameObjects.GameObject {
         }, this)
     }
 
+    public stringToTierNr(name : string) : number {
+        switch(name) {
+            case "Common":
+                return 0;
+            case "Uncommon":
+                return 1;
+            case "Rare":
+                return 2;
+            case "Legendary":
+                return 3;
+            case "Mythical":
+                return 4;
+            case "Godlike":
+                return 5;
+            default:
+                return -1;
+        }
+    }
+
     public upgrade(id : number) : PlayerUpgrade | undefined {
         return this.m_upgrades.get(id)
     }

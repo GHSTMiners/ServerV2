@@ -24,18 +24,19 @@ export default class PlayerPurchaseManager extends Phaser.GameObjects.GameObject
             //Get current tier
             let currentTier : UpgradeTier = this.player.upgradeManager().upgrade(upgrade.id).tier()
             //Check if request is for next tier in line
-            if((currentTier+1) == message.tier) {
+            if((currentTier+1) == this.player.upgradeManager().stringToTierNr(message.tier.toString())) {
                 //Check if player has the dough for this upgrade
                 let hasAmounts : boolean = true
                 upgrade.prices.forEach(price => {
                     //Get tier price amount
                     let tierPrice : number = 0;
-                    if(message.tier == Protocol.PurchaseUpgrade.Tier.Uncommon) tierPrice = price.tier_1
-                    else if(message.tier == Protocol.PurchaseUpgrade.Tier.Rare) tierPrice = price.tier_2
-                    else if(message.tier == Protocol.PurchaseUpgrade.Tier.Legendary) tierPrice = price.tier_3
-                    else if(message.tier == Protocol.PurchaseUpgrade.Tier.Mythical) tierPrice = price.tier_4
-                    else if(message.tier == Protocol.PurchaseUpgrade.Tier.Godlike) tierPrice = price.tier_5
-                    hasAmounts = hasAmounts && this.player.walletManager().hasAmount(price.crypto_id, tierPrice)
+                    let tier : number = this.player.upgradeManager().stringToTierNr(message.tier.toString())
+                    if(tier == Protocol.PurchaseUpgrade.Tier.Uncommon) tierPrice = price.tier_1
+                    else if(tier == Protocol.PurchaseUpgrade.Tier.Rare) tierPrice = price.tier_2
+                    else if(tier == Protocol.PurchaseUpgrade.Tier.Legendary) tierPrice = price.tier_3
+                    else if(tier == Protocol.PurchaseUpgrade.Tier.Mythical) tierPrice = price.tier_4
+                    else if(tier == Protocol.PurchaseUpgrade.Tier.Godlike) tierPrice = price.tier_5
+                    if(tierPrice != null) hasAmounts = hasAmounts && this.player.walletManager().hasAmount(price.crypto_id, tierPrice)
                 }, this)
                 if(hasAmounts) {
                     //Take the money and process the upgrade

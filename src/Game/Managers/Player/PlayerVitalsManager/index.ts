@@ -58,7 +58,7 @@ export class PlayerVital extends Phaser.GameObjects.GameObject {
 
     private bindUpgrades() {
         this.upgrades.forEach(upgrade => {
-            upgrade.on(PlayerUpgrade.TIER_CHANGED, this.generateValues)
+            upgrade.on(PlayerUpgrade.TIER_CHANGED, this.generateValues, this)
         }, this);
     }
 

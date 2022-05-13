@@ -1,6 +1,6 @@
 import { Schema, ArraySchema, type, filterChildren, MapSchema} from "@colyseus/schema"
 import { Client } from "colyseus";
-import Config from "../../../../Config";
+import Config from "../../Config";
 import { Player } from "../Player";
 import { Explosive } from "./Explosive";
 import { Layer } from "./Layer";
@@ -16,4 +16,3 @@ export class World extends Schema {
     @type ([Player]) players = new ArraySchema<Player>();
     @type ([Layer]) layers = new ArraySchema<Layer>();
 }
-

@@ -1,24 +1,21 @@
-import {Client} from "colyseus"
-import ClientWrapper from "../../../Helpers/ClientWrapper"
-import * as Protocol from "gotchiminer-multiplayer-protocol"
+import { Client } from "colyseus";
+import ClientWrapper from "../../../Helpers/ClientWrapper";
 
-export default class ClientManager extends Phaser.GameObjects.GameObject{
-    constructor(scene : Phaser.Scene) {
-        super(scene, "ClientManager")
+export default class LobbyManager {
+    constructor() {
         this.clientWrappers = new Map<Client, ClientWrapper>()
+
     }
 
-    public handleClientJoined(client: Client, options : Protocol.AuthenticationInfo) {
+    public handleClientJoined(client : Client) {
         let clientWrapper : ClientWrapper = new ClientWrapper(client);
         this.clientWrappers.set(client, clientWrapper)
-        this.emit(ClientManager.CLIENT_JOINED, clientWrapper, options)
     }
 
     public handleClientLeave(client : Client) {
         let clientWrapper : ClientWrapper | undefined = this.clientWrappers.get(client)
         if(clientWrapper) {
             this.clientWrappers.delete(client)
-            this.emit(ClientManager.CLIENT_LEFT, clientWrapper)
         }
     }
 
@@ -29,7 +26,6 @@ export default class ClientManager extends Phaser.GameObjects.GameObject{
         }
     }
 
-    static readonly CLIENT_JOINED: unique symbol = Symbol();
-    static readonly CLIENT_LEFT: unique symbol = Symbol();
     private clientWrappers : Map<Client, ClientWrapper>
+
 }

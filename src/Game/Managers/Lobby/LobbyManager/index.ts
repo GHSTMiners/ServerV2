@@ -4,7 +4,6 @@ import ClientWrapper from "../../../Helpers/ClientWrapper";
 export default class LobbyManager {
     constructor() {
         this.clientWrappers = new Map<Client, ClientWrapper>()
-
     }
 
     public handleClientJoined(client : Client) {

@@ -1,19 +1,25 @@
 import { Client } from "colyseus";
-import ClientWrapper from "../../../Helpers/ClientWrapper";
+import * as Schema from "../../Schemas";
+import ClientWrapper from "../../Game/Helpers/ClientWrapper";
+import PlayerSeatManager from "../PlayerSeatManager/PlayerSeatManager";
 
 export default class LobbyManager {
-    constructor() {
+    constructor(schema : Schema.Lobby) {
         this.clientWrappers = new Map<Client, ClientWrapper>()
+        this.playerSeatManager = new PlayerSeatManager(schema)
     }
 
     public handleClientJoined(client : Client) {
         let clientWrapper : ClientWrapper = new ClientWrapper(client);
         this.clientWrappers.set(client, clientWrapper)
+        this.playerSeatManager.handleClientJoined(clientWrapper)
+
     }
 
     public handleClientLeave(client : Client) {
         let clientWrapper : ClientWrapper | undefined = this.clientWrappers.get(client)
         if(clientWrapper) {
+            this.playerSeatManager.handleClientLeave(clientWrapper)
             this.clientWrappers.delete(client)
         }
     }
@@ -26,5 +32,6 @@ export default class LobbyManager {
     }
 
     private clientWrappers : Map<Client, ClientWrapper>
+    private playerSeatManager : PlayerSeatManager
 
 }

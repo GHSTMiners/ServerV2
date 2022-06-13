@@ -1,7 +1,7 @@
 import http from "http";
 import * as Schema from "../../Schemas";
 import { Room, Client } from "colyseus";
-import LobbyManager from "../../Game/Managers/Lobby/LobbyManager";
+import LobbyManager from "../../Lobby/LobbyManager";
 
 
 export class Lobby extends Room<Schema.Lobby, any> {
@@ -9,12 +9,12 @@ export class Lobby extends Room<Schema.Lobby, any> {
     onCreate (options: any) { 
         this.setState(new Schema.Lobby())
         this.maxClients = 5
-        this.lobbyManager = new LobbyManager()
+        this.lobbyManager = new LobbyManager(this.state)
     }
 
     // Authorize client based on provided options before WebSocket handshake is complete
     onAuth (client: Client, options: any, request: http.IncomingMessage) {
-
+        return true;
     }
 
     // When client successfully join the room

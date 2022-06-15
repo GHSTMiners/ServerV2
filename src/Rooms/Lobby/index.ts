@@ -2,6 +2,7 @@ import http from "http";
 import * as Schema from "../../Schemas";
 import { Room, Client } from "colyseus";
 import LobbyManager from "../../Lobby/LobbyManager";
+import CountdownManager from "../../Lobby/CountdownManager/CountdownManager";
 
 
 export class Lobby extends Room<Schema.Lobby, any> {
@@ -9,7 +10,8 @@ export class Lobby extends Room<Schema.Lobby, any> {
     onCreate (options: any) { 
         this.setState(new Schema.Lobby())
         this.maxClients = 5
-        this.lobbyManager = new LobbyManager(this.state)
+        this.lobbyManager = new LobbyManager(this)
+        this.countdownManager = new CountdownManager(this, this.lobbyManager)
     }
 
     // Authorize client based on provided options before WebSocket handshake is complete
@@ -31,4 +33,5 @@ export class Lobby extends Room<Schema.Lobby, any> {
     onDispose () { }
 
     private lobbyManager : LobbyManager
+    private countdownManager : CountdownManager
 }

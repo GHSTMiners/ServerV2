@@ -25,6 +25,10 @@ export default class PlayerSeatManager {
         }
     }
 
+    public seats() : PlayerSeat[] {
+        return Array<PlayerSeat>.from(this.playerSeats.values())
+    }
+
     private schema : Schema.Lobby
     private playerSeats : Map<ClientWrapper, PlayerSeat>
     private playerSeatStates : Map<ClientWrapper, Schema.PlayerSeatState>

@@ -68,6 +68,9 @@ export default class CountdownManager {
         // Create a new room
         const matchRoom = await matchMaker.createRoom(`${chosenMap}_Classic`, {});
 
+        // Sync with schema
+        this.lobby.state.game_id = matchRoom.roomId
+        this.lobby.state.state = LobbyState.Started
     }
 
     private lobby : Lobby

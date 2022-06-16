@@ -18,8 +18,8 @@ document.body.innerHTML = 'hello'
 var env = process.env.NODE_ENV || 'development';
 
 // Import arena config
-import arenaDevConfig from "./arena.config.dev";
-import arenaConfig from "./arena.config";
+import arenaDevConfig from "./Config/arena.config.dev";
+import arenaConfig from "./Config/arena.config";
 
 // Create and listen on 2567 (or PORT environment variable.)
 var env = process.env.NODE_ENV || 'development';

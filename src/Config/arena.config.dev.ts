@@ -6,9 +6,8 @@ import { APIInterface } from "chisel-api-interface";
 /**
  * Import your Room files
  */
-import { Lobby, Classic } from "./Rooms";
-
-import Config from "./Config";
+import { Lobby, Classic } from "../Rooms";
+import Config from ".";
 
 export default Arena({
     getId: () => "Gotchiminer",
@@ -30,12 +29,32 @@ export default Arena({
 
     },
 
-    initializeTransport: function() {
-        return new uWebSocketsTransport({
-            
-        })
+    // initializeTransport: function() {
+    //     return new uWebSocketsTransport({
+    //         /* options */
+    //     })
+    //   },
+
+    initializeExpress: (app) => {
+        /**
+         * Bind your custom express routes here:
+         */
+        app.get("/", (req, res) => {
+            res.send("Nothing here fren!");
+        });
+
+        /**
+         * Bind @colyseus/monitor
+         * It is recommended to protect this route with a password.
+         * Read more: https://docs.colyseus.io/tools/monitor/
+         */
+        app.use("/colyseus", monitor());
     },
 
-    
-    
+
+    beforeListen: () => {
+        /**
+         * Before before gameServer.listen() is called.
+         */
+    }
 });

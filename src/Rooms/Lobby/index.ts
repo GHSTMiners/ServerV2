@@ -12,6 +12,8 @@ export class Lobby extends Room<Schema.Lobby, any> {
         this.maxClients = 5
         this.lobbyManager = new LobbyManager(this)
         this.countdownManager = new CountdownManager(this, this.lobbyManager)
+        this.onMessage("*", (client: Client, type: string | number, message: string) => this.lobbyManager.handleMessage(client, type as string, message))
+
     }
 
     // Authorize client based on provided options before WebSocket handshake is complete

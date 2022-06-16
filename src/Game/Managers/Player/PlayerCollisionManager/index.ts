@@ -29,7 +29,7 @@ export default class PlayerCollisionManager extends Phaser.GameObjects.GameObjec
 
 
         //Find top of world
-        let worldHeight : number = -Config.skyLayers
+        let worldHeight : number = 1000
         if(scene instanceof MainScene) {
             scene.worldInfo.backgrounds.forEach(background =>{
                 if(background.ending_layer < worldHeight) worldHeight = background.ending_layer

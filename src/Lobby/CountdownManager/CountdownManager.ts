@@ -13,7 +13,7 @@ export default class CountdownManager {
         this.lobby = lobby
         this.lobbyManager = lobbyManager
         this.intervalTimer = setInterval(this.handleCountDown.bind(this), 1000)
-        this.timeRemaining = 30
+        this.timeRemaining = 60
     }
 
     private handleCountDown() {

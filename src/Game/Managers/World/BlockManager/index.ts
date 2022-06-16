@@ -2,7 +2,7 @@ import { World } from "../../../../Schemas/World/World";
 import * as Schema from "../../../../Schemas";
 import Config from "../../../../Config";
 import MainScene from "../../../Scenes/MainScene";
-import { BlockSchemaWrapper, BlockInterface } from "../../../Helpers/BlockSchemaWrapper";
+import { BlockSchemaWrapper, BlockInterface } from "../../../../Helpers/BlockSchemaWrapper";
 
 export default class BlockManager extends Phaser.GameObjects.GameObject {
     constructor(scene : Phaser.Scene, world : World) {

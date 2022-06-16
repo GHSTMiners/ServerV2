@@ -11,7 +11,7 @@ import * as Protocol from "gotchiminer-multiplayer-protocol"
 import * as Schema from "../../../../Schemas";
 import Config from "../../../../Config";
 import MainScene from "../../../Scenes/MainScene";
-import { BlockInterface } from "../../../Helpers/BlockSchemaWrapper";
+import { BlockInterface } from "../../../../Helpers/BlockSchemaWrapper";
 
 export default class PlayerCollisionManager extends Phaser.GameObjects.GameObject {
     constructor(scene : Phaser.Scene, playerManager : PlayerManager, blockManager : BlockManager, world : World) {

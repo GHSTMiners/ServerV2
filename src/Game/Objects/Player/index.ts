@@ -1,6 +1,6 @@
 import Config from "../../../Config";
 import * as Schema from "../../../Schemas";
-import { AavegotchiTraits } from "../../Helpers/AavegotchiInfoFetcher";
+import { AavegotchiTraits } from "../../../Helpers/AavegotchiInfoFetcher";
 import PlayerBuildingManager from "../../Managers/Player/PlayerBuildingManager";
 import PlayerCargoManager from "../../Managers/Player/PlayerCargoManager";
 import PlayerMovementManager from "../../Managers/Player/PlayerMovementManager";
@@ -8,7 +8,7 @@ import PlayerPurchaseManager from "../../Managers/Player/PlayerPurchaseManager";
 import PlayerSkillManager from "../../Managers/Player/PlayerSkillManager";
 import PlayerVitalsManager, { DefaultVitals, PlayerVital } from "../../Managers/Player/PlayerVitalsManager";
 import PlayerWalletManager from "../../Managers/Player/PlayerWalletManager";
-import ClientWrapper from "../../Helpers/ClientWrapper";
+import ClientWrapper from "../../../Helpers/ClientWrapper";
 import PlayerStatisticsManager, { DefaultStatistics } from "../../Managers/Player/PlayerStatisticsManager";
 import PlayerExcavationManager from "../../Managers/Player/PlayerExcavationManager";
 import * as Chisel from "chisel-api-interface"

@@ -1,5 +1,5 @@
 import axios from "axios"
-import Config from "../../../Config"
+import Config from "../../Config"
 import http from 'http';
 
 export default class Logging {

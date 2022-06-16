@@ -1,6 +1,6 @@
 import { Client } from "colyseus";
 import * as Schema from "../../Schemas";
-import ClientWrapper from "../../Game/Helpers/ClientWrapper";
+import ClientWrapper from "../../Helpers/ClientWrapper";
 import PlayerSeatManager from "../PlayerSeatManager/PlayerSeatManager";
 import { Lobby } from "../../Rooms/Lobby";
 

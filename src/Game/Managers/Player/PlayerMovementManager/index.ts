@@ -1,7 +1,7 @@
 import {ChangeDirection} from "gotchiminer-multiplayer-protocol";
 import Config from "../../../../Config";
 import * as Schema from "../../../../Schemas"
-import ClientWrapper from "../../../Helpers/ClientWrapper";
+import ClientWrapper from "../../../../Helpers/ClientWrapper";
 import Player from "../../../Objects/Player";
 import PlayerExcavationManager from "../PlayerExcavationManager";
 import { DefaultSkills } from "../PlayerSkillManager";

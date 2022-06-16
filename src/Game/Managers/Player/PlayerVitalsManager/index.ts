@@ -3,7 +3,7 @@ import * as mathjs from "mathjs"
 import Player from "../../../Objects/Player";
 
 import { Vital } from "../../../../Schemas"
-import { AavegotchiTraits } from "../../../Helpers/AavegotchiInfoFetcher"
+import { AavegotchiTraits } from "../../../../Helpers/AavegotchiInfoFetcher"
 import MainScene from "../../../Scenes/MainScene"
 import { PlayerUpgrade, PlayerUpgradeManager } from "../PlayerUpgradeManager"
 

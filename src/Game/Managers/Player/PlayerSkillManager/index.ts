@@ -1,7 +1,7 @@
 import * as Chisel from "chisel-api-interface"
 import * as mathjs from "mathjs"
 import { Skill } from "../../../../Schemas"
-import { AavegotchiTraits } from "../../../Helpers/AavegotchiInfoFetcher"
+import { AavegotchiTraits } from "../../../../Helpers/AavegotchiInfoFetcher"
 import MainScene from "../../../Scenes/MainScene"
 import { PlayerUpgradeManager, PlayerUpgrade } from "../PlayerUpgradeManager"
 import Player from "../../../Objects/Player";

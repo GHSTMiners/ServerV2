@@ -1,6 +1,6 @@
 import Config from "../../../Config"
 import * as Schema from "../../../Schemas"
-import { BlockInterface } from "../../Helpers/BlockSchemaWrapper"
+import { BlockInterface } from "../../../Helpers/BlockSchemaWrapper"
 export default class Block extends Phaser.GameObjects.Rectangle {
     constructor(scene: Phaser.Scene, blockSchema: BlockInterface, x: number, y: number, width?: number, height?: number) {
         super(scene, x, y, width, height) 

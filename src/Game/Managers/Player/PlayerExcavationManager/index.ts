@@ -12,7 +12,7 @@ import BlockManager from "../../World/BlockManager";
 import { DefaultSkills } from "../PlayerSkillManager";
 import { DefaultVitals } from "../PlayerVitalsManager";
 import { DefaultStatistics } from "../PlayerStatisticsManager";
-import { BlockInterface } from "../../../Helpers/BlockSchemaWrapper";
+import { BlockInterface } from "../../../../Helpers/BlockSchemaWrapper";
 export default class PlayerExcavationManager extends Phaser.GameObjects.GameObject {
     constructor(scene : Phaser.Scene, player : Player) {
         super(scene, "PlayerExcavationManager")

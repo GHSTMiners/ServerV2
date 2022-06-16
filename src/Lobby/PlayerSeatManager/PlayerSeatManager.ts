@@ -1,4 +1,4 @@
-import ClientWrapper from "../../Game/Helpers/ClientWrapper";
+import ClientWrapper from "../../Helpers/ClientWrapper";
 import PlayerSeat from "../PlayerSeat/PlayerSeat";
 import * as Schema from "../../Schemas";
 

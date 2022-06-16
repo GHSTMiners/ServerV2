@@ -12,7 +12,7 @@ import Block from "../../../Objects/Block";
 import Config from "../../../../Config";
 import PlayerCollisionManager from "../../Player/PlayerCollisionManager";
 import PlayerVitalsManager, { DefaultVitals } from "../../Player/PlayerVitalsManager";
-import { BlockInterface } from "../../../Helpers/BlockSchemaWrapper";
+import { BlockInterface } from "../../../../Helpers/BlockSchemaWrapper";
 
 export default class ExplosivesManager extends Phaser.GameObjects.GameObject {
     constructor(scene : Phaser.Scene, blockManager : BlockManager, playerManager : PlayerManager) {

@@ -5,9 +5,9 @@ import * as Protocol from "gotchiminer-multiplayer-protocol"
 import http from 'http';
 import Game from "../../Game";
 import { APIInterface } from "chisel-api-interface";
-import Authenticator, { AuthenticatorState } from "../../Game/Helpers/Authenticator";
+import Authenticator, { AuthenticatorState } from "../../Helpers/Authenticator";
 import Config from "../../Config";
-import Logging from "../../Game/Helpers/Logging";
+import Logging from "../../Helpers/Logging";
 import {v4 as uuidv4} from 'uuid';
 import axios from "axios"
 

@@ -1,8 +1,8 @@
 import Web3 from 'web3';
 import { Contract } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils/types'
-import diamondABI from '../../../../contracts/aavegotchiFacet.json';
-import Config from '../../../Config';
+import diamondABI from '../../../contracts/aavegotchiFacet.json';
+import Config from '../../Config';
 
 export class AavegotchiTraits {
     constructor(traits : number[]) {

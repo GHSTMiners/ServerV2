@@ -1,4 +1,5 @@
 import * as Schema from "../../Schemas";
+import * as _ from "lodash"
 import { LobbyState } from "../../Schemas";
 import { matchMaker } from "colyseus";
 import { Lobby } from "../../Rooms";
@@ -23,27 +24,50 @@ export default class CountdownManager {
 
         // Lock loby at 15 seconds remaining
         if(this.timeRemaining == 15) {
+            this.lobby.lock()
             this.lobby.state.state = LobbyState.Locked
         }
 
         // Start game when timer expires
         if(this.timeRemaining <= 0) {
             clearInterval(this.intervalTimer)
-            this.lobby.state.state = LobbyState.Starting
             this.startGame()
         }
     }
 
-    private startGame() {
-        // Get map with most votes
+    private async startGame() {
+        this.lobby.state.state = LobbyState.Starting
+        // Create a histogram of the votes
         let seats : PlayerSeat[] = this.lobbyManager.seatManager().seats()
-        let scores = Array<number>()
+        let voteHistogram : Map<number, number> = new Map<number, number>()
         seats.forEach(seat => {
-            scores.push(seat.mapVote())
+            if(voteHistogram.has(seat.mapVote())) {
+                voteHistogram.set(seat.mapVote(), voteHistogram.get(seat.mapVote()))
+            } else {
+                voteHistogram.set(seat.mapVote(), 1)
+            }
         })
-        histogram(scores)
 
-        matchMaker.createRoom()
+        // Get map canidates that have the highest amount of votes
+        let highestVoteCount : number = 0;
+        let mapCandidates : Array<number>
+        voteHistogram.forEach((map, voteCount) => {
+            //If there is a map with more votes than previous candidates, discard all old candidates
+            if(voteCount > highestVoteCount) {
+                mapCandidates = []
+                highestVoteCount = voteCount
+            }
+            if(voteCount >= highestVoteCount) {
+                mapCandidates.push(map)
+            }
+        })
+
+        // Pick a random map from map candidates
+        let chosenMap : number = _.sample<number>(mapCandidates)
+
+        // Create a new room
+        const matchRoom = await matchMaker.createRoom(`${chosenMap}_Classic`, {});
+
     }
 
     private lobby : Lobby

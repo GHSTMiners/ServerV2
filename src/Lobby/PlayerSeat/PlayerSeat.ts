@@ -1,4 +1,4 @@
-import ClientWrapper from "../../Game/Helpers/ClientWrapper";
+import ClientWrapper from "../../Helpers/ClientWrapper";
 import * as Protocol from "gotchiminer-multiplayer-protocol"
 import * as Schema from "../../Schemas";
 

@@ -50,6 +50,7 @@
     "chisel-api-interface": "^1.11.0",
     "chroma-js": "^2.4.2",
     "colyseus": "^0.14.20",
+    "generate-password-ts": "^1.6.3",
     "global-jsdom": "8.4.0",
     "gotchiminer-multiplayer-protocol": "^1.5.0",
     "jsdom": "19.0.0",

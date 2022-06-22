@@ -33,6 +33,10 @@ export class Classic extends Room<Schema.World, any> {
     this.maxClients = 5;
     this.state.id = options.worldID;
     this.development_mode = options.development_mode
+    if(options.password) {
+      this.setPrivate(true)
+      this.password = options.password
+    }
     //Generate blocks for world
     var self = this;
     let apiInterface = new APIInterface(Config.apiURL)
@@ -53,6 +57,13 @@ export class Classic extends Room<Schema.World, any> {
 
   onAuth(client: Client, options: Protocol.AuthenticationInfo, request: http.IncomingMessage) : Promise<any>{
     return new Promise((resolve, reject) => {
+      if(this.password.length > 0 ) {
+        if(options.password != this.password) {
+          Logging.submitEvent("Player didn't know the password to the room", 500, request, options.gotchiId, options.walletAddress)
+          reject(new ServerError(400, "Invalid password"))
+          return;
+        }
+      }
       let authenticator : Authenticator = new Authenticator(this.presence, options, request)
       authenticator.authenticate_full().then(result => {
         if(result == AuthenticatorState.Authenticated) {
@@ -91,5 +102,6 @@ export class Classic extends Room<Schema.World, any> {
     this.game.destroy(false, false)
   }
   private game : Game
+  private password : string
   private development_mode : boolean
 }

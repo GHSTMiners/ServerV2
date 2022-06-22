@@ -6,6 +6,7 @@ import { Lobby } from "../../Rooms";
 import LobbyManager from "../LobbyManager";
 import PlayerSeat from "../PlayerSeat/PlayerSeat";
 import { APIInterface, World } from "chisel-api-interface";
+import generator from "generate-password-ts";
 import Config from "../../Config";
 
 export default class CountdownManager {
@@ -86,10 +87,18 @@ export default class CountdownManager {
 
     private async startGame() {
         this.lobby.state.state = LobbyState.Starting
+        // Generate a password for the room
+        let password: string = generator.generate({
+            length: 10,
+            numbers: true
+        });
         // Create a new room
-        const matchRoom = await matchMaker.createRoom(`${this.chosenMap}_Classic`, {});
+        const matchRoom = await matchMaker.createRoom(`${this.chosenMap}_Classic`, {
+            password : password
+        });
         // Sync with schema
         this.lobby.state.game_id = matchRoom.roomId
+        this.lobby.state.password = password
         this.lobby.state.state = LobbyState.Started
     }
 

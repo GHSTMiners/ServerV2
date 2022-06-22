@@ -67,7 +67,7 @@ export default class Player extends Phaser.GameObjects.Rectangle {
         this.m_movementManager.m_excavationManager.cancelDrilling()
         this.m_cargoManager.empty()
         this.m_vitalsManager.resetAll()
-        this.m_movementManager.moveToSurface()
+        this.m_movementManager.moveToNearestPortal()
         this.emit(Player.RESPAWNED)
     }
 

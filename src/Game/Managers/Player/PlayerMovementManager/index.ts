@@ -6,6 +6,7 @@ import Player from "../../../Objects/Player";
 import PlayerExcavationManager from "../PlayerExcavationManager";
 import { DefaultSkills } from "../PlayerSkillManager";
 import { DefaultVitals, PlayerVital } from "../PlayerVitalsManager";
+import MainScene from "../../../Scenes/MainScene";
 
 
 export default class PlayerMovementManager extends Phaser.GameObjects.GameObject {
@@ -22,6 +23,18 @@ export default class PlayerMovementManager extends Phaser.GameObjects.GameObject
         if(this.player.body instanceof Phaser.Physics.Arcade.Body && !this.m_excavationManager.isDrilling()) {
             this.player.body.setMaxVelocityX(this.player.skillManager().get(DefaultSkills.MOVING_SPEED).value() * Config.blockWidth)
             this.player.body.setMaxVelocityY(this.player.skillManager().get(DefaultSkills.FLYING_SPEED).value() * Config.blockHeight) 
+        }
+    }
+
+    public moveToNearestPortal() {
+        if(this.moveTween) this.moveTween.stop()
+        if(this.moveTween) this.scene.tweens.remove(this.moveTween)
+        if(this.player.body instanceof Phaser.Physics.Arcade.Body && !this.m_excavationManager.isDrilling()) {
+            let nearestPortalBlockPosition : Phaser.Geom.Point = this.player.buildingManager().nearestSpawnPortal()
+            let nearestPortalPosition : Phaser.Geom.Point = new Phaser.Geom.Point(Config.blockWidth * (nearestPortalBlockPosition.x-0.5), Config.blockHeight * (nearestPortalBlockPosition.y-1))
+            this.player.setPosition(nearestPortalPosition.x, nearestPortalPosition.y)
+            this.player.body.setVelocity(0, 0)
+            this.player.body.setAcceleration(0, 0)
         }
     }
 

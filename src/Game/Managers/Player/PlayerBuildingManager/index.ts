@@ -41,6 +41,42 @@ export default class PlayerBuildingManager extends Phaser.GameObjects.GameObject
         }
     }
 
+    public nearestSpawnPortal() : Phaser.Geom.Point {
+        //Find the closest portal above the player
+        let nearestBuildingDistance : number = Number.MAX_SAFE_INTEGER
+        let selectedBuilding : Building | undefined;
+        this.buildings.forEach(building => {
+            if(building.type == "Portal") {
+                let playerPosition : Phaser.Geom.Point = this.player.movementManager().blockPosition()
+                let buildingPosition : Phaser.Geom.Point = new Phaser.Geom.Point(building.spawn_x, building.spawn_y)
+                if(buildingPosition.y < playerPosition.y) {
+                    let currentBuildingDistance : number = Phaser.Math.Distance.BetweenPoints(buildingPosition, playerPosition)
+                    if(currentBuildingDistance < nearestBuildingDistance) {
+                        nearestBuildingDistance = currentBuildingDistance
+                        selectedBuilding = building
+                    }
+                }
+            }
+        })
+        if(selectedBuilding) return new Phaser.Geom.Point(selectedBuilding.spawn_x, selectedBuilding.spawn_y)
+        // If no portal was found above the player, just find the nearest portal
+        nearestBuildingDistance = Number.MAX_SAFE_INTEGER
+        this.buildings.forEach(building => {
+            if(building.type == "Portal") {
+            let playerPosition : Phaser.Geom.Point = this.player.movementManager().blockPosition()
+            let buildingPosition : Phaser.Geom.Point = new Phaser.Geom.Point(building.spawn_x, building.spawn_y)
+                let currentBuildingDistance : number = Phaser.Math.Distance.BetweenPoints(buildingPosition, playerPosition)
+                if(currentBuildingDistance < nearestBuildingDistance) {
+                    nearestBuildingDistance = currentBuildingDistance
+                    selectedBuilding = building
+                }
+            }
+        })
+        if(selectedBuilding) return new Phaser.Geom.Point(selectedBuilding.spawn_x, selectedBuilding.spawn_y)
+        // If no portal was found, just return (0, 0)
+        return new Phaser.Geom.Point(0, 0)
+    }
+
     private buildings : Map<number, Building>
     private player : Player
 }

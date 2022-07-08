@@ -118,7 +118,7 @@ export default class ExplosivesManager extends Phaser.GameObjects.GameObject {
             let explosionPoint : Phaser.Geom.Point = new Phaser.Geom.Point(blockPosition.x + coordinate.y, blockPosition.y + coordinate.x)
             //Take health from player
             this.playerManager.playersAt(explosionPoint).forEach(player => {
-                player.vitalsManager().get(DefaultVitals.HEALTH).takeAmount(50)
+                player.vitalsManager().get(DefaultVitals.HEALTH).takeAmount(200)
             })
             //Destroy blocks
             let block : BlockInterface | undefined =  this.blockManager.blockAt(explosionPoint.x, explosionPoint.y)

@@ -5,7 +5,7 @@ export default class Config {
     public static gravity : number = 600
     public static blockWidth : number = 128
     public static blockHeight : number = 128
-    public static explosiveTimeout = 5000
+    public static explosiveTimeout = 3000
     public static gameDuration = 30 * 60 
     public static blockWidthOffset = Config.blockWidth / 2
     public static blockHeightOffset = Config.blockHeight / 2

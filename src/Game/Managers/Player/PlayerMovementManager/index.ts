@@ -7,6 +7,7 @@ import PlayerExcavationManager from "../PlayerExcavationManager";
 import { DefaultSkills } from "../PlayerSkillManager";
 import { DefaultVitals, PlayerVital } from "../PlayerVitalsManager";
 import MainScene from "../../../Scenes/MainScene";
+import { DefaultStatistics } from "../PlayerStatisticsManager";
 
 
 export default class PlayerMovementManager extends Phaser.GameObjects.GameObject {
@@ -122,6 +123,10 @@ export default class PlayerMovementManager extends Phaser.GameObjects.GameObject
         }
     }
 
+    protected updateStatistics(): void {
+        this.player.statisticsManager().addAmount(DefaultStatistics.TRAVELED_DISTANCE, 
+            Phaser.Math.Distance.Between(this.player.playerSchema.playerState.x, this.player.playerSchema.playerState.y, this.player.x, this.player.y))
+    }
     
     protected syncWithSchema(): void {
         //Sync drilldirection

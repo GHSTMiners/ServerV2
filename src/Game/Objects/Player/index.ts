@@ -13,6 +13,7 @@ import PlayerStatisticsManager, { DefaultStatistics } from "../../Managers/Playe
 import PlayerExcavationManager from "../../Managers/Player/PlayerExcavationManager";
 import * as Chisel from "chisel-api-interface"
 import { PlayerUpgradeManager } from "../../Managers/Player/PlayerUpgradeManager";
+import MainScene from "../../Scenes/MainScene";
 
 export default class Player extends Phaser.GameObjects.Rectangle {
     
@@ -59,6 +60,11 @@ export default class Player extends Phaser.GameObjects.Rectangle {
         })
         this.vitalsManager().get(DefaultVitals.FUEL).on(PlayerVital.DECREASED, (amount : number) => {
             this.statisticsManager().addAmount(DefaultStatistics.FUEL_CONSUMED, amount)
+        })
+        this.walletManager().on(PlayerWalletManager.ADDED_CRYPTO, (cryptoId : number, amount : number) => {
+            // Conver to dollar value
+            let dollarValue : number = (scene as MainScene).exchangeManager.dollarValue(cryptoId, amount)
+            this.statisticsManager().addAmount(DefaultStatistics.TOTAL_CRYPTO_MINED, dollarValue)
         })
         this.on(Player.RESPAWNED, () => this.statisticsManager().addAmount(DefaultStatistics.DEATHS))
     }

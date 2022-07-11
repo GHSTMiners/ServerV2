@@ -31,6 +31,12 @@ export default class ExchangeManager extends Phaser.GameObjects.GameObject {
         }, this);
     }
 
+    public dollarValue(crypto : number, amount : number) : number{
+        let exchangeCrypto : Schema.ExchangeEntry | undefined = this.mainScene.worldSchema.exchange.get(crypto.toString())
+        let exchangeAmount = Math.round( amount * exchangeCrypto.usd_value )
+        return exchangeAmount
+    }
+
     private calculateExchangeAmount(sourceCrypto : number, targetCrypto : number, amount : number) : number{
         let sourceExchangeCrypto : Schema.ExchangeEntry | undefined = this.mainScene.worldSchema.exchange.get(sourceCrypto.toString())
         let targetExchangeCrypto : Schema.ExchangeEntry | undefined = this.mainScene.worldSchema.exchange.get(targetCrypto.toString())

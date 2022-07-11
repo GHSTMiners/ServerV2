@@ -24,6 +24,8 @@ export default class PlayerWalletManager extends Phaser.GameObjects.GameObject {
             walletEntry.amount = amount
             this.player.playerSchema.wallet.set(walletEntry.cryptoID.toString(), walletEntry)
         }
+        this.emit(PlayerWalletManager.ADDED_CRYPTO, cryptoID, amount)
+
     }
 
     public takeAmount(cryptoID : number, amount : number) {
@@ -34,6 +36,7 @@ export default class PlayerWalletManager extends Phaser.GameObjects.GameObject {
             } else return false
         } else return false
     }
+    static readonly ADDED_CRYPTO: unique symbol = Symbol();
 
     private player : Player
 }

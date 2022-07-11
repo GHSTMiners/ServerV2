@@ -29,26 +29,28 @@ export default class PlayerPurchaseManager extends Phaser.GameObjects.GameObject
                 let hasAmounts : boolean = true
                 upgrade.prices.forEach(price => {
                     //Get tier price amount
-                    let tierPrice : number = 0;
+                    let tierPrice : number | undefined = null;
                     let tier : number = this.player.upgradeManager().stringToTierNr(message.tier.toString())
                     if(tier == Protocol.PurchaseUpgrade.Tier.Uncommon) tierPrice = price.tier_1
                     else if(tier == Protocol.PurchaseUpgrade.Tier.Rare) tierPrice = price.tier_2
                     else if(tier == Protocol.PurchaseUpgrade.Tier.Legendary) tierPrice = price.tier_3
                     else if(tier == Protocol.PurchaseUpgrade.Tier.Mythical) tierPrice = price.tier_4
                     else if(tier == Protocol.PurchaseUpgrade.Tier.Godlike) tierPrice = price.tier_5
-                    if(tierPrice != null) hasAmounts = hasAmounts && this.player.walletManager().hasAmount(price.crypto_id, tierPrice)
+                    else hasAmounts = false
+                    if(tierPrice) hasAmounts = (hasAmounts && this.player.walletManager().hasAmount(price.crypto_id, tierPrice))
                 }, this)
                 if(hasAmounts) {
                     //Take the money and process the upgrade
                     upgrade.prices.forEach(price => {
                         //Get tier price amount
                         let tierPrice : number = 0;
-                        if(message.tier == Protocol.PurchaseUpgrade.Tier.Uncommon) tierPrice = price.tier_1
-                        else if(message.tier == Protocol.PurchaseUpgrade.Tier.Rare) tierPrice = price.tier_2
-                        else if(message.tier == Protocol.PurchaseUpgrade.Tier.Legendary) tierPrice = price.tier_3
-                        else if(message.tier == Protocol.PurchaseUpgrade.Tier.Mythical) tierPrice = price.tier_4
-                        else if(message.tier == Protocol.PurchaseUpgrade.Tier.Godlike) tierPrice = price.tier_5
-                        hasAmounts && this.player.walletManager().takeAmount(price.crypto_id, tierPrice)
+                        let tier : number = this.player.upgradeManager().stringToTierNr(message.tier.toString())
+                        if(tier == Protocol.PurchaseUpgrade.Tier.Uncommon) tierPrice = price.tier_1
+                        else if(tier == Protocol.PurchaseUpgrade.Tier.Rare) tierPrice = price.tier_2
+                        else if(tier == Protocol.PurchaseUpgrade.Tier.Legendary) tierPrice = price.tier_3
+                        else if(tier == Protocol.PurchaseUpgrade.Tier.Mythical) tierPrice = price.tier_4
+                        else if(tier == Protocol.PurchaseUpgrade.Tier.Godlike) tierPrice = price.tier_5
+                        this.player.walletManager().takeAmount(price.crypto_id, tierPrice)
                     }, this)
                     this.player.upgradeManager().upgrade(upgrade.id).increaseTier()
                 } else {

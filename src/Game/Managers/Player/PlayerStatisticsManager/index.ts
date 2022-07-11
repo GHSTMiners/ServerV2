@@ -43,7 +43,6 @@ export default class PlayerStatisticsManager extends Phaser.GameObjects.GameObje
                 categories: categories.join(','),
                 values: values.join(',')
             }, {
-                
                 headers: {
                     'X-API-KEY': Config.apiKey
                 }

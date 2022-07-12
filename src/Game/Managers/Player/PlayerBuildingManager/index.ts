@@ -8,7 +8,7 @@ import Config from "../../../../Config";
 
 export default class PlayerBuildingManager extends Phaser.GameObjects.GameObject {
     constructor(scene : Phaser.Scene, player : Player) {
-        super(scene, "PlayerMovementManager")
+        super(scene, "PlayerBuildingManager")
         scene.add.existing(this)
         this.player = player
         this.buildings = new Map<number, Building>()

@@ -14,6 +14,7 @@ import PlayerExcavationManager from "../../Managers/Player/PlayerExcavationManag
 import * as Chisel from "chisel-api-interface"
 import { PlayerUpgradeManager } from "../../Managers/Player/PlayerUpgradeManager";
 import MainScene from "../../Scenes/MainScene";
+import PlayerDiagnosticsManager from "../../Managers/Player/PlayerDiagnosticsManager";
 
 export default class Player extends Phaser.GameObjects.Rectangle {
     
@@ -38,6 +39,7 @@ export default class Player extends Phaser.GameObjects.Rectangle {
         this.setPosition(playerSchema.playerState.x, playerSchema.playerState.y)
         this.setSize(Config.blockWidth*0.5, Config.blockHeight)
         //Create managers
+        this.m_diagnosticsManager = new PlayerDiagnosticsManager(scene, this);
         this.m_statisticsManager = new PlayerStatisticsManager(scene, this);
         this.m_walletManager = new PlayerWalletManager(scene, this)
         this.m_buildingManager = new PlayerBuildingManager(scene, this)
@@ -118,6 +120,10 @@ export default class Player extends Phaser.GameObjects.Rectangle {
     public statisticsManager() : PlayerStatisticsManager {
         return this.m_statisticsManager
     }
+
+    public diagnosticManager() : PlayerDiagnosticsManager {
+        return this.m_diagnosticsManager
+    }
     
     public client() : ClientWrapper {
         return this.m_client
@@ -133,6 +139,7 @@ export default class Player extends Phaser.GameObjects.Rectangle {
     private m_movementManager : PlayerMovementManager
     private m_purchaseManager : PlayerPurchaseManager
     private m_statisticsManager : PlayerStatisticsManager
+    private m_diagnosticsManager : PlayerDiagnosticsManager
     
 
     public playerSchema : Schema.Player

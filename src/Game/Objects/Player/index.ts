@@ -65,6 +65,12 @@ export default class Player extends Phaser.GameObjects.Rectangle {
             // Conver to dollar value
             let dollarValue : number = (scene as MainScene).exchangeManager.dollarValue(cryptoId, amount)
             this.statisticsManager().addAmount(DefaultStatistics.TOTAL_CRYPTO_MINED, dollarValue)
+            this.statisticsManager().addAmount(DefaultStatistics.ENDGAME_CRYPTO, dollarValue)
+        })
+        this.walletManager().on(PlayerWalletManager.TAKEN_CRYPTO, (cryptoId : number, amount : number) => {
+            // Conver to dollar value
+            let dollarValue : number = (scene as MainScene).exchangeManager.dollarValue(cryptoId, amount)
+            this.statisticsManager().takeAmount(DefaultStatistics.ENDGAME_CRYPTO, dollarValue)
         })
         this.on(Player.RESPAWNED, () => this.statisticsManager().addAmount(DefaultStatistics.DEATHS))
     }

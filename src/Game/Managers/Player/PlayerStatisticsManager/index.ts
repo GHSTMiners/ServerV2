@@ -16,6 +16,17 @@ export default class PlayerStatisticsManager extends Phaser.GameObjects.GameObje
         else this.statistics.set(stat, amount)
     }
 
+    public takeAmount( stat : DefaultStatistics, amount : number = 1) {
+        let statistic : number | undefined = this.statistics.get(stat)
+        if(statistic) this.statistics.set(stat, statistic - amount)
+    }
+
+    public set(stat: DefaultStatistics, value : number) {
+        let statistic : number | undefined = this.statistics.get(stat)
+        if(statistic) this.statistics.set(stat, value)
+        else this.statistics.set(stat, value)
+    }
+
     public get(stat: DefaultStatistics) : number{
         let statistic : number | undefined = this.statistics.get(stat)
         return statistic ? statistic : 0 

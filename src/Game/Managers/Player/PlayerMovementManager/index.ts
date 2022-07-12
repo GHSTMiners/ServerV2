@@ -83,6 +83,8 @@ export default class PlayerMovementManager extends Phaser.GameObjects.GameObject
         this.updateMovementState()
         //Apply player movement
         this.applyUserInput()
+        //Process statistics
+        this.updateStatistics()
         //Synchronize with schema
         this.syncWithSchema()
 

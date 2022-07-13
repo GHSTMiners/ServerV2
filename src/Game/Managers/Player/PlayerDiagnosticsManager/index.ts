@@ -6,7 +6,7 @@ export default class PlayerDiagnosticsManager extends Phaser.GameObjects.GameObj
         super(scene, "PlayerDiagnosticsManager")
         scene.add.existing(this)
         this.player = player
-        player.client().messageRouter.addRoute(Protocol.ActivateBuilding, this.handlePingMessage.bind(this))       
+        player.client().messageRouter.addRoute(Protocol.Ping, this.handlePingMessage.bind(this))       
     }
 
 

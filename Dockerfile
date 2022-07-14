@@ -23,6 +23,7 @@ COPY package*.json ./
 RUN npm config set unsafe-perm true
 
 # Since we are all good let us, install our dependencies
+RUN npm install -g npm
 RUN npm install -g typescript
 RUN npm install -g ts-node
 USER root

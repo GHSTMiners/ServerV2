@@ -26,6 +26,7 @@ RUN npm config set unsafe-perm true
 RUN npm install -g npm
 RUN npm install -g typescript
 RUN npm install -g ts-node
+RUN chown node:node -R /app
 USER node
 RUN npm install
 

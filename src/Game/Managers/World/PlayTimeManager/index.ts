@@ -18,7 +18,7 @@ export default class PlayTimeManager extends Phaser.GameObjects.GameObject {
 
         //Start game commence timer
         var env = process.env.NODE_ENV || 'production';
-        if(env == "production") {
+        if(env == "development") {
             this.startGame()
             this.m_mainScene.room.state.gameStartUTC = (new Date(Date.now())).getUTCDate()
         } else {

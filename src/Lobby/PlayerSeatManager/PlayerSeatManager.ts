@@ -29,6 +29,14 @@ export default class PlayerSeatManager {
         return Array<PlayerSeat>.from(this.playerSeats.values())
     }
 
+    public readyCount() : number {
+        let readyCounter : number = 0
+        this.playerSeats.forEach(seat => {
+            if(seat.ready()) readyCounter += 1
+        })
+        return readyCounter
+    }
+
     private schema : Schema.Lobby
     private playerSeats : Map<ClientWrapper, PlayerSeat>
     private playerSeatStates : Map<ClientWrapper, Schema.PlayerSeatState>

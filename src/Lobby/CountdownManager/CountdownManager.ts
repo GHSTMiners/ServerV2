@@ -14,8 +14,10 @@ export default class CountdownManager {
         this.lobby = lobby
         this.lobbyManager = lobbyManager
         this.intervalTimer = setInterval(this.handleCountDown.bind(this), 1000)
-        this.timeRemaining = 60
+        this.timeRemaining = 300
     }
+
+    
 
     private handleCountDown() {
         // Drop timer to 15 second when lobby is full
@@ -23,11 +25,23 @@ export default class CountdownManager {
             this.timeRemaining = 15
         } else this.timeRemaining = this.timeRemaining - 1
 
+        // If all player are ready, just start the game
+        var env = process.env.NODE_ENV || 'production';
+        if(env == "development") {
+            if(this.timeRemaining > 15 && this.lobbyManager.seatManager().readyCount() == this.lobbyManager.seatManager().seats().length) {
+                this.timeRemaining = 1
+            }
+        } else {
+            if(this.timeRemaining > 15 && this.lobbyManager.seatManager().readyCount() >= this.lobby.maxClients) {
+                this.timeRemaining = 15
+            }
+        }
+
         // Sync with schema
         this.lobby.state.countdown = this.timeRemaining
 
         // Lock loby at 15 seconds remaining
-        if(this.timeRemaining == 15) {
+        if(!this.lobby.locked && this.timeRemaining <= 15) {
             this.lobby.lock()
             this.pickMap()
             this.lobby.state.state = LobbyState.Locked

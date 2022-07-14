@@ -13,8 +13,8 @@ RUN apk add --update --no-cache \
 
 
 # Create a directory to hold your service and relevant modules with owner being node and define the working directory of your Docker container.
-RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
-WORKDIR /home/node/app
+RUN mkdir -p /app/node_modules && chown -R node:node /app
+WORKDIR /app
 
 # Let us copy our package file into the working directory to make it the root directory from which we will install our dependency packages.
 COPY package*.json ./
@@ -23,9 +23,11 @@ COPY package*.json ./
 RUN npm config set unsafe-perm true
 
 # Since we are all good let us, install our dependencies
+RUN npm install -g npm
 RUN npm install -g typescript
 RUN npm install -g ts-node
-USER root
+RUN chown node:node -R /app
+USER node
 RUN npm install
 
 # Copy our project into our working container and initiate build
@@ -41,11 +43,11 @@ RUN apk add --update --no-cache \
     pango \
     gcompat
 
-RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
-WORKDIR /home/node/app
+RUN mkdir -p /app/node_modules && chown -R node:node /app
+WORKDIR /app
 COPY package*.json ./
 COPY arena.env ./
-RUN chown -R node:node /home/node/app
+RUN chown -R node:node /app
 RUN apk add --no-cache --virtual .build-deps \
     make \
     g++ \
@@ -60,7 +62,7 @@ RUN apk add --no-cache --virtual .build-deps \
     && apk del .build-deps
 
 USER node
-COPY --from=builder /home/node/app/build ./build
+COPY --from=builder /app/build ./build
 EXPOSE 2567
 
 ENV NODE_ENV production

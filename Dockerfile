@@ -26,7 +26,7 @@ RUN npm config set unsafe-perm true
 RUN npm install -g npm
 RUN npm install -g typescript
 RUN npm install -g ts-node
-USER root
+USER node
 RUN npm install
 
 # Copy our project into our working container and initiate build

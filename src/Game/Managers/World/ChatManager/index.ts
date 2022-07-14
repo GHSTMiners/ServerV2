@@ -34,7 +34,6 @@ export default class ChatManager extends Phaser.GameObjects.GameObject {
         this.mainScene.room.broadcast(serializedResponse.name, serializedResponse.data)
     }
 
-
     private handleMessageToServer(player : Player, message : Protocol.MessageToServer) {
         let response : Protocol.MessageFromServer = new Protocol.MessageFromServer();
         response.msg = message.msg; //this.badWordsFilter.clean(message.msg);

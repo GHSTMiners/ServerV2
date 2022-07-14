@@ -14,7 +14,7 @@ import { DefaultVitals } from "../PlayerVitalsManager";
 import { DefaultStatistics } from "../PlayerStatisticsManager";
 import { BlockInterface } from "../../../../Helpers/BlockSchemaWrapper";
 export default class PlayerExcavationManager extends Phaser.GameObjects.GameObject {
-    constructor(scene : Phaser.Scene, player : Player) {
+    constructor(scene : MainScene, player : Player) {
         super(scene, "PlayerExcavationManager")
         //Fetch blockmanager from scene
         if(scene instanceof MainScene) {
@@ -22,6 +22,7 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
             this.worldInfo = scene.worldInfo
         }
         this.player = player
+        this.mainScene =  scene
 
         this.soilMap = new Map<number, Chisel.Soil>()
         this.worldInfo.soil.forEach(soil => {
@@ -173,7 +174,7 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
     }
 
     public processDirection(direction : ChangeDirection) {
-        if(!this.isDrilling()) {
+        if(!this.isDrilling() && this.mainScene.room.state.ready) {
             //Get drilling direction
             this.drillDirection = this.drillDirectionFromChangeDirection(direction)
             if(this.drillDirection != Schema.MovementDirection.None) {
@@ -194,5 +195,6 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
     private soilMap : Map<number, Chisel.Soil>
     private worldInfo : Chisel.DetailedWorld
     private blockManager : BlockManager
+    private mainScene : MainScene
     private player : Player
 }

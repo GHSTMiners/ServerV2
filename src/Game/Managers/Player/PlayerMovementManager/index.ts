@@ -11,7 +11,7 @@ import { DefaultStatistics } from "../PlayerStatisticsManager";
 
 
 export default class PlayerMovementManager extends Phaser.GameObjects.GameObject {
-    constructor(scene : Phaser.Scene, player : Player) {
+    constructor(scene : MainScene, player : Player) {
         super(scene, "PlayerMovementManager")
         scene.add.existing(this)
         this.player = player

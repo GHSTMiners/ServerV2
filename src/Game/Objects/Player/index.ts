@@ -18,7 +18,7 @@ import PlayerDiagnosticsManager from "../../Managers/Player/PlayerDiagnosticsMan
 
 export default class Player extends Phaser.GameObjects.Rectangle {
     
-    constructor(scene : Phaser.Scene, playerSchema : Schema.Player, traits : AavegotchiTraits, client: ClientWrapper) {
+    constructor(scene : MainScene, playerSchema : Schema.Player, traits : AavegotchiTraits, client: ClientWrapper) {
         super(scene, playerSchema.playerState.x, playerSchema.playerState.y)
         this.m_client = client
         this.playerSchema = playerSchema

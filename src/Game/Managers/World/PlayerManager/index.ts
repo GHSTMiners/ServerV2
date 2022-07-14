@@ -7,9 +7,10 @@ import ClientWrapper from "../../../../Helpers/ClientWrapper";
 import * as Protocol from "gotchiminer-multiplayer-protocol"
 import AavegotchiInfoFetcher, { AavegotchiTraits } from "../../../../Helpers/AavegotchiInfoFetcher";
 import chroma from "chroma-js"
+import MainScene from "../../../Scenes/MainScene";
 
 export default class PlayerManager extends Phaser.GameObjects.GameObject{
-    constructor(scene: Scene, clientManager : ClientManager, room : Room<Schema.World>) {
+    constructor(scene: MainScene, clientManager : ClientManager, room : Room<Schema.World>) {
         super(scene, "PlayerManager")
         this.room = room;
         this.playerMap = new Map<ClientWrapper, Player>()
@@ -30,7 +31,7 @@ export default class PlayerManager extends Phaser.GameObjects.GameObject{
             newPlayerSchema.name = gotchi.name
             const playerColor = chroma.random();
             newPlayerSchema.chatColor = playerColor.hex();
-            let newPlayerSprite : Player = new Player(this.scene, newPlayerSchema, new AavegotchiTraits(gotchi.modifiedNumericTraits), client)
+            let newPlayerSprite : Player = new Player(this.scene as MainScene, newPlayerSchema, new AavegotchiTraits(gotchi.modifiedNumericTraits), client)
             newPlayerSchema.playerSessionID = client.client.sessionId
             //Add new object to game server logic
             this.room.state.players.push(newPlayerSchema)

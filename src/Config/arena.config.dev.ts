@@ -29,11 +29,11 @@ export default Arena({
 
     },
 
-    // initializeTransport: function() {
-    //     return new uWebSocketsTransport({
-    //         /* options */
-    //     })
-    //   },
+    initializeTransport: function() {
+        return new uWebSocketsTransport({
+            /* options */
+        })
+      },
 
     initializeExpress: (app) => {
         /**

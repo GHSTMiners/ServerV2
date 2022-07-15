@@ -2401,6 +2401,11 @@
     "jsprim" "^1.2.2"
     "sshpk" "^1.7.0"
 
+"http-status-codes@^2.1.4":
+  "integrity" "sha512-feERVo9iWxvnejp3SEfm/+oNG517npqL2/PIA8ORjyOZjGC7TwCRQsZylciLS64i6pJ0wRYz3rkXLRwbtFa8Ng=="
+  "resolved" "https://registry.npmjs.org/http-status-codes/-/http-status-codes-2.2.0.tgz"
+  "version" "2.2.0"
+
 "httpie@^2.0.0-next.13":
   "integrity" "sha512-KbKOnq8wt0hVEfteYCSnEsPgzaWxcVc4qZ4OaDU9mVOYLRo3XChjWs3MiuRgFu5y+4JDo7sDKdKzkAn1ljQYFA=="
   "resolved" "https://registry.npmjs.org/httpie/-/httpie-2.0.0-next.13.tgz"
@@ -2961,6 +2966,11 @@
   "resolved" "https://registry.npmjs.org/mime/-/mime-1.6.0.tgz"
   "version" "1.6.0"
 
+"mime@^2.5.2":
+  "integrity" "sha512-USPkMeET31rOMiarsBNIHZKLGgvKc/LrjofAnBlOttf5ajRvqiRA8QsenbcooctK6d6Ts6aqZXBA+XbkKthiQg=="
+  "resolved" "https://registry.npmjs.org/mime/-/mime-2.6.0.tgz"
+  "version" "2.6.0"
+
 "mimic-response@^1.0.0", "mimic-response@^1.0.1":
   "integrity" "sha512-j5EctnkH7amfV/q5Hgmoal1g2QHFJRraOtmx0JpIqkxhBhI/lJSl1nMpQ45hVarwNETOoWEimndZ4QK0RHxuxQ=="
   "resolved" "https://registry.npmjs.org/mimic-response/-/mimic-response-1.0.1.tgz"
@@ -3493,7 +3503,7 @@
   "resolved" "https://registry.npmjs.org/path-parse/-/path-parse-1.0.7.tgz"
   "version" "1.0.7"
 
-"path-to-regexp@0.1.7":
+"path-to-regexp@^0.1.7", "path-to-regexp@0.1.7":
   "integrity" "sha512-5DFkuoqlv1uYQKxy8omFBeJPQcdoE07Kv2sferDCrAq1ohOU+MSDswDIbnx3YAM60qIOnYa53wBhXW0EbMonrQ=="
   "resolved" "https://registry.npmjs.org/path-to-regexp/-/path-to-regexp-0.1.7.tgz"
   "version" "0.1.7"
@@ -4555,6 +4565,15 @@
   "integrity" "sha512-yXJmeNaw3DnnKAOKJE51sL/ZaYfWJRl1pK9dr19YFCu0ObS231AB1/LbqTKRAQ5kw8A90rA6fr4riOUpTZvQZA=="
   "resolved" "https://registry.npmjs.org/uuid/-/uuid-3.3.2.tgz"
   "version" "3.3.2"
+
+"uwebsockets-express@^1.2.2":
+  "integrity" "sha512-cpyVTKzzIgu3nUH4FkerHqCvHjoZXeCVO2Sd7wKNFfo1VfwtCkglF/7F99UeBkNTSnbdhS1vQUA8n9xVfuDE1g=="
+  "resolved" "https://registry.npmjs.org/uwebsockets-express/-/uwebsockets-express-1.2.2.tgz"
+  "version" "1.2.2"
+  dependencies:
+    "http-status-codes" "^2.1.4"
+    "mime" "^2.5.2"
+    "path-to-regexp" "^0.1.7"
 
 "uWebSockets.js@github:uNetworking/uWebSockets.js#v20.10.0":
   "resolved" "git+ssh://git@github.com/uNetworking/uWebSockets.js.git#806df48c9da86af7b3341f3e443388c7cd15c3de"

@@ -58,12 +58,13 @@
     "mathjs": "^10.0.2",
     "phaser": "^3.55.2",
     "uuid": "^8.3.2",
+    "uwebsockets-express": "^1.2.2",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.10.0",
     "web3": "^1.7.1"
   },
   "overrides": {
     "@colyseus/uwebsockets-transport": {
-      "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.10.0" 
+      "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.10.0"
     }
   }
 }

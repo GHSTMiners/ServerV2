@@ -34,7 +34,8 @@ export default class PlayTimeManager extends Phaser.GameObjects.GameObject {
         let gameDurationMs : number = Config.gameDuration * 1000
         this.m_gameStartTime = new Date(Date.now());
         this.m_gameEndTime = new Date(Date.now() + gameDurationMs)
-        this.m_mainScene.room.state.gameEndUTC = (new Date(this.m_gameEndTime)).getUTCDate()
+        this.m_mainScene.room.state.gameEndUTC = this.m_gameEndTime.getTime()
+        this.m_mainScene.room.state.gameStartUTC = this.m_gameStartTime.getTime()
         this.emit(PlayTimeManager.GAME_STARTED)
         setTimeout(this.endGame.bind(this), gameDurationMs - 30 * 1000)
         if((gameDurationMs - 5 * 60 * 1000) > 0) {

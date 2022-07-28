@@ -63,4 +63,4 @@ jobs:
                   docker pull ghcr.io/ghstminers/gotchiminer-server:$VERSION
                   docker kill gotchiminer-$VERSION
                   docker rm gotchiminer-$VERSION
-                  docker run --name gotchiminer-$VERSION -t -i -d -p 2567:2567 -e NODE_ENV=development ghcr.io/ghstminers/gotchiminer-server:${{ github.ref }}
+                  docker run --name gotchiminer-$VERSION -t -i -d -p 2567:2567 -e NODE_ENV=development ghcr.io/ghstminers/gotchiminer-server:$VERSION

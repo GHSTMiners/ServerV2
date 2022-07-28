@@ -59,4 +59,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-                  whoami
+                  docker pull ghcr.io/ghstminers/gotchiminer-server:${{ github.ref }}
+                  docker kill gotchiminer-${{ github.ref }}
+                  docker rm gotchiminer-${{ github.ref }}
+                  docker run --name gotchiminer-${{ github.ref }} -t -i -d -p 2567:2567 -e NODE_ENV=development ghcr.io/ghstminers/gotchiminer-server:${{ github.ref }}

@@ -5,6 +5,7 @@ import { CargoEntry } from "./CargoEntry";
 import { Vital } from "./Vital";
 import { Skill } from "./Skill";
 import { Client } from "colyseus";
+import { StatisticEntry } from "./StatisticEntry"
 import { ExplosiveEntry } from "./ExplosiveEntry";
 import { Upgrade } from "./Upgrade";
 
@@ -27,5 +28,6 @@ export class Player extends Schema {
     @type ({ map: WalletEntry }) wallet = new MapSchema<WalletEntry>();
     @filter(function(this: Player, client: Client, value: Player['explosives']) { return this.playerSessionID == client.sessionId})
     @type ({ map: ExplosiveEntry}) explosives = new MapSchema<ExplosiveEntry>();
+    @type ({ map: StatisticEntry}) statistics = new MapSchema<StatisticEntry>();
 
 }

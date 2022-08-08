@@ -36,6 +36,13 @@ export default Arena({
         })
     },
 
-    
+    initializeExpress: (app) => {
+        /**
+         * Bind your custom express routes here:
+         */
+        app.get("/", (req, res) => {
+            res.send("<H1>Nothing to see here fren!</H1>");
+        });
+    },
     
 });

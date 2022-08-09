@@ -45,7 +45,8 @@ export default class Authenticator {
     }
 
     private async validateGotchiPresence() : Promise<AuthenticatorState> {
-        if(!this.m_presence.get(`gotchi_${this.m_options.gotchiId.toString()}`)) {
+	const value = await this.m_presence.get(`gotchi_${this.m_options.gotchiId.toString()}`)
+        if(!value) {
             return AuthenticatorState.GotchiPresenceVerified
         } else {
             Logging.submitEvent("Player tried to play with a Gotchi that already has a session", 1, this.m_request, this.m_options.gotchiId, this.m_options.walletAddress);

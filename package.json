@@ -8,7 +8,7 @@
     "version": "tsc -v",
     "start": "ts-node-dev --respawn --transpile-only src/index.ts",
     "start:prod": "node build/src/index.js",
-    "loadtest": "colyseus-loadtest loadtest/Classic.ts --room Classic --numClients 32",
+    "loadtest": "colyseus-loadtest loadtest/Classic.ts --room 6_Classic --numClients 32",
     "build": "npm run clean && tsc && node node_modules/copyfiles/copyfiles package.json ./build && node node_modules/copyfiles/copyfiles arena.env ./build",
     "clean": "node node_modules/rimraf/bin build",
     "test": "mocha --require ts-node/register test/**_test.ts --exit --timeout 15000"

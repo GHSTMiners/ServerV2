@@ -61,6 +61,11 @@ if(env == "production") {
     gameServer.listen(port)
 
     arenaConfig.initializeGameServer(gameServer)
+
+    process.on('SIGTERM', () => {
+        console.log('Shutting down gracefully')
+        const shutdown = gameServer.gracefullyShutdown(true)
+    });
 } else {
     listen(arenaDevConfig);
 }

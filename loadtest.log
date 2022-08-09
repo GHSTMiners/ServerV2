@@ -1,0 +1,7 @@
+[8/9/2022, 7:16:28 PM] @colyseus/loadtest
+endpoint: ws://localhost:2567
+roomName: 6_Classic
+numClients: 32
+scriptFile: /home/benjamin/Projects/ServerV2/loadtest/Classic.ts
+logLevel: all
+output: /home/benjamin/Projects/ServerV2/loadtest.log

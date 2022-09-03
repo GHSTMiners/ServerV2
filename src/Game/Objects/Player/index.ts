@@ -15,6 +15,7 @@ import * as Chisel from "chisel-api-interface"
 import { PlayerUpgradeManager } from "../../Managers/Player/PlayerUpgradeManager";
 import MainScene from "../../Scenes/MainScene";
 import PlayerDiagnosticsManager from "../../Managers/Player/PlayerDiagnosticsManager";
+import * as Protocol from "gotchiminer-multiplayer-protocol"
 
 export default class Player extends Phaser.GameObjects.Rectangle {
     
@@ -78,6 +79,11 @@ export default class Player extends Phaser.GameObjects.Rectangle {
     }
 
     public respawn() {
+        //Notify client of player dead
+        let diedMessage : Protocol.NotifyPlayerDied = new Protocol.NotifyPlayerDied()
+        let serializedMessage : Protocol.Message = Protocol.MessageSerializer.serialize(diedMessage)
+        this.m_client.client.send(serializedMessage.name, serializedMessage.data)
+
         this.m_movementManager.m_excavationManager.cancelDrilling()
         this.m_cargoManager.empty()
         this.m_vitalsManager.resetAll()

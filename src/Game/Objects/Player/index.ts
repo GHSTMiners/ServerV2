@@ -83,12 +83,21 @@ export default class Player extends Phaser.GameObjects.Rectangle {
         let diedMessage : Protocol.NotifyPlayerDied = new Protocol.NotifyPlayerDied()
         let serializedMessage : Protocol.Message = Protocol.MessageSerializer.serialize(diedMessage)
         this.m_client.client.send(serializedMessage.name, serializedMessage.data)
-
+        this.movementManager().suspend(Config.deathTimeout);
         this.m_movementManager.m_excavationManager.cancelDrilling()
         this.m_cargoManager.empty()
-        this.m_vitalsManager.resetAll()
-        this.m_movementManager.moveToNearestPortal()
-        this.emit(Player.RESPAWNED)
+
+        setTimeout(() => {
+            // Notify client
+            let respawnedMessage : Protocol.NotifyPlayerRespawned = new Protocol.NotifyPlayerRespawned()
+            let serializedMessage : Protocol.Message = Protocol.MessageSerializer.serialize(respawnedMessage)
+            this.m_client.client.send(serializedMessage.name, serializedMessage.data)
+
+            // Reset vitals and respawn
+            this.m_vitalsManager.resetAll()
+            this.m_movementManager.moveToNearestPortal()
+            this.emit(Player.RESPAWNED)
+        }, Config.deathTimeout);
     }
 
     public walletManager() : PlayerWalletManager {

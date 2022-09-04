@@ -65,6 +65,7 @@ USER node
 COPY --from=builder /app/build ./build
 EXPOSE 2567
 
+ENV SKIP_VALIDATION=
 ENV NODE_ENV production
 ENV REDIS_HOST localhost
 ENV REDIS_PORT 6379

@@ -40,7 +40,7 @@ export default Arena({
          * Bind your custom express routes here:
          */
         app.get("/", (req, res) => {
-            res.send("Nothing here fren!");
+            res.send("<H1>Nothing to see here fren!</H1>");
         });
 
         /**

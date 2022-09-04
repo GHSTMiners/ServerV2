@@ -9,6 +9,8 @@
 import { listen } from "@colyseus/arena";
 import { Server, RedisPresence, MongooseDriver } from "colyseus"
 import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
+import express from "express";
+import expressify from "uwebsockets-express"
 
 const globalJsdom = require('global-jsdom')
 globalJsdom('', {pretendToBeVisual: true})
@@ -38,7 +40,15 @@ if(env == "production") {
 
     //Configure transport
     var transport = new uWebSocketsTransport();
+    
+    //Intialize express webserver
+    const app = expressify(transport.app);
 
+    //Register express route
+    app.get("/", (req, res) => {
+      res.send("<H1>Nothing to see here fren!</H1>");
+    });
+    
     //Configure game server
     const port = parseInt(process.env.PORT, 10) || 2567
     const gameServer = new Server(
@@ -51,6 +61,11 @@ if(env == "production") {
     gameServer.listen(port)
 
     arenaConfig.initializeGameServer(gameServer)
+
+    process.on('SIGTERM', () => {
+        console.log('Shutting down gracefully')
+        const shutdown = gameServer.gracefullyShutdown(true)
+    });
 } else {
     listen(arenaDevConfig);
 }

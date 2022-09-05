@@ -53,6 +53,7 @@ if(env == "production") {
     const port = parseInt(process.env.PORT, 10) || 2567
     const gameServer = new Server(
         {
+            //@ts-ignore
             presence: redisPresence,
             driver: mongooseDrive,
             transport: transport,

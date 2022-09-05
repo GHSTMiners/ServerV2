@@ -82,7 +82,7 @@ export default class PlayerPurchaseManager extends Phaser.GameObjects.GameObject
                     this.player.playerSchema.explosives.set(message.id.toString(), explosiveEntry)
                 }
                 //Notify player that transaction succeeded
-                let transactionMessage : Protocol.NotifyPlayerTransation = new Protocol.NotifyPlayerTransation()
+                let transactionMessage : Protocol.NotifyPlayerTransaction = new Protocol.NotifyPlayerTransaction()
                 transactionMessage.accepted = true
                 transactionMessage.amount = totalAmount
                 transactionMessage.cryptoId = explosive.crypto_id
@@ -92,7 +92,7 @@ export default class PlayerPurchaseManager extends Phaser.GameObjects.GameObject
                 this.emit(PlayerPurchaseManager.PURCHASED_EXPLOSIVE, explosive);
             } else {
                 //Notify player that transaction failed
-                let transactionMessage : Protocol.NotifyPlayerTransation = new Protocol.NotifyPlayerTransation()
+                let transactionMessage : Protocol.NotifyPlayerTransaction = new Protocol.NotifyPlayerTransaction()
                 transactionMessage.accepted = false
                 transactionMessage.amount = totalAmount
                 transactionMessage.cryptoId = explosive.crypto_id

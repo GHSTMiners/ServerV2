@@ -28,7 +28,7 @@ var env = process.env.NODE_ENV || 'development';
 
 if(env == "production") {
     //Configure redis
-    var redisPresence = new RedisPresence(
+    let redisPresence : RedisPresence = new RedisPresence(
         {
             host: process.env.REDIS_HOST || 'localhost',
             port: parseInt(process.env.REDIS_PORT) || 6379,
@@ -53,6 +53,7 @@ if(env == "production") {
     const port = parseInt(process.env.PORT, 10) || 2567
     const gameServer = new Server(
         {
+            //@ts-ignore
             presence: redisPresence,
             driver: mongooseDrive,
             transport: transport,

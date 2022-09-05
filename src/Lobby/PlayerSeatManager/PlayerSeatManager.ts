@@ -26,7 +26,7 @@ export default class PlayerSeatManager {
     }
 
     public seats() : PlayerSeat[] {
-        return Array<PlayerSeat>.from(this.playerSeats.values())
+        return Array.from(this.playerSeats.values())
     }
 
     public readyCount() : number {

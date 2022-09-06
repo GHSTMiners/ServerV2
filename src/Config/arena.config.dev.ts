@@ -19,7 +19,7 @@ export default Arena({
         let apiInterface : APIInterface = new APIInterface(Config.apiURL);
         apiInterface.worlds().then(worlds => {
             worlds.forEach(world => {
-                console.info(`Registering room with name ${world.id}_Classic for world with name: ${world.name}`);
+                console.info(`🎮 Registering room with name ${world.id}_Classic for world with name: ${world.name}`);
                 gameServer.define(`${world.id}_Classic`, Classic, {
                     worldID: world.id,
                     development_mode: world.development_mode

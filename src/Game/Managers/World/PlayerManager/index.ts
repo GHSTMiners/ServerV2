@@ -48,7 +48,10 @@ export default class PlayerManager extends Phaser.GameObjects.GameObject{
     private async handleClientLeave(client : ClientWrapper) {
         let player : Player | undefined = this.playerMap.get(client)
         if(player) {
-            const result = await player.statisticsManager().submit();
+            var env = process.env.NODE_ENV || 'development';
+            if(env == "production")  {
+                const result = await player.statisticsManager().submit();
+            }
             let playerIndex : number = this.room.state.players.indexOf(player.playerSchema)
             this.room.state.players.deleteAt(playerIndex)
             this.room.presence.del(`gotchi_${player.playerSchema.gotchiID}`)

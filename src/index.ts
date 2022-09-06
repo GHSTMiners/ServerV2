@@ -9,7 +9,6 @@
 import { listen } from "@colyseus/arena";
 import { Server, RedisPresence, MongooseDriver } from "colyseus"
 import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
-import express from "express";
 import expressify from "uwebsockets-express"
 
 const globalJsdom = require('global-jsdom')

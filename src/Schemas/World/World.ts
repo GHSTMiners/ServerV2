@@ -12,6 +12,7 @@ export class World extends Schema {
     @type ("number") gravity: number = 900;
     @type ("number") gameEndUTC: number = 0;
     @type ("number") gameStartUTC: number = 0;
+    @type ("number") serverRegionId: number = 0;
     @type ("boolean") ready: boolean = false;
     @type ({map : ExchangeEntry}) exchange = new MapSchema<ExchangeEntry>();
     @type ([Explosive]) explosives = new ArraySchema<Explosive>();

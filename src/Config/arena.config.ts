@@ -9,25 +9,34 @@ import { APIInterface } from "chisel-api-interface";
 import { Lobby, Classic } from "../Rooms";
 
 import Config from ".";
+import { ServerRegion } from "chisel-api-interface/lib/ServerRegion";
 
 export default Arena({
     getId: () => "Gotchiminer",
 
     initializeGameServer: (gameServer) => {
-        //Add lobby
-        gameServer.define(`Lobby`, Lobby);
-        //Add rooms for every map
         let apiInterface : APIInterface = new APIInterface(Config.apiURL);
-        apiInterface.worlds().then(worlds => {
-            worlds.forEach(world => {
-                console.info(`Registering room with name ${world.id}_Classic for world with name: ${world.name}`);
-                gameServer.define(`${world.id}_Classic`, Classic, {
-                    worldID: world.id,
-                    development_mode: world.development_mode
-                });
+        let region : ServerRegion | null = null
+        // Determine server region
+        var region_id = parseInt(process.env.REGION_ID)
+        apiInterface.server_region(region_id).then(fetched_region => {
+            region = fetched_region
+            console.log(`🚩 Running in region ${region.name}`)
+        }).catch(()=>{}).finally(() => {
+            //Add lobby
+            gameServer.define(`Lobby`, Lobby);
+            //Add rooms for every map
+            apiInterface.worlds().then(worlds => {
+                worlds.forEach(world => {
+                    console.info(`🎮 Registering room with name ${world.id}_Classic for world with name: ${world.name}`);
+                    gameServer.define(`${world.id}_Classic`, Classic, {
+                        worldID: world.id,
+                        development_mode: world.development_mode,
+                        region: region
+                    });
+                })
             })
         })
-
     },
 
     initializeTransport: function() {

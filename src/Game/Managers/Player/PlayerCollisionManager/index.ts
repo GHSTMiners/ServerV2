@@ -11,7 +11,7 @@ import * as Protocol from "gotchiminer-multiplayer-protocol"
 import * as Schema from "../../../../Schemas";
 import Config from "../../../../Config";
 import MainScene from "../../../Scenes/MainScene";
-import { BlockInterface } from "../../../../Helpers/BlockSchemaWrapper";
+import { BlockInterface, BlockSchemaWrapper } from "../../../../Helpers/BlockSchemaWrapper";
 
 export default class PlayerCollisionManager extends Phaser.GameObjects.GameObject {
     constructor(scene : Phaser.Scene, playerManager : PlayerManager, blockManager : BlockManager, world : World) {
@@ -94,7 +94,7 @@ export default class PlayerCollisionManager extends Phaser.GameObjects.GameObjec
     private processCollision(player : Phaser.Types.Physics.Arcade.GameObjectWithBody, block : Phaser.Types.Physics.Arcade.GameObjectWithBody) : boolean {
         //Check if player should collide with collision object
         if(block instanceof Block) {
-            return(block.blockSchema.spawnType != SpawnType.None)
+            return(block.blockSchema.read().spawnType != SpawnType.None)
         } else return true
     }
 
@@ -112,8 +112,8 @@ export default class PlayerCollisionManager extends Phaser.GameObjects.GameObjec
             for (let y = renderRectangle.y; y < (renderRectangle.y + renderRectangle.height); y++) {
                 for (let x = renderRectangle.x; x < (renderRectangle.x + renderRectangle.width); x++) {
                     if(x >=0 && this.world.width >= x && y >= 0 && this.world.height >= y) {
-                        let blockSchema : BlockInterface = this.blockManager.blockAt(x, y)
-                        if(blockSchema && blockSchema.spawnType != SpawnType.None) {
+                        let blockSchema : BlockSchemaWrapper = this.blockManager.blockAt(x, y)
+                        if(blockSchema && blockSchema.read().spawnType != SpawnType.None) {
                             staticGroup.add(new Block(this.scene, blockSchema, x*Config.blockWidth+Config.blockWidth/2, y*Config.blockHeight+Config.blockHeight/2, Config.blockWidth, Config.blockHeight))
                         }
                     }

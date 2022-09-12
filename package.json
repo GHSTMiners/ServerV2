@@ -47,7 +47,7 @@
     "bad-words": "^3.0.4",
     "browserenv": "^1.0.0",
     "canvas": "^2.9.0",
-    "chisel-api-interface": "^1.11.0",
+    "chisel-api-interface": "^1.24.0",
     "chroma-js": "^2.4.2",
     "colyseus": "^0.14.20",
     "generate-password-ts": "^1.6.3",

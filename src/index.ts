@@ -9,7 +9,6 @@
 import { listen } from "@colyseus/arena";
 import { Server, RedisPresence, MongooseDriver } from "colyseus"
 import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
-import express from "express";
 import expressify from "uwebsockets-express"
 
 const globalJsdom = require('global-jsdom')
@@ -28,7 +27,7 @@ var env = process.env.NODE_ENV || 'development';
 
 if(env == "production") {
     //Configure redis
-    var redisPresence = new RedisPresence(
+    let redisPresence : RedisPresence = new RedisPresence(
         {
             host: process.env.REDIS_HOST || 'localhost',
             port: parseInt(process.env.REDIS_PORT) || 6379,
@@ -53,6 +52,7 @@ if(env == "production") {
     const port = parseInt(process.env.PORT, 10) || 2567
     const gameServer = new Server(
         {
+            //@ts-ignore
             presence: redisPresence,
             driver: mongooseDrive,
             transport: transport,

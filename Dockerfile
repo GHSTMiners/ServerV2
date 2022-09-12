@@ -65,6 +65,7 @@ USER node
 COPY --from=builder /app/build ./build
 EXPOSE 2567
 
+ENV REGION_ID=
 ENV SKIP_VALIDATION=
 ENV NODE_ENV production
 ENV REDIS_HOST localhost

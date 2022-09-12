@@ -5,6 +5,7 @@ export class PlayerState extends Schema {
     @type ("int32") y: number = -300;
     @type ("int32") velocityX: number = 0;
     @type ("int32") velocityY: number = 0;
+    @type ("number") healthState : HealthState = HealthState.Healthy
     @type ("number") movementState : MovementState = MovementState.Stationary
     @type ("number") movementDirection : MovementDirection = MovementDirection.Down
 }
@@ -14,6 +15,12 @@ export enum MovementState {
     Moving = 1,
     Flying = 2,
     Drilling = 3
+}
+
+export enum HealthState {
+    Healthy = 0,
+    Hurt = 1,
+    Deceased = 2,
 }
 
 export enum MovementDirection {

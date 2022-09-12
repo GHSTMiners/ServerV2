@@ -15,6 +15,7 @@ export default class PlayerMovementManager extends Phaser.GameObjects.GameObject
         super(scene, "PlayerMovementManager")
         scene.add.existing(this)
         this.player = player
+        this.suspended = false
         this.lastDirection = new ChangeDirection()
         this.lastBlockPosition = new Phaser.Geom.Point()
         this.m_excavationManager = new PlayerExcavationManager(scene, player)
@@ -37,6 +38,13 @@ export default class PlayerMovementManager extends Phaser.GameObjects.GameObject
             this.player.body.setVelocity(0, 0)
             this.player.body.setAcceleration(0, 0)
         }
+    }
+
+    public suspend(timeout : number) {
+        this.suspended = true
+        setTimeout((() => {
+            this.suspended = false
+        }).bind(this), timeout)
     }
 
     public moveToSurface() {
@@ -75,19 +83,23 @@ export default class PlayerMovementManager extends Phaser.GameObjects.GameObject
     }
 
     protected preUpdate(willStep: boolean, delta: number): void {
-        //Process fuel for previous action
-        this.processFuelUsage(delta)
-        //First, see if we are gonna drill
-        this.m_excavationManager.processDirection(this.lastDirection)
-        //Update playerstate
-        this.updateMovementState()
-        //Apply player movement
-        this.applyUserInput()
-        //Process statistics
-        this.updateStatistics()
-        //Synchronize with schema
-        this.syncWithSchema()
-
+        if(!this.suspended) {
+            //Process fuel for previous action
+            this.processFuelUsage(delta)
+            //First, see if we are gonna drill
+            this.m_excavationManager.processDirection(this.lastDirection)
+            //Update playerstate
+            this.updateMovementState()
+            //Apply player movement
+            this.applyUserInput()
+            //Process statistics
+            this.updateStatistics()
+            //Synchronize with schema
+            this.syncWithSchema()
+        } else {
+            this.player.playerSchema.playerState.movementState = Schema.MovementState.Stationary
+            this.player.playerSchema.playerState.movementDirection = Schema.MovementDirection.None
+        }
     }
 
     private applyUserInput() {
@@ -160,4 +172,5 @@ export default class PlayerMovementManager extends Phaser.GameObjects.GameObject
     public m_excavationManager : PlayerExcavationManager
     private lastDirection : ChangeDirection
     private player : Player
+    private suspended : boolean
 }

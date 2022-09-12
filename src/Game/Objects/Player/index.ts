@@ -15,7 +15,8 @@ import * as Chisel from "chisel-api-interface"
 import { PlayerUpgradeManager } from "../../Managers/Player/PlayerUpgradeManager";
 import MainScene from "../../Scenes/MainScene";
 import PlayerDiagnosticsManager from "../../Managers/Player/PlayerDiagnosticsManager";
-import * as Protocol from "gotchiminer-multiplayer-protocol"
+import { HealthState } from "../../../Schemas";
+import PlayerRespawnManager from "../../Managers/Player/PlayerRespawnManager";
 
 export default class Player extends Phaser.GameObjects.Rectangle {
     
@@ -50,15 +51,14 @@ export default class Player extends Phaser.GameObjects.Rectangle {
         this.m_purchaseManager = new PlayerPurchaseManager(scene, this)
         this.m_movementManager = new PlayerMovementManager(scene, this)
         this.m_cargoManager = new PlayerCargoManager(scene, this)
-        //Create kill conditions
-        this.m_vitalsManager.get(DefaultVitals.FUEL).on(PlayerVital.EMPTY, this.respawn.bind(this))
-        this.m_vitalsManager.get(DefaultVitals.HEALTH).on(PlayerVital.EMPTY, this.respawn.bind(this))
+        this.m_respawnManager = new PlayerRespawnManager(scene, this)
         //Bind statistics
         this.purchaseManager().on(PlayerPurchaseManager.PURCHASED_EXPLOSIVE, (explosive : Chisel.Explosive) => {
             this.statisticsManager().addAmount(DefaultStatistics.AMOUNT_SPENT_EXPLOSIVES, explosive.price)
         })
         this.movementManager().excavationManager().on(PlayerExcavationManager.BLOCK_MINED, () => this.statisticsManager().addAmount(DefaultStatistics.BLOCKS_MINED))
         this.vitalsManager().get(DefaultVitals.HEALTH).on(PlayerVital.DECREASED, (amount : number) => {
+            this.playerSchema.playerState.healthState = HealthState.Hurt;
             this.statisticsManager().addAmount(DefaultStatistics.DAMAGE_TAKEN, amount)
         })
         this.vitalsManager().get(DefaultVitals.FUEL).on(PlayerVital.DECREASED, (amount : number) => {
@@ -75,20 +75,7 @@ export default class Player extends Phaser.GameObjects.Rectangle {
             let dollarValue : number = (scene as MainScene).exchangeManager.dollarValue(cryptoId, amount)
             this.statisticsManager().takeAmount(DefaultStatistics.ENDGAME_CRYPTO, dollarValue)
         })
-        this.on(Player.RESPAWNED, () => this.statisticsManager().addAmount(DefaultStatistics.DEATHS))
-    }
-
-    public respawn() {
-        //Notify client of player dead
-        let diedMessage : Protocol.NotifyPlayerDied = new Protocol.NotifyPlayerDied()
-        let serializedMessage : Protocol.Message = Protocol.MessageSerializer.serialize(diedMessage)
-        this.m_client.client.send(serializedMessage.name, serializedMessage.data)
-
-        this.m_movementManager.m_excavationManager.cancelDrilling()
-        this.m_cargoManager.empty()
-        this.m_vitalsManager.resetAll()
-        this.m_movementManager.moveToNearestPortal()
-        this.emit(Player.RESPAWNED)
+        this.respawnManager().on(PlayerRespawnManager.RESPAWNED, () => this.statisticsManager().addAmount(DefaultStatistics.DEATHS))
     }
 
     public walletManager() : PlayerWalletManager {
@@ -105,6 +92,10 @@ export default class Player extends Phaser.GameObjects.Rectangle {
 
     public cargoManager() : PlayerCargoManager {
         return this.m_cargoManager
+    }
+
+    public respawnManager() : PlayerRespawnManager {
+        return this.m_respawnManager
     }
 
     public upgradeManager() : PlayerUpgradeManager {
@@ -130,7 +121,7 @@ export default class Player extends Phaser.GameObjects.Rectangle {
     public diagnosticManager() : PlayerDiagnosticsManager {
         return this.m_diagnosticsManager
     }
-    
+
     public client() : ClientWrapper {
         return this.m_client
     }
@@ -140,6 +131,7 @@ export default class Player extends Phaser.GameObjects.Rectangle {
     private m_skillManager : PlayerSkillManager
     private m_vitalsManager : PlayerVitalsManager
     private m_cargoManager : PlayerCargoManager
+    private m_respawnManager : PlayerRespawnManager
     private m_upgradeManager : PlayerUpgradeManager
     private m_buildingManager : PlayerBuildingManager
     private m_movementManager : PlayerMovementManager
@@ -149,6 +141,5 @@ export default class Player extends Phaser.GameObjects.Rectangle {
     
 
     public playerSchema : Schema.Player
-    static readonly RESPAWNED: unique symbol = Symbol();
 
 }

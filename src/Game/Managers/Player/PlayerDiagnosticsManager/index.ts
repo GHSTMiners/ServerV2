@@ -1,4 +1,5 @@
 import * as Protocol from "gotchiminer-multiplayer-protocol";
+
 import Player from "../../../Objects/Player";
 
 export default class PlayerDiagnosticsManager extends Phaser.GameObjects.GameObject {

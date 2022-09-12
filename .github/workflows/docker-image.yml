@@ -51,16 +51,3 @@ jobs:
           echo VERSION=$VERSION
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
-
-      - name: Instruct server to run new docker image
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-                  VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-                  docker pull ghcr.io/ghstminers/gotchiminer-server:$VERSION
-                  docker kill gotchiminer-$VERSION
-                  docker rm gotchiminer-$VERSION
-                  docker run --name gotchiminer-$VERSION -t -i -d -p 2567:2567 -e NODE_ENV=development ghcr.io/ghstminers/gotchiminer-server:$VERSION

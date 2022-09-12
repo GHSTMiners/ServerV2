@@ -22,6 +22,7 @@ export default class WorldGenerator {
         //Fetch all spawns for that layer, and also the soil
         for (let layer = 0; layer < worldInfo.height; layer++) {
             let newLayer : Schema.Layer = new Schema.Layer()
+            newLayer.blocks.fill(0, 0, worldInfo.width)
             let filteredSpawns : (CryptoSpawn|RockSpawn|WhiteSpace)[] = spawns.filter(spawn => 
                 (layer >= spawn.starting_layer && layer <= spawn.ending_layer))
             let currentSoil : Soil = WorldGenerator.soilForLayer(sortedSoil, layer)
@@ -47,7 +48,9 @@ export default class WorldGenerator {
                     } 
 
                 } else currentBlock.spawnType = SpawnType.None
-                newLayer.blocks.push(BlockSchemaWrapper.blockToString(currentBlock))
+                //Write block to array
+                let blockSchemaWrapper : BlockSchemaWrapper = new BlockSchemaWrapper(newLayer.blocks, x)
+                blockSchemaWrapper.write(currentBlock)
             }
             worldSchema.layers.push(newLayer)
         }

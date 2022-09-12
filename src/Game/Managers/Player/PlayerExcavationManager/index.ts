@@ -12,7 +12,7 @@ import BlockManager from "../../World/BlockManager";
 import { DefaultSkills } from "../PlayerSkillManager";
 import { DefaultVitals } from "../PlayerVitalsManager";
 import { DefaultStatistics } from "../PlayerStatisticsManager";
-import { BlockInterface } from "../../../../Helpers/BlockSchemaWrapper";
+import { BlockInterface, BlockSchemaWrapper } from "../../../../Helpers/BlockSchemaWrapper";
 export default class PlayerExcavationManager extends Phaser.GameObjects.GameObject {
     constructor(scene : MainScene, player : Player) {
         super(scene, "PlayerExcavationManager")
@@ -55,11 +55,11 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
         let targetPosition : Phaser.Geom.Point = this.targetBlockPosition(drillingDirection)
         switch(drillingDirection) {
             case Schema.MovementDirection.Down:
-                return this.blockManager.blockAt(targetPosition.x, targetPosition.y)
+                return this.blockManager.blockAt(targetPosition.x, targetPosition.y).read()
             case Schema.MovementDirection.Left:
-                return this.blockManager.blockAt(targetPosition.x, targetPosition.y)
+                return this.blockManager.blockAt(targetPosition.x, targetPosition.y).read()
             case Schema.MovementDirection.Right:
-                return this.blockManager.blockAt(targetPosition.x, targetPosition.y)
+                return this.blockManager.blockAt(targetPosition.x, targetPosition.y).read()
         }
     }
 
@@ -77,9 +77,9 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
 
     protected canDrillInDirection(direction : Schema.MovementDirection) : boolean {
         //Check if there actually is a block below the player
-        let blockBelowPlayer : BlockInterface | undefined = this.blockManager.blockAt(this.player.movementManager().blockPosition().x, this.player.movementManager().blockPosition().y+1)
+        let blockBelowPlayer : BlockSchemaWrapper | undefined = this.blockManager.blockAt(this.player.movementManager().blockPosition().x, this.player.movementManager().blockPosition().y+1)
         if(!blockBelowPlayer) return false
-        if(blockBelowPlayer.spawnType == Chisel.SpawnType.None) return false
+        if(blockBelowPlayer.read().spawnType == Chisel.SpawnType.None) return false
 
 
         //Check if there is a block to drill in the direction we want to drill
@@ -159,7 +159,7 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
                     self.player.body.enable = true
                 }
                 targetBlock.spawnType = Chisel.SpawnType.None
-                self.blockManager.updateBlockAt(targetBlockPosition.x, targetBlockPosition.y, targetBlock)
+                self.blockManager.blockAt(targetBlockPosition.x, targetBlockPosition.y).write(targetBlock)
                 self .drilling = false
             }, )        
 

@@ -10,16 +10,10 @@ export default class BlockManager extends Phaser.GameObjects.GameObject {
         this.world = world
     }
 
-    public blockAt(x : number, y : number) : BlockInterface | undefined {
+    public blockAt(x : number, y : number) : BlockSchemaWrapper | undefined {
         if(y < 0 || y > this.world.height) return null
         else if(x < 0 || x > this.world.width) return null
-        return BlockSchemaWrapper.stringToBlock(this.world.layers[y].blocks[x])
-    }
-
-    public updateBlockAt(x : number, y : number, block : BlockInterface) {
-        if(y < 0 || y > this.world.height) return null
-        else if(x < 0 || x > this.world.width) return null
-        return this.world.layers[y].blocks[x] = BlockSchemaWrapper.blockToString(block)
+        return new BlockSchemaWrapper(this.world.layers[y].blocks, x)
     }
 
     private world : World

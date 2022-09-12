@@ -22,11 +22,13 @@ export default class WorldGenerator {
         //Fetch all spawns for that layer, and also the soil
         for (let layer = 0; layer < worldInfo.height; layer++) {
             let newLayer : Schema.Layer = new Schema.Layer()
-            newLayer.blocks.fill(0, 0, worldInfo.width)
+            newLayer.blocks.push(new Array(worldInfo.width).fill(0))
+
             let filteredSpawns : (CryptoSpawn|RockSpawn|WhiteSpace)[] = spawns.filter(spawn => 
                 (layer >= spawn.starting_layer && layer <= spawn.ending_layer))
             let currentSoil : Soil = WorldGenerator.soilForLayer(sortedSoil, layer)
             for (let x = 0; x < worldInfo.width; x++) {
+
                 //Fetch current block
                 const currentBlock = {} as BlockInterface
                 //First write soil to blockSchema

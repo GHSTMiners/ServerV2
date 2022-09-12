@@ -45,21 +45,21 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
     }
 
     protected blockExistsInDiretion(drillingDirection : Schema.MovementDirection) : boolean {
-        let targetBlock : BlockInterface | undefined = this.blockInDirectionRelativeToPlayer(drillingDirection)
+        let targetBlock : BlockSchemaWrapper | undefined = this.blockInDirectionRelativeToPlayer(drillingDirection)
         if(!targetBlock) return false
-        if(targetBlock.spawnType == Chisel.SpawnType.None) return false
+        if(targetBlock.read().spawnType == Chisel.SpawnType.None) return false
         return true
     }
 
-    protected blockInDirectionRelativeToPlayer(drillingDirection : Schema.MovementDirection) : BlockInterface | undefined {
+    protected blockInDirectionRelativeToPlayer(drillingDirection : Schema.MovementDirection) : BlockSchemaWrapper | undefined {
         let targetPosition : Phaser.Geom.Point = this.targetBlockPosition(drillingDirection)
         switch(drillingDirection) {
             case Schema.MovementDirection.Down:
-                return this.blockManager.blockAt(targetPosition.x, targetPosition.y).read()
+                return this.blockManager.blockAt(targetPosition.x, targetPosition.y)
             case Schema.MovementDirection.Left:
-                return this.blockManager.blockAt(targetPosition.x, targetPosition.y).read()
+                return this.blockManager.blockAt(targetPosition.x, targetPosition.y)
             case Schema.MovementDirection.Right:
-                return this.blockManager.blockAt(targetPosition.x, targetPosition.y).read()
+                return this.blockManager.blockAt(targetPosition.x, targetPosition.y)
         }
     }
 
@@ -85,9 +85,9 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
         //Check if there is a block to drill in the direction we want to drill
         if(!this.blockExistsInDiretion(direction)) return false
         //Check if the target block is not a rock, if so check if we can drill into the block
-        let targetBlock : BlockInterface = this.blockInDirectionRelativeToPlayer(direction)
-        if(targetBlock.spawnType == Chisel.SpawnType.Rock) {
-            let rockType : Chisel.Rock = this.rockMap.get(targetBlock.spawnID)
+        let targetBlock : BlockSchemaWrapper = this.blockInDirectionRelativeToPlayer(direction)
+        if(targetBlock.read().spawnType == Chisel.SpawnType.Rock) {
+            let rockType : Chisel.Rock = this.rockMap.get(targetBlock.read().spawnID)
             if (!(rockType.digable || rockType.lava)) return false
         }
         if(this.player.body instanceof Phaser.Physics.Arcade.Body) {
@@ -115,11 +115,12 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
 
     protected drillInDirection(drillingDirection : Schema.MovementDirection) {
         //Find target block
-        let targetBlock : BlockInterface | undefined = this.blockInDirectionRelativeToPlayer(drillingDirection)
+        let targetBlock : BlockSchemaWrapper | undefined = this.blockInDirectionRelativeToPlayer(drillingDirection)
         if(targetBlock) {
+            let blockInterface : BlockInterface = targetBlock.read()
             //Find soil type and calculate drillduration using skills
             let digMultiplier : number = 1
-            let targetSoil : Chisel.Soil | undefined = this.soilMap.get(targetBlock.soilID)
+            let targetSoil : Chisel.Soil | undefined = this.soilMap.get(blockInterface.soilID)
             if(targetSoil) digMultiplier = targetSoil.dig_multiplier
             let drillDuration : number = 1000 / this.player.skillManager().get(DefaultSkills.DIGGING_SPEED).value() * digMultiplier
             //Disable updates on body
@@ -137,17 +138,17 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
                 //Emit event
                 self.emit(PlayerExcavationManager.BLOCK_MINED, targetBlock);
                 //Process block on player inventory manager
-                if(self.player.cargoManager().processBlock(targetBlock)) {
+                if(self.player.cargoManager().processBlock(blockInterface)) {
                     //Notify the client that a block has been minted
-                    if(targetBlock.spawnType == Chisel.SpawnType.Crypto) {
+                    if(blockInterface.spawnType == Chisel.SpawnType.Crypto) {
                         let cryptoMinedMessage : Protocol.NotifyPlayerMinedCrypto = new Protocol.NotifyPlayerMinedCrypto()
-                        cryptoMinedMessage.cryptoId = targetBlock.spawnID
+                        cryptoMinedMessage.cryptoId = blockInterface.spawnID
                         let serializedMessage : Protocol.Message = Protocol.MessageSerializer.serialize(cryptoMinedMessage)
                         self.player.client().client.send(serializedMessage.name, serializedMessage.data)
                     }
-                }else if(targetBlock.spawnType == SpawnType.Rock) {
+                }else if(blockInterface.spawnType == SpawnType.Rock) {
                     //If digging lava, take some health and notify client
-                   if(self.rockMap.get(targetBlock.spawnID).lava) {
+                   if(self.rockMap.get(blockInterface.spawnID).lava) {
                        let lavaMinedMessage : Protocol.NotifyPlayerMinedLava = new Protocol.NotifyPlayerMinedLava()
                        let serializedMessage : Protocol.Message = Protocol.MessageSerializer.serialize(lavaMinedMessage)
                        self.player.client().client.send(serializedMessage.name, serializedMessage.data)
@@ -158,8 +159,8 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
                 if(self.player.body instanceof Phaser.Physics.Arcade.Body) {
                     self.player.body.enable = true
                 }
-                targetBlock.spawnType = Chisel.SpawnType.None
-                self.blockManager.blockAt(targetBlockPosition.x, targetBlockPosition.y).write(targetBlock)
+                blockInterface.spawnType = Chisel.SpawnType.None
+                self.blockManager.blockAt(targetBlockPosition.x, targetBlockPosition.y).write(blockInterface)
                 self .drilling = false
             }, )        
 

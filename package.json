@@ -45,7 +45,7 @@
     "canvas": "^2.9.0",
     "chisel-api-interface": "^1.24.0",
     "chroma-js": "^2.4.2",
-    "colyseus": "^0.15.0-preview.4",
+    "colyseus": "^0.14.23",
     "generate-password-ts": "^1.6.3",
     "global-jsdom": "8.4.0",
     "gotchiminer-multiplayer-protocol": "^1.14.0",

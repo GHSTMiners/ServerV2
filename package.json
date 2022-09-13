@@ -44,6 +44,7 @@
     "@colyseus/uwebsockets-transport": "^0.14.27",
     "@geckos.io/phaser-on-nodejs": "^1.2.5",
     "@types/lodash": "^4.14.182",
+    "@types/webrtc": "^0.0.32",
     "bad-words": "^3.0.4",
     "browserenv": "^1.0.0",
     "canvas": "^2.9.0",
@@ -60,7 +61,8 @@
     "uuid": "^8.3.2",
     "uwebsockets-express": "^1.2.2",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.10.0",
-    "web3": "^1.7.5"
+    "web3": "^1.7.5",
+    "wrtc": "^0.4.7"
   },
   "overrides": {
     "@colyseus/uwebsockets-transport": {

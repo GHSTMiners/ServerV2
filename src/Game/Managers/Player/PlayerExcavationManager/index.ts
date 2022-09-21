@@ -33,6 +33,10 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
         this.worldInfo.rocks.forEach(rock => {
             this.rockMap.set(rock.id, rock)
         })
+        this.fallThroughLayers = new Array<number>()
+        this.worldInfo.fall_through_layers.forEach(layer => {
+            this.fallThroughLayers.push(layer.layer)
+        })
         scene.add.existing(this)
         this.drilling = false;
     }
@@ -118,6 +122,7 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
         let targetBlock : BlockSchemaWrapper | undefined = this.blockInDirectionRelativeToPlayer(drillingDirection)
         if(targetBlock) {
             let blockInterface : BlockInterface = targetBlock.read()
+            if(blockInterface.spawnType === SpawnType.FallThrough) return;
             //Find soil type and calculate drillduration using skills
             let digMultiplier : number = 1
             let targetSoil : Chisel.Soil | undefined = this.soilMap.get(blockInterface.soilID)
@@ -159,7 +164,12 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
                 if(self.player.body instanceof Phaser.Physics.Arcade.Body) {
                     self.player.body.enable = true
                 }
-                blockInterface.spawnType = Chisel.SpawnType.None
+                // Check if should be a fallthrough layer
+                if (self.fallThroughLayers.indexOf(targetBlockPosition.y) != -1) {
+                    blockInterface.spawnType = Chisel.SpawnType.FallThrough
+                } else {
+                    blockInterface.spawnType = Chisel.SpawnType.None
+                }
                 self.blockManager.blockAt(targetBlockPosition.x, targetBlockPosition.y).write(blockInterface)
                 self .drilling = false
             }, )        
@@ -193,6 +203,7 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
     private drilling : boolean
     private digTimeout : NodeJS.Timeout
     private rockMap : Map<number, Chisel.Rock>
+    private fallThroughLayers : Array<number>
     private soilMap : Map<number, Chisel.Soil>
     private worldInfo : Chisel.DetailedWorld
     private blockManager : BlockManager

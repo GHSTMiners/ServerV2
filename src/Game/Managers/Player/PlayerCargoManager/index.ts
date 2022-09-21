@@ -3,6 +3,7 @@ import * as Schema from "../../../../Schemas"
 import { BlockInterface } from "../../../../Helpers/BlockSchemaWrapper"
 import Player from "../../../Objects/Player"
 import { DefaultVitals } from "../PlayerVitalsManager"
+import PlayerSkillManager, { DefaultSkills } from "../PlayerSkillManager"
 
 export default class PlayerCargoManager extends Phaser.GameObjects.GameObject {
 
@@ -37,7 +38,8 @@ export default class PlayerCargoManager extends Phaser.GameObjects.GameObject {
     public processCargo() {
         //Move cargo to wallet
         this.playerSchema.cargo.forEach(cargoEntry => {
-            this.player.walletManager().addAmount(cargoEntry.cryptoID, cargoEntry.amount)
+            let multiplier : number = this.player.skillManager().get(DefaultSkills.REFINERY_YIELD).value()
+            this.player.walletManager().addAmount(cargoEntry.cryptoID, multiplier * cargoEntry.amount)
         })
         this.empty()
     }

@@ -605,6 +605,11 @@
   "resolved" "https://registry.npmjs.org/@types/uuid/-/uuid-8.3.4.tgz"
   "version" "8.3.4"
 
+"@types/webrtc@^0.0.32":
+  "integrity" "sha512-+F0Ozq+ksnKtjcMHujSgb4A1Vjt0b4wvvxP3/pTnXKsIrLo34EgHh2z3qJq3ntX4dbK6ytxpY1rzO/4Z8rVrHg=="
+  "resolved" "https://registry.npmjs.org/@types/webrtc/-/webrtc-0.0.32.tgz"
+  "version" "0.0.32"
+
 "@types/ws@^7.4.4":
   "integrity" "sha512-JQbbmxZTZehdc2iszGKs5oC3NFnjeay7mtAWrdt7qNtAVK0g19muApzAy4bm9byz79xa2ZnO/BOBC2R8RC5Lww=="
   "resolved" "https://registry.npmjs.org/@types/ws/-/ws-7.4.7.tgz"
@@ -1597,6 +1602,13 @@
   "integrity" "sha512-6QvTW9mrGeIegrFXdtQi9pk7O/nSK6lSdXW2eqUspN5LWD7UTji2Fqw5V2YLjBpHEoU9Xl/eUWNpDeZvoyOv2w=="
   "resolved" "https://registry.npmjs.org/dom-walk/-/dom-walk-0.1.2.tgz"
   "version" "0.1.2"
+
+"domexception@^1.0.1":
+  "integrity" "sha512-raigMkn7CJNNo6Ihro1fzG7wr3fHuYVytzquZKX5n0yizGsTcYgzdIUwj1X9pK0VvjeihV+XiclP+DjwbsSKug=="
+  "resolved" "https://registry.npmjs.org/domexception/-/domexception-1.0.1.tgz"
+  "version" "1.0.1"
+  dependencies:
+    "webidl-conversions" "^4.0.2"
 
 "domexception@^4.0.0":
   "integrity" "sha512-A2is4PLG+eeSfoTMA95/s4pvAoSo2mKtiM5jlHkAVewmiO8ISFTFKZjH7UAM1Atli/OT/7JHOrJRJiMKUZKYBw=="
@@ -4833,6 +4845,11 @@
   "resolved" "https://registry.npmjs.org/webidl-conversions/-/webidl-conversions-3.0.1.tgz"
   "version" "3.0.1"
 
+"webidl-conversions@^4.0.2":
+  "integrity" "sha512-YQ+BmxuTgd6UXZW3+ICGfyqRyHXVlD5GtQr5+qjiNW7bF0cqrzX500HVXPBOvgXb5YnzDd+h0zqyv61KUD7+Sg=="
+  "resolved" "https://registry.npmjs.org/webidl-conversions/-/webidl-conversions-4.0.2.tgz"
+  "version" "4.0.2"
+
 "webidl-conversions@^7.0.0":
   "integrity" "sha512-VwddBukDzu71offAQR975unBIGqfKZpM+8ZX6ySk8nYhVoo5CYaZyzt3YBvYtRtO+aoGlqxPg/B87NGVZ/fu6g=="
   "resolved" "https://registry.npmjs.org/webidl-conversions/-/webidl-conversions-7.0.0.tgz"
@@ -4953,6 +4970,15 @@
   "integrity" "sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ=="
   "resolved" "https://registry.npmjs.org/wrappy/-/wrappy-1.0.2.tgz"
   "version" "1.0.2"
+
+"wrtc@^0.4.7":
+  "integrity" "sha512-P6Hn7VT4lfSH49HxLHcHhDq+aFf/jd9dPY7lDHeFhZ22N3858EKuwm2jmnlPzpsRGEPaoF6XwkcxY5SYnt4f/g=="
+  "resolved" "https://registry.npmjs.org/wrtc/-/wrtc-0.4.7.tgz"
+  "version" "0.4.7"
+  dependencies:
+    "node-pre-gyp" "^0.13.0"
+  optionalDependencies:
+    "domexception" "^1.0.1"
 
 "ws@^3.0.0":
   "integrity" "sha512-nnWLa/NwZSt4KQJu51MYlCcSQ5g7INpOrOMt4XV8j4dqTXdmlUmSHQ8/oLC069ckre0fRsgfvsKwbTdtKLCDkA=="

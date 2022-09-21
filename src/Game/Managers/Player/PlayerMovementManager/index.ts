@@ -112,6 +112,10 @@ export default class PlayerMovementManager extends Phaser.GameObjects.GameObject
         }
     }
 
+    public getLastDirection() : ChangeDirection {
+        return this.lastDirection
+    }
+
     private updateMovementState() {
         if(this.m_excavationManager.isDrilling()) this.player.playerSchema.playerState.movementState = Schema.MovementState.Drilling
         else if (this.lastDirection.y < 0) this.player.playerSchema.playerState.movementState = Schema.MovementState.Flying 

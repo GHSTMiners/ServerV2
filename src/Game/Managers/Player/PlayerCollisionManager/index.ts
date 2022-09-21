@@ -94,14 +94,13 @@ export default class PlayerCollisionManager extends Phaser.GameObjects.GameObjec
     private processCollision(player : Phaser.Types.Physics.Arcade.GameObjectWithBody, block : Phaser.Types.Physics.Arcade.GameObjectWithBody) : boolean {
         //Check if player should collide with collision object
         if(block instanceof Block) {
-            console.log(`Collision: ${block.blockSchema.read().spawnType}`)
             switch (block.blockSchema.read().spawnType) {
                 case SpawnType.None:
                     return false;
                 case SpawnType.FallThrough:
-                    console.log('Fallthrough block');
-                    if(player.body instanceof Phaser.Physics.Arcade.Body){
-                        if(player.body.acceleration.y < 0) return false
+                    if(player instanceof Player){
+                        if(player.body.velocity.y < 0) return false
+                        if(player.movementManager().getLastDirection().y > 0) return false
                     }
             }
         }

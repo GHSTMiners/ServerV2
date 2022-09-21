@@ -35,7 +35,6 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
         })
         this.fallThroughLayers = new Array<number>()
         this.worldInfo.fall_through_layers.forEach(layer => {
-            console.log(layer)
             this.fallThroughLayers.push(layer.layer)
         })
         scene.add.existing(this)
@@ -123,6 +122,7 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
         let targetBlock : BlockSchemaWrapper | undefined = this.blockInDirectionRelativeToPlayer(drillingDirection)
         if(targetBlock) {
             let blockInterface : BlockInterface = targetBlock.read()
+            if(blockInterface.spawnType === SpawnType.FallThrough) return;
             //Find soil type and calculate drillduration using skills
             let digMultiplier : number = 1
             let targetSoil : Chisel.Soil | undefined = this.soilMap.get(blockInterface.soilID)

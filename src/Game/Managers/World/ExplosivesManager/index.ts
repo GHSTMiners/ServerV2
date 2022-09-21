@@ -25,6 +25,10 @@ export default class ExplosivesManager extends Phaser.GameObjects.GameObject {
         this.blockManager = blockManager
         this.playerManager = playerManager
         this.playerManager.on(PlayerManager.PLAYER_ADDED, this.handlePlayerJoined.bind(this))
+        this.fallThroughLayers = new Array<number>()
+        this.mainScene.worldInfo.fall_through_layers.forEach(layer => {
+            this.fallThroughLayers.push(layer.layer)
+        })
     }    
 
     private handlePlayerJoined(player : Player) {
@@ -64,8 +68,13 @@ export default class ExplosivesManager extends Phaser.GameObjects.GameObject {
     private processCollision(player : Phaser.Types.Physics.Arcade.GameObjectWithBody, block : Phaser.Types.Physics.Arcade.GameObjectWithBody) : boolean {
         //Check if player should collide with collision object
         if(block instanceof Block) {
-            return(block.blockSchema.read().spawnType != SpawnType.None)
-        } else return true
+            switch (block.blockSchema.read().spawnType) {
+                case SpawnType.None:
+                case SpawnType.FallThrough:
+                    return false
+            }
+        }
+        return true
     }
 
     private handleExplosiveBlockPositionChanged(explosive : Explosive, prevPosition : Phaser.Geom.Point, newPosition : Phaser.Geom.Point) {
@@ -125,7 +134,12 @@ export default class ExplosivesManager extends Phaser.GameObjects.GameObject {
             let block : BlockSchemaWrapper | undefined =  this.blockManager.blockAt(explosionPoint.x, explosionPoint.y)
             if(block) {
                 let blockInterface : BlockInterface = block.read()
-                blockInterface.spawnType = Chisel.SpawnType.None
+                // Check if should be a fallthrough layer
+                if (this.fallThroughLayers.indexOf(explosionPoint.y) != -1) {
+                    blockInterface.spawnType = Chisel.SpawnType.FallThrough
+                } else {
+                    blockInterface.spawnType = Chisel.SpawnType.None
+                }
                 block.write(blockInterface)
             }
         })
@@ -144,6 +158,7 @@ export default class ExplosivesManager extends Phaser.GameObjects.GameObject {
     private mainScene : MainScene
     private blockManager : BlockManager
     private playerManager : PlayerManager
+    private fallThroughLayers : Array<number>
     private explosiveColliders : Map<Explosive, Phaser.Physics.Arcade.Collider>
     private explosivePlayerColliders : Map<Explosive, Phaser.Physics.Arcade.Collider>
     private explosiveStaticBodies : Map<Explosive, Phaser.Physics.Arcade.StaticGroup>

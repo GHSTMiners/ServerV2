@@ -9,6 +9,7 @@ import ExplosivesManager from "../../Managers/World/ExplosivesManager"
 import PlayerCollisionManager from "../../Managers/Player/PlayerCollisionManager"
 import PlayerManager from "../../Managers/World/PlayerManager"
 import PlayTimeManager from "../../Managers/World/PlayTimeManager"
+import LoggingManager from "../../Managers/World/LoggingManager"
 
 export default class MainScene extends Phaser.Scene {
 
@@ -20,6 +21,7 @@ export default class MainScene extends Phaser.Scene {
     }
 
     create() {
+        this.loggingManager = new LoggingManager(this)
         this.clientManager = new ClientManager(this)
         this.playerManager = new PlayerManager(this, this.clientManager, this.room)
         this.chatManager = new ChatManager(this, this.playerManager)
@@ -38,6 +40,7 @@ export default class MainScene extends Phaser.Scene {
     public chatManager : ChatManager
     public blockManager : BlockManager
     public playerManager : PlayerManager
+    public loggingManager : LoggingManager
     public clientManager : ClientManager
     public playTimeManager : PlayTimeManager
     public exchangeManager : ExchangeManager

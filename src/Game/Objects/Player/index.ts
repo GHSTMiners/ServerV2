@@ -17,6 +17,7 @@ import MainScene from "../../Scenes/MainScene";
 import PlayerDiagnosticsManager from "../../Managers/Player/PlayerDiagnosticsManager";
 import { HealthState } from "../../../Schemas";
 import PlayerRespawnManager from "../../Managers/Player/PlayerRespawnManager";
+import PlayerLoggingManager from "../../Managers/Player/PlayerLoggingManager";
 
 export default class Player extends Phaser.GameObjects.Rectangle {
     
@@ -52,6 +53,7 @@ export default class Player extends Phaser.GameObjects.Rectangle {
         this.m_movementManager = new PlayerMovementManager(scene, this)
         this.m_cargoManager = new PlayerCargoManager(scene, this)
         this.m_respawnManager = new PlayerRespawnManager(scene, this)
+        this.m_loggingManager = new PlayerLoggingManager(scene, this)
         //Bind statistics
         this.purchaseManager().on(PlayerPurchaseManager.PURCHASED_EXPLOSIVE, (explosive : Chisel.Explosive) => {
             this.statisticsManager().addAmount(DefaultStatistics.AMOUNT_SPENT_EXPLOSIVES, explosive.price)
@@ -94,6 +96,10 @@ export default class Player extends Phaser.GameObjects.Rectangle {
         return this.m_cargoManager
     }
 
+    public logginManager() : PlayerLoggingManager {
+        return this.m_loggingManager
+    }
+
     public respawnManager() : PlayerRespawnManager {
         return this.m_respawnManager
     }
@@ -131,6 +137,7 @@ export default class Player extends Phaser.GameObjects.Rectangle {
     private m_skillManager : PlayerSkillManager
     private m_vitalsManager : PlayerVitalsManager
     private m_cargoManager : PlayerCargoManager
+    private m_loggingManager : PlayerLoggingManager
     private m_respawnManager : PlayerRespawnManager
     private m_upgradeManager : PlayerUpgradeManager
     private m_buildingManager : PlayerBuildingManager
@@ -138,7 +145,6 @@ export default class Player extends Phaser.GameObjects.Rectangle {
     private m_purchaseManager : PlayerPurchaseManager
     private m_statisticsManager : PlayerStatisticsManager
     private m_diagnosticsManager : PlayerDiagnosticsManager
-    
 
     public playerSchema : Schema.Player
 

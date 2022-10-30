@@ -23,6 +23,7 @@ export default class PlayerRespawnManager extends Phaser.GameObjects.GameObject 
         this.player.movementManager().suspend(Config.deathTimeout);
         this.player.movementManager().m_excavationManager.cancelDrilling()
         this.player.cargoManager().empty()
+        this.emit(PlayerRespawnManager.DIED)
 
         setTimeout(() => {
             // Notify client of respawn
@@ -37,6 +38,7 @@ export default class PlayerRespawnManager extends Phaser.GameObjects.GameObject 
             this.emit(PlayerRespawnManager.RESPAWNED)
         }, Config.deathTimeout);
     }
+    static readonly DIED: unique symbol = Symbol();
 
     static readonly RESPAWNED: unique symbol = Symbol();
     private player : Player

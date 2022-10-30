@@ -21,7 +21,6 @@ export default class MainScene extends Phaser.Scene {
     }
 
     create() {
-        this.loggingManager = new LoggingManager(this)
         this.clientManager = new ClientManager(this)
         this.playerManager = new PlayerManager(this, this.clientManager, this.room)
         this.chatManager = new ChatManager(this, this.playerManager)
@@ -30,6 +29,8 @@ export default class MainScene extends Phaser.Scene {
         this.playerCollisionManager = new PlayerCollisionManager(this, this.playerManager, this.blockManager, this.worldSchema)
         this.explosiveManager = new ExplosivesManager(this, this.blockManager, this.playerManager)
         this.playTimeManager = new PlayTimeManager(this, this.playerManager)
+        this.loggingManager = new LoggingManager(this)
+
     }
 
     update(time: number, delta: number): void {

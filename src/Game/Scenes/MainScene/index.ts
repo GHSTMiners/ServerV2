@@ -10,7 +10,7 @@ import PlayerCollisionManager from "../../Managers/Player/PlayerCollisionManager
 import PlayerManager from "../../Managers/World/PlayerManager"
 import PlayTimeManager from "../../Managers/World/PlayTimeManager"
 import LoggingManager from "../../Managers/World/LoggingManager"
-import DevCommandManager from "../../Managers/World/DevCommandManager.ts"
+import DevCommandManager from "../../Managers/World/DevCommandManager"
 
 export default class MainScene extends Phaser.Scene {
 

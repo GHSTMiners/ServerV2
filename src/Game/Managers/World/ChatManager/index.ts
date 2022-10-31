@@ -40,7 +40,7 @@ export default class ChatManager extends Phaser.GameObjects.GameObject {
         response.systemMessage = false;
         let serializedResponse : Protocol.Message = Protocol.MessageSerializer.serialize(response);
         this.mainScene.room.broadcast(serializedResponse.name, serializedResponse.data);   
-        this.emit(ChatManager.RECEIVED_MESSAGE, response.msg)
+        this.emit(ChatManager.RECEIVED_MESSAGE, response.msg, player)
     }
 
     private mainScene : MainScene

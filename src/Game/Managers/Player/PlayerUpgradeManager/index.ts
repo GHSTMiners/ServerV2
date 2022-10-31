@@ -37,6 +37,12 @@ export class PlayerUpgrade extends Phaser.GameObjects.GameObject {
         }
     }
 
+    public maxOut() {
+        this.m_tier = UpgradeTier.Godlike
+        this.m_schema.tier = this.m_tier
+        this.emit(PlayerUpgrade.TIER_CHANGED)
+    }
+
     public tier() : UpgradeTier {
         return this.m_tier
     }
@@ -100,6 +106,10 @@ export class PlayerUpgradeManager extends Phaser.GameObjects.GameObject {
 
     public upgrade(id : number) : PlayerUpgrade | undefined {
         return this.m_upgrades.get(id)
+    }
+
+    public upgrades() : PlayerUpgrade[] {
+        return Array.from(this.m_upgrades.values())
     }
 
     public upgrades_for_skill(skillId : number) : PlayerUpgrade[] {

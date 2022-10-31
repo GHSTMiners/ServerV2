@@ -8,6 +8,7 @@ export default class PlayerStatisticsManager extends Phaser.GameObjects.GameObje
     constructor(scene : MainScene, player: Player) {
         super(scene, "PlayerStatisticsManager")
         this.player = player
+        this. submitted = false
         this.id_map = new Map<DefaultStatistics, number>()
         this.statistics = new Map<DefaultStatistics, number>()
         this.populateIdMap();
@@ -74,41 +75,50 @@ export default class PlayerStatisticsManager extends Phaser.GameObjects.GameObje
     }
 
     public async submit() : Promise<boolean> {
-        //Put categories and values in order into arrays
-        let categories : string[] = []
-        let values : number[] = []
-        for(const element of Object.values(DefaultStatistics)) {
-            categories.push(element)
-            values.push(this.get(element))
+        var env = process.env.NODE_ENV || 'development';
+        if(env == "development")  {
+            return true
         }
-        //Fetch query data from other objects
-        if(this.scene instanceof MainScene) {
-            let room_id : string = this.scene.room.roomId
-            let gotchi_id : number = this.player.playerSchema.gotchiID
-            let wallet_address : string = this.player.playerSchema.walletAddress
+        if(!this.submitted) {
+            this.submitted = true
+            //Put categories and values in order into arrays
+            let categories : string[] = []
+            let values : number[] = []
+            for(const element of Object.values(DefaultStatistics)) {
+                categories.push(element)
+                values.push(this.get(element))
+            }
+            //Fetch query data from other objects
+            if(this.scene instanceof MainScene) {
+                let room_id : string = this.scene.room.roomId
+                let gotchi_id : number = this.player.playerSchema.gotchiID
+                let wallet_address : string = this.player.playerSchema.walletAddress
 
-            //Send data to chisel
-            return axios.post(`${Config.apiURL}/game/add_statistics`, { 
-                room_id: room_id, 
-                gotchi_id: gotchi_id,
-                wallet_address: wallet_address,
-                categories: categories.join(','),
-                values: values.join(',')
-            }, {
-                headers: {
-                    'X-API-KEY': Config.apiKey
-                }
-            }). then(response => {
-                return (response.status == 200)
-            }).catch(error => {
-                console.log(error);
-                return false;
-            })
+                //Send data to chisel
+                return axios.post(`${Config.apiURL}/game/add_statistics`, { 
+                    room_id: room_id, 
+                    gotchi_id: gotchi_id,
+                    wallet_address: wallet_address,
+                    categories: categories.join(','),
+                    values: values.join(',')
+                }, {
+                    headers: {
+                        'X-API-KEY': Config.apiKey
+                    }
+                }). then(response => {
 
-        } else return false;      
+                    return (response.status == 200)
+                }).catch(error => {
+                    console.log(error);
+                    return false;
+                })
+
+            } else return false;     
+        } else return false;
     }
 
     private player : Player
+    private submitted : boolean
     private statistics : Map<DefaultStatistics, number> 
     private id_map : Map<DefaultStatistics, number>
 }

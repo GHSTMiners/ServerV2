@@ -29,8 +29,14 @@ export default class PlayTimeManager extends Phaser.GameObjects.GameObject {
     }
 
     private startGame() {
+        // Send notification to all clients
+        let response : Protocol.NotifyGameStarted = new Protocol.NotifyGameStarted();
+        let serializedResponse : Protocol.Message = Protocol.MessageSerializer.serialize(response);
+        this.m_mainScene.room.broadcast(serializedResponse.name, serializedResponse.data)
+        // Send chat message and update game state
         this.m_mainScene.chatManager.broadCastMessage(`The game has started, you have ${Config.gameDuration/60} minutes`)
         this.m_mainScene.room.state.ready = true
+        // Calculate durations and set timers for game end
         let gameDurationMs : number = Config.gameDuration * 1000
         this.m_gameStartTime = new Date(Date.now());
         this.m_gameEndTime = new Date(Date.now() + gameDurationMs)
@@ -51,6 +57,11 @@ export default class PlayTimeManager extends Phaser.GameObjects.GameObject {
     private endGame() { 
         this.m_mainScene.chatManager.broadCastMessage("Game will end in 30 seconds")
         setTimeout((() => {
+            // Send notification to all clients
+            let response : Protocol.NotifyGameEnded = new Protocol.NotifyGameEnded();
+            let serializedResponse : Protocol.Message = Protocol.MessageSerializer.serialize(response);
+            this.m_mainScene.room.broadcast(serializedResponse.name, serializedResponse.data)
+            // Send chat message and disconnect clients
             this.m_mainScene.chatManager.broadCastMessage("The game has ended")
             this.emit(PlayTimeManager.GAME_ENDED)
             this.m_mainScene.room.disconnect()

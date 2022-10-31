@@ -28,7 +28,7 @@ export default class LoggingManager extends Phaser.GameObjects.GameObject {
     }
 
     private logEvent(event : LoggingEvent) {
-        const stmt = this.database.prepare(`INSERT INTO "Events "("ID","PlayerID","Time","Event") VALUES (NULL,NULL,?,?);`)
+        const stmt = this.database.prepare(`INSERT INTO "Events"("ID","PlayerID","Time","Event") VALUES (NULL,NULL,?,?);`)
         stmt.run([Date.now(), event])
     }
 

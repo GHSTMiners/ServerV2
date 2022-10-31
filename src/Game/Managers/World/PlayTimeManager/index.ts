@@ -54,9 +54,13 @@ export default class PlayTimeManager extends Phaser.GameObjects.GameObject {
         this.m_mainScene.chatManager.broadCastMessage("Game will end in 5 minutes")
     }
 
-    private endGame() { 
-        this.m_mainScene.chatManager.broadCastMessage("Game will end in 30 seconds")
-        setTimeout((() => {
+    public terminate() {
+        // Submit all stats
+        let promises : Promise<boolean>[] = []
+        this.m_mainScene.playerManager.players().forEach(player => {
+            promises.push(player.statisticsManager().submit())
+        });
+        Promise.allSettled<boolean>(promises).finally(() => {
             // Send notification to all clients
             let response : Protocol.NotifyGameEnded = new Protocol.NotifyGameEnded();
             let serializedResponse : Protocol.Message = Protocol.MessageSerializer.serialize(response);
@@ -65,7 +69,12 @@ export default class PlayTimeManager extends Phaser.GameObjects.GameObject {
             this.m_mainScene.chatManager.broadCastMessage("The game has ended")
             this.emit(PlayTimeManager.GAME_ENDED)
             this.m_mainScene.room.disconnect()
-        }).bind(this), 30 * 1000)
+        })
+    }
+
+    private endGame() { 
+        this.m_mainScene.chatManager.broadCastMessage("Game will end in 30 seconds")
+        setTimeout((() => this.terminate.bind(this)), 30 * 1000)
     }
 
     private handlePlayerJoined(player : Player) {

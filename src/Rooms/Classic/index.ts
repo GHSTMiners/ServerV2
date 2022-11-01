@@ -14,7 +14,13 @@ import axios from "axios"
 export class Classic extends Room<Schema.World, any> {
 
   async generateRoomId(worldID:number): Promise<string> {
-    return axios.post(`${Config.apiURL}/game/create` , {world_id: worldID, server_region_id : this.state.serverRegionId}, {
+    let postdata : any = {}
+    postdata.world_id = worldID
+    if(process.env.REGION_ID) {
+      postdata.server_region_id = this.state.serverRegionId
+    }
+
+    return axios.post(`${Config.apiURL}/game/create` , postdata, {
       headers: {
           'X-API-Key': Config.apiKey
       }

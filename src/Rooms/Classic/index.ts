@@ -14,22 +14,17 @@ import axios from "axios"
 export class Classic extends Room<Schema.World, any> {
 
   async generateRoomId(worldID:number): Promise<string> {
-    var env = process.env.NODE_ENV || 'development';
-    if(env == "production")  {
-      return axios.post(`${Config.apiURL}/game/create` , {world_id: worldID, server_region_id : this.state.serverRegionId}, {
-        headers: {
-            'X-API-Key': Config.apiKey
-        }
-      }).then(value => {
-        return value.data.room_id as string;
-      })
-      .catch(exception=> {
-          console.warn(exception);
-          return "";
-      })
-  } else {
-    return uuidv4();
-  }
+    return axios.post(`${Config.apiURL}/game/create` , {world_id: worldID, server_region_id : this.state.serverRegionId}, {
+      headers: {
+          'X-API-Key': Config.apiKey
+      }
+    }).then(value => {
+      return value.data.room_id as string;
+    })
+    .catch(exception=> {
+        console.warn(exception);
+        return "";
+    })
 }
 
   async onCreate (options:any) {

@@ -75,10 +75,6 @@ export default class PlayerStatisticsManager extends Phaser.GameObjects.GameObje
     }
 
     public async submit() : Promise<boolean> {
-        var env = process.env.NODE_ENV || 'development';
-        if(env == "development")  {
-            return true
-        }
         if(!this.submitted) {
             this.submitted = true
             //Put categories and values in order into arrays

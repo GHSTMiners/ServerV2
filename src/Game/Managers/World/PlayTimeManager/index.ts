@@ -55,6 +55,7 @@ export default class PlayTimeManager extends Phaser.GameObjects.GameObject {
     }
 
     public terminate() {
+        this.emit(PlayTimeManager.GAME_ENDED)
         // Submit all stats
         let promises : Promise<boolean>[] = []
         this.m_mainScene.playerManager.players().forEach(player => {
@@ -68,7 +69,6 @@ export default class PlayTimeManager extends Phaser.GameObjects.GameObject {
             this.m_mainScene.room.broadcast(serializedResponse.name, serializedResponse.data)
             // Send chat message and disconnect clients
             this.m_mainScene.chatManager.broadCastMessage("The game has ended")
-            this.emit(PlayTimeManager.GAME_ENDED)
             this.m_mainScene.room.disconnect()
         })
     }

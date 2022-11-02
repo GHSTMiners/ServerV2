@@ -9,15 +9,17 @@ import * as fs from 'node:fs';
 export default class LoggingManager extends Phaser.GameObjects.GameObject {
     constructor(scene : MainScene) {
         super(scene, "PlayerLoggingManager")
+        this.databaseOpen = false
         scene.add.existing(this)
         this.mainScene = scene
         this.file = tmp.fileSync({
 
         }).name
-        this.database = new Database(this.file)
+        this.database = new Database(this.file, (err) => {
+            if(!err) this.databaseOpen = true
+        })
         this.createPlayersTable()
         this.createTables()
-        console.log(this.file)
         scene.time.addEvent({
             delay: 5000,
             loop: true,
@@ -29,12 +31,15 @@ export default class LoggingManager extends Phaser.GameObjects.GameObject {
     }
 
     private requestLogging() {
+        if(!this.databaseOpen) return
         this.emit(LoggingManager.REQUEST_LOGGING)
     }
 
     private logEvent(event : LoggingEvent) {
+        if(!this.databaseOpen) return
         const stmt = this.database.prepare(`INSERT INTO "Events"("ID","PlayerID","Time","Event") VALUES (NULL,NULL,?,?);`)
         stmt.run([Date.now(), event])
+        stmt.finalize()
     }
 
     private createPlayersTable() {
@@ -46,6 +51,8 @@ export default class LoggingManager extends Phaser.GameObjects.GameObject {
     }
 
     public async upload() : Promise<boolean> {
+        this.databaseOpen  =false
+        this.database.close()
 
         // Prepare data
         let formData = new FormData();
@@ -63,6 +70,8 @@ export default class LoggingManager extends Phaser.GameObjects.GameObject {
         }).catch(error => {
             console.log(error);
             return false;
+        }).finally(() =>{
+            fs.unlinkSync(this.file)
         })
     }
 
@@ -87,6 +96,7 @@ export default class LoggingManager extends Phaser.GameObjects.GameObject {
         )`)
     }
 
+    private databaseOpen : boolean
     private file : string
     private mainScene : MainScene
     public readonly database : Database

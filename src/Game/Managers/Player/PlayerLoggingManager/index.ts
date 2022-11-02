@@ -28,11 +28,13 @@ export default class PlayerLoggingManager extends Phaser.GameObjects.GameObject 
     private insertValue(category : LoggingCategory, value : number) {
         const stmt = this.database.prepare(`INSERT INTO "${category}"("ID","PlayerID","Time","Value") VALUES (NULL,?,?,?);`)
         stmt.run([this.databaseID, Date.now(), value])
+        stmt.finalize()
     }
 
     private logEvent(event : LoggingEvent) {
         const stmt = this.database.prepare(`INSERT INTO "Events"("ID","PlayerID","Time","Event") VALUES (NULL,?,?,?);`)
         stmt.run([this.databaseID, Date.now(), event])
+        stmt.finalize()
     }
 
     private insertPlayer() {
@@ -41,6 +43,7 @@ export default class PlayerLoggingManager extends Phaser.GameObjects.GameObject 
         stmt.run(this.player.playerSchema.gotchiID, function (err) {  
             self.databaseID = this.lastID
         });
+        stmt.finalize()
     }
     private databaseID : number
     private database : Database

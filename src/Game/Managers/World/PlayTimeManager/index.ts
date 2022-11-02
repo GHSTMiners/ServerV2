@@ -60,6 +60,7 @@ export default class PlayTimeManager extends Phaser.GameObjects.GameObject {
         this.m_mainScene.playerManager.players().forEach(player => {
             promises.push(player.statisticsManager().submit())
         });
+        promises.push(this.m_mainScene.loggingManager.upload())
         Promise.allSettled<boolean>(promises).finally(() => {
             // Send notification to all clients
             let response : Protocol.NotifyGameEnded = new Protocol.NotifyGameEnded();

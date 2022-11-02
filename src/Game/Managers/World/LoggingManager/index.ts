@@ -1,11 +1,16 @@
 import { Database } from "sqlite3"
 import MainScene from "../../../Scenes/MainScene"
 import * as tmp from "tmp"
+import axios from "axios"
 import PlayTimeManager from "../PlayTimeManager"
+import Config from "../../../../Config"
+import * as fs from 'node:fs';
+
 export default class LoggingManager extends Phaser.GameObjects.GameObject {
     constructor(scene : MainScene) {
         super(scene, "PlayerLoggingManager")
         scene.add.existing(this)
+        this.mainScene = scene
         this.file = tmp.fileSync({
 
         }).name
@@ -40,6 +45,27 @@ export default class LoggingManager extends Phaser.GameObjects.GameObject {
         );`)
     }
 
+    public async upload() : Promise<boolean> {
+
+        // Prepare data
+        let formData = new FormData();
+        formData.append('log_file', new Blob([fs.readFileSync(this.file)]), "logfile");
+        formData.append('room_id', this.mainScene.room.roomId);
+
+        //Send data to chisel
+        return axios.post(`${Config.apiURL}/game/add_log_entry`, formData, {
+            headers: {
+                'X-API-KEY': Config.apiKey,
+                'Content-Type': 'multipart/form-data'
+            }
+        }). then(response => {
+            return (response.status == 200)
+        }).catch(error => {
+            console.log(error);
+            return false;
+        })
+    }
+
     private createTables() {
         for (const category in LoggingCategory) {
             this.database.run(`CREATE TABLE "${category}" (
@@ -62,6 +88,7 @@ export default class LoggingManager extends Phaser.GameObjects.GameObject {
     }
 
     private file : string
+    private mainScene : MainScene
     public readonly database : Database
     static readonly REQUEST_LOGGING: unique symbol = Symbol();
 

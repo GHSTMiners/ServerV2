@@ -1,5 +1,5 @@
 # Stage 1: Build application
-FROM node:18.9-alpine as builder
+FROM node:19-alpine as builder
 RUN apk add --update --no-cache \
     make \
     g++ \
@@ -35,7 +35,7 @@ COPY --chown=node:node . .
 RUN npm run build
 
 # Prepare runtime image
-FROM node:18.9-alpine
+FROM node:19-alpine
 RUN apk add --update --no-cache \
     jpeg \
     cairo \

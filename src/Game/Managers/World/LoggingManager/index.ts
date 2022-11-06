@@ -73,6 +73,7 @@ export default class LoggingManager extends Phaser.GameObjects.GameObject {
             this.uploaded = response.status == 200
             return (response.status == 200)
         }).catch(error => {
+            console.log(`RoomID: ${this.mainScene.room.roomId}`)
             console.log(error);
             return false;
         }).finally(() =>{

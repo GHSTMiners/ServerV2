@@ -14,9 +14,12 @@ export default class LoggingManager extends Phaser.GameObjects.GameObject {
         this.mainScene = scene
         this.uploaded = false
         this.file = tmp.fileSync({
-        }).name
-        this.database = new Database(this.file, (err) => {
+        })
+        console.log(this.file.name);
+        
+        this.database = new Database(this.file.name, (err) => {
             if(!err) this.databaseOpen = true
+            else console.warn(err.message)
         })
         this.createPlayersTable()
         this.createTables()
@@ -57,7 +60,7 @@ export default class LoggingManager extends Phaser.GameObjects.GameObject {
 
         // Prepare data
         let formData = new FormData();
-        formData.append('log_file', new Blob([fs.readFileSync(this.file)]), "logfile");
+        formData.append('log_file', new Blob([fs.readFileSync(this.file.name)]), "logfile");
         formData.append('room_id', this.mainScene.room.roomId);
 
         //Send data to chisel
@@ -73,7 +76,7 @@ export default class LoggingManager extends Phaser.GameObjects.GameObject {
             console.log(error);
             return false;
         }).finally(() =>{
-            fs.unlinkSync(this.file)
+            fs.unlinkSync(this.file.name)
         })
     }
 
@@ -99,7 +102,7 @@ export default class LoggingManager extends Phaser.GameObjects.GameObject {
     }
 
     private databaseOpen : boolean
-    private file : string
+    private file : tmp.FileResult
     public uploaded : boolean
     private mainScene : MainScene
     public readonly database : Database

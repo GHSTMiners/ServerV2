@@ -12,8 +12,8 @@ export default class LoggingManager extends Phaser.GameObjects.GameObject {
         this.databaseOpen = false
         scene.add.existing(this)
         this.mainScene = scene
+        this.uploaded = false
         this.file = tmp.fileSync({
-
         }).name
         this.database = new Database(this.file, (err) => {
             if(!err) this.databaseOpen = true
@@ -51,6 +51,7 @@ export default class LoggingManager extends Phaser.GameObjects.GameObject {
     }
 
     public async upload() : Promise<boolean> {
+        if(this.uploaded) return true
         this.databaseOpen  =false
         this.database.close()
 
@@ -66,6 +67,7 @@ export default class LoggingManager extends Phaser.GameObjects.GameObject {
                 'Content-Type': 'multipart/form-data'
             }
         }). then(response => {
+            this.uploaded = response.status == 200
             return (response.status == 200)
         }).catch(error => {
             console.log(error);
@@ -98,6 +100,7 @@ export default class LoggingManager extends Phaser.GameObjects.GameObject {
 
     private databaseOpen : boolean
     private file : string
+    public uploaded : boolean
     private mainScene : MainScene
     public readonly database : Database
     static readonly REQUEST_LOGGING: unique symbol = Symbol();

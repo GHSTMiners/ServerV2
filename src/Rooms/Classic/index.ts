@@ -105,7 +105,8 @@ export class Classic extends Room<Schema.World, any> {
     }
   }
 
-  onDispose() {
+  async onDispose() {
+    const result = await this.game.mainScene.loggingManager.upload()
     console.log("Room", this.roomId, "disposing...");
     this.game.destroy(false, false)
   }

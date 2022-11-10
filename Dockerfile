@@ -28,6 +28,7 @@ RUN npm install -g typescript
 RUN npm install -g ts-node
 RUN chown node:node -R /app
 USER node
+RUN npm cache clean --force
 RUN npm install --omit=dev
 
 # Copy our project into our working container and initiate build

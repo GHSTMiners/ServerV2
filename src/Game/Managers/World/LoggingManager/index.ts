@@ -1,7 +1,7 @@
 import { Database } from "sqlite3"
 import MainScene from "../../../Scenes/MainScene"
 import * as tmp from "tmp"
-import axios from "axios"
+import needle from "needle"
 import PlayTimeManager from "../PlayTimeManager"
 import Config from "../../../../Config"
 import * as fs from 'node:fs';
@@ -64,14 +64,20 @@ export default class LoggingManager extends Phaser.GameObjects.GameObject {
         formData.append('room_id', this.mainScene.room.roomId);
 
         //Send data to chisel
-        return axios.post(`${Config.apiURL}/game/add_log_entry`, formData, {
+        return needle('post', `${Config.apiURL}/game/add_log_entry`, {
+            room_id: this.mainScene.room.roomId,
+            log_file: {
+                file: this.file.name,
+                content_type: 'application/x-sqlite3'
+            }
+        }, {
             headers: {
                 'X-API-KEY': Config.apiKey,
-                'Content-Type': 'multipart/form-data'
-            }
+            },
+            multipart: true
         }). then(response => {
-            this.uploaded = response.status == 200
-            return (response.status == 200)
+            this.uploaded = response.statusCode == 200
+            return (response.statusCode == 200)
         }).catch(error => {
             console.log(`RoomID: ${this.mainScene.room.roomId}`)
             console.log(error);

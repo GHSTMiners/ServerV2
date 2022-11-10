@@ -1,5 +1,5 @@
 import MainScene from "../../../Scenes/MainScene";
-import axios from "axios"
+import needle from "needle"
 import * as Protocol from "gotchiminer-multiplayer-protocol"
 import *  as Schema from "../../../../Schemas"
 import PlayerManager from "../PlayerManager";
@@ -17,10 +17,10 @@ export default class ExchangeManager extends Phaser.GameObjects.GameObject {
 
     private async fetchExchangeRates() {
         this.mainScene.worldInfo.crypto.forEach(crypto => {
-            axios.get(`https://polygon.api.0x.org/swap/v1/price?sellToken=DAI&buyToken=${crypto.wallet_address}&buyAmount=1000`).then(response => {
+            needle('get', `https://polygon.api.0x.org/swap/v1/price?sellToken=DAI&buyToken=${crypto.wallet_address}&buyAmount=1000`).then(response => {
                 let exchangeEntry : Schema.ExchangeEntry = new Schema.ExchangeEntry();
                 exchangeEntry.crypto_id = crypto.id;
-                exchangeEntry.usd_value = Number(response.data.price);
+                exchangeEntry.usd_value = Number(response.body.price);
                 this.mainScene.worldSchema.exchange.set(crypto.id.toString(), exchangeEntry)
             }).catch(error => {
                 let exchangeEntry : Schema.ExchangeEntry = new Schema.ExchangeEntry();

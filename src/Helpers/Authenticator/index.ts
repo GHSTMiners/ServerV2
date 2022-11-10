@@ -1,5 +1,5 @@
 import http from 'http';
-import axios from "axios"
+import needle from "needle"
 import { Client, Presence } from "colyseus";
 import * as Protocol from "gotchiminer-multiplayer-protocol"
 import AavegotchiInfoFetcher from '../AavegotchiInfoFetcher';
@@ -70,12 +70,12 @@ export default class Authenticator {
     }
 
     private async validateWalletOwnership() : Promise<AuthenticatorState>{
-        const response = await axios.post(`${Config.apiURL}/token/validate`, { wallet_address: this.m_options.walletAddress, token: this.m_options.authenticationToken })
+        const response = await needle('post', `${Config.apiURL}/token/validate`, { wallet_address: this.m_options.walletAddress, token: this.m_options.authenticationToken })
         //Check result status
-        if (response.status == 200) {
+        if (response.statusCode == 200) {
             //Check that token is valid
-            if(response.data.success) {
-                this.m_roles = response.data.roles
+            if(response.body.success) {
+                this.m_roles = response.body.roles
                 return AuthenticatorState.ValidatedWalletOwnership
             } else {
                 Logging.submitEvent("Player tried to authenticate with an invalid wallet authentication token", 10, this.m_request, this.m_options.gotchiId, this.m_options.walletAddress);
@@ -83,7 +83,7 @@ export default class Authenticator {
                 return AuthenticatorState.AuthenticationFailed
             }
         } else {
-            this.m_failedReason = `Server request returned code: ${response.status}`
+            this.m_failedReason = `Server request returned code: ${response.statusCode}`
             return AuthenticatorState.AuthenticationFailed
         }
     }

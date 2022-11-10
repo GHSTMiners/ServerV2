@@ -1,6 +1,6 @@
 import Player from "../../../Objects/Player";
 import MainScene from "../../../Scenes/MainScene";
-import axios from "axios"
+import needle from "needle"
 import Config from "../../../../Config";
 import { StatisticEntry } from "../../../../Schemas/Player/StatisticEntry";
 
@@ -91,7 +91,7 @@ export default class PlayerStatisticsManager extends Phaser.GameObjects.GameObje
                 let wallet_address : string = this.player.playerSchema.walletAddress
 
                 //Send data to chisel
-                return axios.post(`${Config.apiURL}/game/add_statistics`, { 
+                return needle('post', `${Config.apiURL}/game/add_statistics`, { 
                     room_id: room_id, 
                     gotchi_id: gotchi_id,
                     wallet_address: wallet_address,
@@ -103,7 +103,7 @@ export default class PlayerStatisticsManager extends Phaser.GameObjects.GameObje
                     }
                 }). then(response => {
 
-                    return (response.status == 200)
+                    return (response.statusCode == 200)
                 }).catch(error => {
                     console.log(error);
                     return false;

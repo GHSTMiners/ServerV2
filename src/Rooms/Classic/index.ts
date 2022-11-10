@@ -9,7 +9,7 @@ import Authenticator, { AuthenticatorState } from "../../Helpers/Authenticator";
 import Config from "../../Config";
 import Logging from "../../Helpers/Logging";
 import {v4 as uuidv4} from 'uuid';
-import axios from "axios"
+import needle from "needle"
 
 export class Classic extends Room<Schema.World, any> {
 
@@ -20,12 +20,12 @@ export class Classic extends Room<Schema.World, any> {
       postdata.server_region_id = this.state.serverRegionId
     }
 
-    return axios.post(`${Config.apiURL}/game/create` , postdata, {
+    return needle('post', `${Config.apiURL}/game/create` , postdata, {
       headers: {
           'X-API-Key': Config.apiKey
       }
-    }).then(value => {
-      return value.data.room_id as string;
+    }).then(response => {
+      return response.body.room_id as string;
     })
     .catch(exception=> {
         console.warn(exception);

@@ -23,17 +23,16 @@ COPY package*.json ./
 RUN npm config set unsafe-perm true
 
 # Since we are all good let us, install our dependencies
-RUN npm install -g npm
+RUN npm install -g yarn
 RUN npm install -g typescript
 RUN npm install -g ts-node
 RUN chown node:node -R /app
 USER node
-RUN npm cache clean --force
-RUN npm install --omit=dev
+RUN yarn install
 
 # Copy our project into our working container and initiate build
 COPY --chown=node:node . .
-RUN npm run build
+RUN yarn run build
 
 # Prepare runtime image
 FROM node:18.12.1-alpine3.16

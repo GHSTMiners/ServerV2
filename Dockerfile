@@ -18,6 +18,8 @@ WORKDIR /app
 
 # Let us copy our package file into the working directory to make it the root directory from which we will install our dependency packages.
 COPY package.json ./
+COPY yarn.lock ./
+
 
 # Next we ensure that the package installer should never drop into user and group switching when installing our apps.
 RUN yarn config set unsafe-perm true

@@ -67,5 +67,8 @@
     "@colyseus/uwebsockets-transport": {
       "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.14.0"
     }
+  },
+  "resolutions": {
+    "@colyseus/uwebsockets-transport/uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.14.0"
   }
 }

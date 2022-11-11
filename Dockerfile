@@ -1,5 +1,5 @@
 # Stage 1: Build application
-FROM node:18.12.1-alpine3.16 as builder
+FROM node:19.0.1-alpine as builder
 RUN apk add --update --no-cache \
     make \
     g++ \
@@ -20,11 +20,11 @@ WORKDIR /app
 COPY package*.json ./
 
 # Next we ensure that the package installer should never drop into user and group switching when installing our apps.
-RUN npm config set unsafe-perm true
+RUN yarn config set unsafe-perm true
 
 # Since we are all good let us, install our dependencies
-RUN npm install -g typescript
-RUN npm install -g ts-node
+RUN yarn install -g typescript
+RUN yarn install -g ts-node
 RUN chown node:node -R /app
 USER node
 RUN yarn install
@@ -34,7 +34,7 @@ COPY --chown=node:node . .
 RUN yarn run build
 
 # Prepare runtime image
-FROM node:18.12.1-alpine3.16
+FROM node:19.0.1-alpine
 
 RUN apk add --update --no-cache \
     jpeg \
@@ -58,7 +58,7 @@ RUN apk add --no-cache --virtual .build-deps \
     libtool \
     autoconf \
     automake \
-    && npm install --production \
+    && yarn install --production=true \
     && apk del .build-deps
 
 USER node

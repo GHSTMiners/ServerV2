@@ -23,8 +23,8 @@ COPY package*.json ./
 RUN yarn config set unsafe-perm true
 
 # Since we are all good let us, install our dependencies
-RUN yarn install -g typescript
-RUN yarn install -g ts-node
+RUN yarn global add typescript
+RUN yarn global add ts-node
 RUN chown node:node -R /app
 USER node
 RUN yarn install

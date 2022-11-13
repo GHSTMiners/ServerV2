@@ -51,7 +51,7 @@ export default class ExplosivesManager extends Phaser.GameObjects.GameObject {
                 newExplosiveSchema.explosiveID = message.explosiveID
                 this.mainScene.worldSchema.explosives.push(newExplosiveSchema)
                 // Spawn the explosive
-                let newExplosive : Explosive = new Explosive(this.scene, newExplosiveSchema)
+                let newExplosive : Explosive = new Explosive(this.scene, newExplosiveSchema, player)
                 this.mainScene.add.existing(newExplosive)
                 newExplosive.on(Explosive.EXPLODED, this.handleExplosiveDetonated.bind(this))
                 //Create staticgroup and collider
@@ -128,7 +128,7 @@ export default class ExplosivesManager extends Phaser.GameObjects.GameObject {
             let explosionPoint : Phaser.Geom.Point = new Phaser.Geom.Point(blockPosition.x + coordinate.y, blockPosition.y + coordinate.x)
             //Take health from player
             this.playerManager.playersAt(explosionPoint).forEach(player => {
-                player.vitalsManager().get(DefaultVitals.HEALTH).takeAmount(200)
+                player.vitalsManager().get(DefaultVitals.HEALTH).takeAmount(200, {reason : Protocol.DeathReason.Exploded, perpetratorGotchiId: explosive.owner.playerSchema.gotchiID})
             })
             //Destroy blocks
             let block : BlockSchemaWrapper | undefined =  this.blockManager.blockAt(explosionPoint.x, explosionPoint.y)

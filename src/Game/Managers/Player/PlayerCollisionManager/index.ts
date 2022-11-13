@@ -85,7 +85,7 @@ export default class PlayerCollisionManager extends Phaser.GameObjects.GameObjec
 
                 //Take health from client
                 let healthToTake : number = 12.5 * (player.body.speed - maxSpeedBeforeDamage) / Config.blockHeight
-                player.vitalsManager().get(DefaultVitals.HEALTH).takeAmount(healthToTake)
+                player.vitalsManager().get(DefaultVitals.HEALTH).takeAmount(healthToTake, {reason : Protocol.DeathReason.Collision})
             }
         }
     }

@@ -7,10 +7,12 @@ import PlayerMovementManager from "../../Managers/Player/PlayerMovementManager";
 import PlayerSkillManager from "../../Managers/Player/PlayerSkillManager";
 import PlayerVitalsManager, { DefaultVitals, PlayerVital } from "../../Managers/Player/PlayerVitalsManager";
 import ClientWrapper from "../../../Helpers/ClientWrapper";
+import Player from "../Player";
 
 export default class Explosive extends Phaser.GameObjects.Rectangle {
-    constructor(scene : Phaser.Scene, explosiveSchema : Schema.Explosive) {
+    constructor(scene : Phaser.Scene, explosiveSchema : Schema.Explosive, owner : Player) {
         super(scene, explosiveSchema.x, explosiveSchema.y)
+        this.owner = owner
         this.explosiveSchema = explosiveSchema
         this.lastBlockPosition = new Phaser.Geom.Point()
         //Create a body for the rectangle
@@ -58,6 +60,7 @@ export default class Explosive extends Phaser.GameObjects.Rectangle {
         }
     }
     
+    public readonly owner : Player
     public explosiveSchema : Schema.Explosive
     static readonly EXPLODED: unique symbol = Symbol();
     static readonly BLOCK_POSITION_CHANGED: unique symbol = Symbol();

@@ -9,15 +9,18 @@ export default class PlayerRespawnManager extends Phaser.GameObjects.GameObject 
     constructor(scene : MainScene, player : Player) {
         super(scene, "PlayerRespawnManager")
         this.player = player
+        this.mainScene = scene
         //Create kill conditions
         player.vitalsManager().get(DefaultVitals.FUEL).on(PlayerVital.EMPTY, this.respawn.bind(this))
         player.vitalsManager().get(DefaultVitals.HEALTH).on(PlayerVital.EMPTY, this.respawn.bind(this))
     }
 
-    public respawn() {
+    public respawn(options? : any) {
         //Notify client of player death
         this.player.playerSchema.playerState.healthState = HealthState.Deceased;
-        let diedMessage : Protocol.NotifyPlayerDied = new Protocol.NotifyPlayerDied({gotchiId: this.player.playerSchema.gotchiID})
+        let diedMessage : Protocol.NotifyPlayerDied = new Protocol.NotifyPlayerDied(options)
+        diedMessage.gotchiId = this.player.playerSchema.gotchiID
+        diedMessage.lostCargo = this.player.vitalsManager().get(DefaultVitals.CARGO).isDepleted()
         let serializedMessage : Protocol.Message = Protocol.MessageSerializer.serialize(diedMessage)
         this.mainScene.room.broadcast(serializedMessage.name, serializedMessage.data)
         // Stop all movement and clear cargo

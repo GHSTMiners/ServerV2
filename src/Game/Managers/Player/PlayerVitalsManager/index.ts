@@ -125,11 +125,11 @@ export class PlayerVital extends Phaser.GameObjects.GameObject {
         if(this.schema.emptyValue != this.emptyValue()) this.schema.emptyValue = this.emptyValue()
     }
 
-    public takeAmount(amount : number) {
+    public takeAmount(amount : number, options? : any) {
         this.m_currentValue = Phaser.Math.Clamp(this.m_currentValue - amount, 0, this.m_maximum)
-        this.emit(PlayerVital.VALUE_CHANGED)
-        this.emit(PlayerVital.DECREASED, amount)
-        if(this.m_currentValue <= 0) this.emit(PlayerVital.EMPTY)
+        this.emit(PlayerVital.VALUE_CHANGED, options)
+        this.emit(PlayerVital.DECREASED, amount, options)
+        if(this.m_currentValue <= 0) this.emit(PlayerVital.EMPTY, options)
         this.syncWithSchema()
     }
 

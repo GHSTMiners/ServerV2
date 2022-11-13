@@ -12,6 +12,19 @@ export default class ClientManager extends Phaser.GameObjects.GameObject{
         let clientWrapper : ClientWrapper = new ClientWrapper(client);
         this.clientWrappers.set(client, clientWrapper)
         this.emit(ClientManager.CLIENT_JOINED, clientWrapper, options)
+        // Add handle for when player want to leave the game
+        var self = this
+        clientWrapper.messageRouter.addRoute(Protocol.RequestLeaveGame, (msg) => {
+            this.handleClientRequestLeave.bind(self)(client);
+        })
+    }
+
+    public handleClientRequestLeave(client: Client) {
+        let clientWrapper : ClientWrapper | undefined = this.clientWrappers.get(client)
+        if(clientWrapper) {
+            this.clientWrappers.delete(client)
+            this.emit(ClientManager.CLIENT_LEFT, clientWrapper)
+        }
     }
 
     public handleClientLeave(client : Client) {

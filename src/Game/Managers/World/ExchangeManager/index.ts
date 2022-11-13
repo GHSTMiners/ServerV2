@@ -54,7 +54,7 @@ export default class ExchangeManager extends Phaser.GameObjects.GameObject {
 
     private handleExchangeRequest(player : Player, message : Protocol.ExchangeCrypto) {
         //Prepare message
-        let exchangeNotification : Protocol.NotifyPlayerExchangedCrypto = new Protocol.NotifyPlayerExchangedCrypto()
+        let exchangeNotification : Protocol.NotifyPlayerExchangedCrypto = new Protocol.NotifyPlayerExchangedCrypto({gotchiId: player.playerSchema.gotchiID})
         exchangeNotification.sourceCryptoId = message.sourceCryptoId
         exchangeNotification.targetCryptoId = message.targetCryptoId
         exchangeNotification.amount = message.amount
@@ -66,7 +66,7 @@ export default class ExchangeManager extends Phaser.GameObjects.GameObject {
         }
         //Send message
         let serializedMessage : Protocol.Message = Protocol.MessageSerializer.serialize(exchangeNotification)
-        player.client().client.send(serializedMessage.name, serializedMessage.data)
+        this.mainScene.room.broadcast(serializedMessage.name, serializedMessage.data)
     }
     
 

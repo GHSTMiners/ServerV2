@@ -82,22 +82,22 @@ export default class PlayerPurchaseManager extends Phaser.GameObjects.GameObject
                     this.player.playerSchema.explosives.set(message.id.toString(), explosiveEntry)
                 }
                 //Notify player that transaction succeeded
-                let transactionMessage : Protocol.NotifyPlayerTransaction = new Protocol.NotifyPlayerTransaction()
+                let transactionMessage : Protocol.NotifyPlayerTransaction = new Protocol.NotifyPlayerTransaction({gotchiId : this.player.playerSchema.gotchiID})
                 transactionMessage.accepted = true
                 transactionMessage.amount = totalAmount
                 transactionMessage.cryptoId = explosive.crypto_id
                 let serializedMessage : Protocol.Message = MessageSerializer.serialize(transactionMessage)
-                this.player.client().client.send(serializedMessage.name, serializedMessage.data)
+                this.mainScene.room.broadcast(serializedMessage.name, serializedMessage.data)
                 //Emit event
                 this.emit(PlayerPurchaseManager.PURCHASED_EXPLOSIVE, explosive);
             } else {
                 //Notify player that transaction failed
-                let transactionMessage : Protocol.NotifyPlayerTransaction = new Protocol.NotifyPlayerTransaction()
+                let transactionMessage : Protocol.NotifyPlayerTransaction = new Protocol.NotifyPlayerTransaction({gotchiId : this.player.playerSchema.gotchiID})
                 transactionMessage.accepted = false
                 transactionMessage.amount = totalAmount
                 transactionMessage.cryptoId = explosive.crypto_id
                 let serializedMessage : Protocol.Message = MessageSerializer.serialize(transactionMessage)
-                this.player.client().client.send(serializedMessage.name, serializedMessage.data)
+                this.mainScene.room.broadcast(serializedMessage.name, serializedMessage.data)
             }
         }
     }

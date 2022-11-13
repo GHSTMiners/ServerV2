@@ -14,9 +14,10 @@ import MainScene from "../../../Scenes/MainScene";
 import { BlockInterface, BlockSchemaWrapper } from "../../../../Helpers/BlockSchemaWrapper";
 
 export default class PlayerCollisionManager extends Phaser.GameObjects.GameObject {
-    constructor(scene : Phaser.Scene, playerManager : PlayerManager, blockManager : BlockManager, world : World) {
+    constructor(scene : MainScene, playerManager : PlayerManager, blockManager : BlockManager, world : World) {
         super(scene, "BlockManager") 
         this.world = world
+        this.mainScene = scene
         this.blockManager = blockManager
 
         //Create maps and groups
@@ -65,7 +66,6 @@ export default class PlayerCollisionManager extends Phaser.GameObjects.GameObjec
         if(player instanceof Player && player.body instanceof Phaser.Physics.Arcade.Body) {
             let maxSpeedBeforeDamage : number = Config.blockHeight * player.skillManager().get(DefaultSkills.MAX_SPEED_BEFORE_DAMAGE).value();
             if(player.body.speed > maxSpeedBeforeDamage) {
-                // console.log(`Touching down: ${player.body.touching.down}, touching left: ${player.body.touching.left}, touching right: ${player.body.touching.right}`)
                 // If player is moving walking fast, ignore events
                 if(player.body.touching.down) {
                     if(player.body.y < block.body.y) {
@@ -79,9 +79,9 @@ export default class PlayerCollisionManager extends Phaser.GameObjects.GameObjec
                     if ((player.body.touching.left) || (player.body.touching.right)) return false;
                 }
                 //Notify client of collision
-                let colisionMessage : Protocol.NotifyPlayerCollision = new Protocol.NotifyPlayerCollision()
+                let colisionMessage : Protocol.NotifyPlayerCollision = new Protocol.NotifyPlayerCollision({gotchiId : player.playerSchema.gotchiID})
                 let serializedMessage : Protocol.Message = Protocol.MessageSerializer.serialize(colisionMessage)
-                player.client().client.send(serializedMessage.name, serializedMessage.data)
+                this.mainScene.room.broadcast(serializedMessage.name, serializedMessage.data)
 
                 //Take health from client
                 let healthToTake : number = 12.5 * (player.body.speed - maxSpeedBeforeDamage) / Config.blockHeight
@@ -132,6 +132,7 @@ export default class PlayerCollisionManager extends Phaser.GameObjects.GameObjec
     }
 
     private world : World
+    private mainScene : MainScene
     private blockManager : BlockManager
     private playerColliders : Map<Player, Phaser.Physics.Arcade.Collider>
     private playerStaticBodies : Map<Player, Phaser.Physics.Arcade.StaticGroup>

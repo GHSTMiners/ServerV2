@@ -19,6 +19,7 @@ export default class PlayerManager extends Phaser.GameObjects.GameObject{
         clientManager.on(ClientManager.CLIENT_LEFT, this.handleClientLeave.bind(this))
     }
 
+
     private handleClientJoined(client : ClientWrapper, options : Protocol.AuthenticationInfo) {
         //Gotchi was now succesfull authenticated, we should also fetch its traits
         this.traitFetcher.getAavegotchi(options.gotchiId).then(gotchi => {
@@ -39,11 +40,13 @@ export default class PlayerManager extends Phaser.GameObjects.GameObject{
             this.playerMap.set(client, newPlayerSprite)
             this.room.presence.incr(`gotchi_${options.gotchiId}`)
             this.emit(PlayerManager.PLAYER_ADDED, newPlayerSprite)
+
         }).catch(error =>{
             console.log(error);
             client.client.leave(500, "Could not fetch traits for this Aavegotchi")
         })
     }
+
 
     private async handleClientLeave(client : ClientWrapper) {
         let player : Player | undefined = this.playerMap.get(client)
@@ -54,6 +57,10 @@ export default class PlayerManager extends Phaser.GameObjects.GameObject{
                 this.room.presence.del(`gotchi_${player.playerSchema.gotchiID}`)
                 player.destroy(true)
                 this.playerMap.delete(client)
+                // Notify clients that a player has left
+                let response : Protocol.NotifyPlayerLeftGame = new Protocol.NotifyPlayerLeftGame({gotchiId: player.playerSchema.gotchiID});
+                let serializedResponse : Protocol.Message = Protocol.MessageSerializer.serialize(response);
+                this.room.broadcast(serializedResponse.name, serializedResponse.data)
                 this.emit(PlayerManager.PLAYER_REMOVED, player)
             })
         }

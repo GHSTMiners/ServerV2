@@ -146,17 +146,17 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
                 if(self.player.cargoManager().processBlock(blockInterface)) {
                     //Notify the client that a block has been minted
                     if(blockInterface.spawnType == Chisel.SpawnType.Crypto) {
-                        let cryptoMinedMessage : Protocol.NotifyPlayerMinedCrypto = new Protocol.NotifyPlayerMinedCrypto()
+                        let cryptoMinedMessage : Protocol.NotifyPlayerMinedCrypto = new Protocol.NotifyPlayerMinedCrypto({gotchiId : self.player.playerSchema.gotchiID})
                         cryptoMinedMessage.cryptoId = blockInterface.spawnID
                         let serializedMessage : Protocol.Message = Protocol.MessageSerializer.serialize(cryptoMinedMessage)
-                        self.player.client().client.send(serializedMessage.name, serializedMessage.data)
+                        self.mainScene.room.broadcast(serializedMessage.name, serializedMessage.data)
                     }
                 }else if(blockInterface.spawnType == SpawnType.Rock) {
                     //If digging lava, take some health and notify client
                    if(self.rockMap.get(blockInterface.spawnID).lava) {
-                       let lavaMinedMessage : Protocol.NotifyPlayerMinedLava = new Protocol.NotifyPlayerMinedLava()
+                       let lavaMinedMessage : Protocol.NotifyPlayerMinedLava = new Protocol.NotifyPlayerMinedLava({gotchiId : self.player.playerSchema.gotchiID})
                        let serializedMessage : Protocol.Message = Protocol.MessageSerializer.serialize(lavaMinedMessage)
-                       self.player.client().client.send(serializedMessage.name, serializedMessage.data)
+                       self.mainScene.room.broadcast(serializedMessage.name, serializedMessage.data)
                        self.player.vitalsManager().get(DefaultVitals.HEALTH).takeAmount(25)
                    }
                 }

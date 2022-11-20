@@ -110,7 +110,7 @@ export default class PlayerStatisticsManager extends Phaser.GameObjects.GameObje
                 })
 
             } else return false;     
-        } else return false;
+        } else return true;
     }
 
     private player : Player

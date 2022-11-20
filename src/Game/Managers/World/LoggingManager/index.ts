@@ -14,9 +14,7 @@ export default class LoggingManager extends Phaser.GameObjects.GameObject {
         this.mainScene = scene
         this.uploaded = false
         this.file = tmp.fileSync({
-        })
-        console.log(this.file.name);
-        
+        })        
         this.database = new Database(this.file.name, (err) => {
             if(!err) this.databaseOpen = true
             else console.warn(err.message)

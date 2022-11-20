@@ -56,27 +56,26 @@ export default class PlayTimeManager extends Phaser.GameObjects.GameObject {
 
     public terminate() {
         this.emit(PlayTimeManager.GAME_ENDED)
-            this.m_mainScene.loggingManager.upload().finally(() =>{
-            // Submit all stats
-            let promises : Promise<boolean>[] = []
-            this.m_mainScene.playerManager.players().forEach(player => {
-                promises.push(player.statisticsManager().submit())
-            });
-            Promise.allSettled<boolean>(promises).finally(() => {
-                // Send notification to all clients
-                let response : Protocol.NotifyGameEnded = new Protocol.NotifyGameEnded();
-                let serializedResponse : Protocol.Message = Protocol.MessageSerializer.serialize(response);
-                this.m_mainScene.room.broadcast(serializedResponse.name, serializedResponse.data)
-                // Send chat message and disconnect clients
-                this.m_mainScene.chatManager.broadCastMessage("The game has ended")
-                this.m_mainScene.room.disconnect()
-            })
+        // Submit all stats
+        let promises : Promise<boolean>[] = []
+        this.m_mainScene.playerManager.players().forEach(player => {
+            promises.push(player.statisticsManager().submit())
+        });
+        promises.push(this.m_mainScene.loggingManager.upload().finally())
+        Promise.allSettled<boolean>(promises).finally(() => {
+            // Send notification to all clients
+            let response : Protocol.NotifyGameEnded = new Protocol.NotifyGameEnded();
+            let serializedResponse : Protocol.Message = Protocol.MessageSerializer.serialize(response);
+            this.m_mainScene.room.broadcast(serializedResponse.name, serializedResponse.data)
+            // Send chat message and disconnect clients
+            this.m_mainScene.chatManager.broadCastMessage("The game has ended")
+            this.m_mainScene.room.disconnect()
         })
     }
 
     private endGame() { 
         this.m_mainScene.chatManager.broadCastMessage("Game will end in 30 seconds")
-        setTimeout((() => this.terminate.bind(this)), 30 * 1000)
+        setTimeout(this.terminate.bind(this), 30 * 1000)
     }
 
     private handlePlayerJoined(player : Player) {

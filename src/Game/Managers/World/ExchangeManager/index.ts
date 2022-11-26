@@ -17,23 +17,33 @@ export default class ExchangeManager extends Phaser.GameObjects.GameObject {
 
     private async fetchExchangeRates() {
         this.mainScene.worldInfo.crypto.forEach(crypto => {
-            needle('get', `https://polygon.api.0x.org/swap/v1/price?sellToken=DAI&buyToken=${crypto.wallet_address}&buyAmount=1000`).then(response => {
-                if(response.statusCode == 200) {
+            this.mainScene.room.presence.exists(`crypto_${crypto.id}_price`).then(exists => {
+                if(exists) {
                     let exchangeEntry : Schema.ExchangeEntry = new Schema.ExchangeEntry();
                     exchangeEntry.crypto_id = crypto.id;
-                    exchangeEntry.usd_value = Number(response.body.price);
+                    exchangeEntry.usd_value = Number(this.mainScene.room.presence.get(`crypto_${crypto.id}_price`));
                     this.mainScene.worldSchema.exchange.set(crypto.id.toString(), exchangeEntry)
                 } else {
-                    let exchangeEntry : Schema.ExchangeEntry = new Schema.ExchangeEntry();
-                    exchangeEntry.crypto_id = crypto.id;
-                    exchangeEntry.usd_value = 1;
-                    this.mainScene.worldSchema.exchange.set(crypto.id.toString(), exchangeEntry)  
+                    needle('get', `https://polygon.api.0x.org/swap/v1/price?sellToken=DAI&buyToken=${crypto.wallet_address}&buyAmount=1000`).then(response => {
+                        if(response.statusCode == 200) {
+                            let exchangeEntry : Schema.ExchangeEntry = new Schema.ExchangeEntry();
+                            exchangeEntry.crypto_id = crypto.id;
+                            exchangeEntry.usd_value = Number(response.body.price);
+                            this.mainScene.worldSchema.exchange.set(crypto.id.toString(), exchangeEntry)
+                            this.mainScene.room.presence.setex(`crypto_${crypto.id}_price`, exchangeEntry.usd_value.toString(), 60 * 60)
+                        } else {
+                            let exchangeEntry : Schema.ExchangeEntry = new Schema.ExchangeEntry();
+                            exchangeEntry.crypto_id = crypto.id;
+                            exchangeEntry.usd_value = 1;
+                            this.mainScene.worldSchema.exchange.set(crypto.id.toString(), exchangeEntry)  
+                        }
+                    }).catch(error => {
+                        let exchangeEntry : Schema.ExchangeEntry = new Schema.ExchangeEntry();
+                        exchangeEntry.crypto_id = crypto.id;
+                        exchangeEntry.usd_value = 1;
+                        this.mainScene.worldSchema.exchange.set(crypto.id.toString(), exchangeEntry)
+                    })
                 }
-            }).catch(error => {
-                let exchangeEntry : Schema.ExchangeEntry = new Schema.ExchangeEntry();
-                exchangeEntry.crypto_id = crypto.id;
-                exchangeEntry.usd_value = 1;
-                this.mainScene.worldSchema.exchange.set(crypto.id.toString(), exchangeEntry)
             })
         }, this);
     }

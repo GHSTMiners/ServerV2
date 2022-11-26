@@ -24,9 +24,6 @@ export default class Authenticator {
             status = await this.validateWalletOwnership()
         }
         if(status != AuthenticatorState.AuthenticationFailed) {
-            status = await this.validateWalletOwnership()
-        }
-        if(status != AuthenticatorState.AuthenticationFailed) {
             status = await this.validateGotchiOwnership()
         }
         if(status != AuthenticatorState.AuthenticationFailed) {

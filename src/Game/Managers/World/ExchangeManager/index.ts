@@ -18,7 +18,7 @@ export default class ExchangeManager extends Phaser.GameObjects.GameObject {
     private async fetchExchangeRates() {
         this.mainScene.worldInfo.crypto.forEach(crypto => {
             needle('get', `https://polygon.api.0x.org/swap/v1/price?sellToken=DAI&buyToken=${crypto.wallet_address}&buyAmount=1000`).then(response => {
-                if(response.statusCode != 200) {
+                if(response.statusCode == 200) {
                     let exchangeEntry : Schema.ExchangeEntry = new Schema.ExchangeEntry();
                     exchangeEntry.crypto_id = crypto.id;
                     exchangeEntry.usd_value = Number(response.body.price);

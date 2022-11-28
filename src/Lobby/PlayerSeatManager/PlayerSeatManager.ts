@@ -19,9 +19,11 @@ export default class PlayerSeatManager {
 
     public handleClientLeave(client : ClientWrapper) {
         let playerSeat : PlayerSeat | undefined = this.playerSeats.get(client)
+        let playerSeatState : Schema.PlayerSeatState | undefined = this.playerSeatStates.get(client)
         if(playerSeat) {
             this.playerSeats.delete(client)
             this.playerSeatStates.delete(client)
+            this.schema.player_seats = this.schema.player_seats.filter( seat => seat !== playerSeatState )
         }
     }
 

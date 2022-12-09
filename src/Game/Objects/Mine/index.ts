@@ -2,24 +2,12 @@ import Config from "../../../Config";
 import * as Schema from "../../../Schemas";
 import Player from "../Player";
 
-export default class Explosive extends Phaser.GameObjects.Rectangle {
+export default class Mine extends Phaser.GameObjects.Rectangle {
     constructor(scene : Phaser.Scene, explosiveSchema : Schema.Explosive, owner : Player) {
         super(scene, explosiveSchema.x, explosiveSchema.y)
         this.owner = owner
         this.explosiveSchema = explosiveSchema
         this.lastBlockPosition = new Phaser.Geom.Point()
-        //Create a body for the rectangle
-        this.scene.physics.add.existing(this, false)
-        if(this.body instanceof Phaser.Physics.Arcade.Body) {
-            this.body.setCollideWorldBounds(true)
-            this.body.x = explosiveSchema.x;
-            this.body.y = explosiveSchema.y;
-            this.body.setDrag(0.0075, 0.0075)
-            this.body.setDamping(true)
-            this.body.setAccelerationY(Config.gravity)
-            this.body.setBounce(0.2, 0.2)
-            this.body.setSize(Config.blockWidth * 0.75, Config.blockHeight * 0.75)
-        }
         //Start the explosive timer
         this.scene.time.delayedCall(Config.explosiveTimeout, this.timerExpired.bind(this))
     }
@@ -36,7 +24,7 @@ export default class Explosive extends Phaser.GameObjects.Rectangle {
 
     private timerExpired() {
         //Notify all clients about the explosion
-        this.emit(Explosive.EXPLODED, this)
+        this.emit(Mine.EXPLODED, this)
         this.destroy()
     }
 
@@ -45,7 +33,7 @@ export default class Explosive extends Phaser.GameObjects.Rectangle {
         let newBlockPosition : Phaser.Geom.Point = this.blockPosition()
         if(!Phaser.Geom.Point.Equals(this.lastBlockPosition, newBlockPosition)) {
             this.lastBlockPosition = newBlockPosition
-            this.emit(Explosive.BLOCK_POSITION_CHANGED, this.lastBlockPosition, newBlockPosition)
+            this.emit(Mine.BLOCK_POSITION_CHANGED, this.lastBlockPosition, newBlockPosition)
         }
         if(this.body instanceof Phaser.Physics.Arcade.Body) {
             this.explosiveSchema.x = this.body.x

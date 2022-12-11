@@ -15,6 +15,7 @@ export default class PlayerManager extends Phaser.GameObjects.GameObject{
         this.room = room;
         this.playerMap = new Map<ClientWrapper, Player>()
         this.traitFetcher  = new AavegotchiInfoFetcher()
+        this.chatColors = chroma.scale(['#fafa6e','#2A4858']).mode('lch').colors(room.maxClients);
         clientManager.on(ClientManager.CLIENT_JOINED, this.handleClientJoined.bind(this))
         clientManager.on(ClientManager.CLIENT_LEFT, this.handleClientLeave.bind(this))
     }
@@ -26,12 +27,13 @@ export default class PlayerManager extends Phaser.GameObjects.GameObject{
             console.log(`Player joined with gotchi: ${options.gotchiId}`)
             //Create new objects
             let newPlayerSchema : Schema.Player = new Schema.Player()
+            const playerIndex = this.room.clients.indexOf(client.client)
             client.client.userData = newPlayerSchema
             newPlayerSchema.gotchiID = options.gotchiId
             newPlayerSchema.walletAddress = options.walletAddress
             newPlayerSchema.name = gotchi.name
             const playerColor = chroma.random();
-            newPlayerSchema.chatColor = playerColor.hex();
+            newPlayerSchema.chatColor = this.chatColors[playerIndex];
             let newPlayerSprite : Player = new Player(this.scene as MainScene, newPlayerSchema, new AavegotchiTraits(gotchi.modifiedNumericTraits), client)
             newPlayerSchema.playerSessionID = client.client.sessionId
             //Add new object to game server logic
@@ -82,6 +84,7 @@ export default class PlayerManager extends Phaser.GameObjects.GameObject{
     private traitFetcher : AavegotchiInfoFetcher
     private playerMap : Map<ClientWrapper, Player>
     private room : Room<Schema.World>
+    private chatColors : string[]
     static readonly PLAYER_ADDED: unique symbol = Symbol();
     static readonly PLAYER_REMOVED: unique symbol = Symbol();
 

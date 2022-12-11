@@ -1,13 +1,13 @@
 import {ChangeDirection} from "gotchiminer-multiplayer-protocol";
 import Config from "../../../../Config";
 import * as Schema from "../../../../Schemas"
-import ClientWrapper from "../../../../Helpers/ClientWrapper";
-import Player from "../../../Objects/Player";
+import * as Protocol from "gotchiminer-multiplayer-protocol"
 import PlayerExcavationManager from "../PlayerExcavationManager";
 import { DefaultSkills } from "../PlayerSkillManager";
 import { DefaultVitals, PlayerVital } from "../PlayerVitalsManager";
 import MainScene from "../../../Scenes/MainScene";
 import { DefaultStatistics } from "../PlayerStatisticsManager";
+import Player from "../../../Objects/Player";
 
 
 export default class PlayerMovementManager extends Phaser.GameObjects.GameObject {
@@ -130,13 +130,13 @@ export default class PlayerMovementManager extends Phaser.GameObjects.GameObject
     private processFuelUsage(duration : number) {
         switch(this.player.playerSchema.playerState.movementState) {
             case Schema.MovementState.Stationary:
-                this.player.vitalsManager().get(DefaultVitals.FUEL).takeAmount(this.player.skillManager().get(DefaultSkills.STATIONARY_FUEL_USAGE).value() / 1000 * duration)
+                this.player.vitalsManager().get(DefaultVitals.FUEL).takeAmount(this.player.skillManager().get(DefaultSkills.STATIONARY_FUEL_USAGE).value() / 1000 * duration, {reason : Protocol.DeathReason.OutOfFuel})
             break;
             case Schema.MovementState.Moving:
-                this.player.vitalsManager().get(DefaultVitals.FUEL).takeAmount(this.player.skillManager().get(DefaultSkills.MOVING_FUEL_USAGE).value() / 1000 * duration)
+                this.player.vitalsManager().get(DefaultVitals.FUEL).takeAmount(this.player.skillManager().get(DefaultSkills.MOVING_FUEL_USAGE).value() / 1000 * duration, {reason : Protocol.DeathReason.OutOfFuel})
             break;
             case Schema.MovementState.Flying:
-                this.player.vitalsManager().get(DefaultVitals.FUEL).takeAmount(this.player.skillManager().get(DefaultSkills.FLYING_FUEL_USAGE).value() / 1000 * duration)
+                this.player.vitalsManager().get(DefaultVitals.FUEL).takeAmount(this.player.skillManager().get(DefaultSkills.FLYING_FUEL_USAGE).value() / 1000 * duration, {reason : Protocol.DeathReason.OutOfFuel})
             break;
         }
     }

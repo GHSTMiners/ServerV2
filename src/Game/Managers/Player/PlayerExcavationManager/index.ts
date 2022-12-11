@@ -175,7 +175,7 @@ export default class PlayerExcavationManager extends Phaser.GameObjects.GameObje
             }, )        
 
             //Take some fuel
-            this.player.vitalsManager().get(DefaultVitals.FUEL).takeAmount(this.player.skillManager().get(DefaultSkills.DIGGING_FUEL_USAGE).value() * digMultiplier)
+            this.player.vitalsManager().get(DefaultVitals.FUEL).takeAmount(this.player.skillManager().get(DefaultSkills.DIGGING_FUEL_USAGE).value() * digMultiplier, {reason : Protocol.DeathReason.OutOfFuel})
             //Update drilling time
         }
     }

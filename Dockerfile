@@ -1,7 +1,8 @@
 # Stage 1: Build application
-FROM node:19.0.1-alpine as builder
+FROM node:19.2-alpine as builder
 RUN apk add --update --no-cache \
     make \
+    git \
     g++ \
     jpeg-dev \
     cairo-dev \
@@ -36,7 +37,7 @@ COPY --chown=node:node . .
 RUN yarn run build
 
 # Prepare runtime image
-FROM node:19.0.1-alpine
+FROM node:19.2-alpine
 
 RUN apk add --update --no-cache \
     jpeg \

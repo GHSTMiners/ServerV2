@@ -3,7 +3,7 @@ FROM node:19.2-alpine as builder
 RUN apk add --update --no-cache \
     make \
     git \
-    ssh \
+    openssh \
     g++ \
     jpeg-dev \
     cairo-dev \

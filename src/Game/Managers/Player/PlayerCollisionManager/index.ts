@@ -45,7 +45,7 @@ export default class PlayerCollisionManager extends Phaser.GameObjects.GameObjec
         //Create staticgroup and collider
         let newStaticGroup : Phaser.Physics.Arcade.StaticGroup = this.scene.physics.add.staticGroup()
         this.playerStaticBodies.set(player, newStaticGroup)
-        this.playerColliders.set(player, this.scene.physics.add.collider(player, newStaticGroup, this.handleCollision, this.processCollision))
+        this.playerColliders.set(player, this.scene.physics.add.collider(player, newStaticGroup, this.handleCollision.bind(this), this.processCollision))
         player.movementManager().on(PlayerMovementManager.BLOCK_POSITION_CHANGED, this.handlePlayerBlockPositionChanged.bind(this, player))
     }
 

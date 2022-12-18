@@ -41,10 +41,10 @@ export default class PlayerCargoManager extends Phaser.GameObjects.GameObject {
             let multiplier : number = this.player.skillManager().get(DefaultSkills.REFINERY_YIELD).value()
             this.player.walletManager().addAmount(cargoEntry.cryptoID, multiplier * cargoEntry.amount)
         })
-        this.empty()
+        this.clear()
     }
 
-    public empty() {
+    public clear() {
         this.playerSchema.cargo.forEach((elt,key) => {this.playerSchema.cargo.delete(key)});
         this.player.vitalsManager().get(DefaultVitals.CARGO).reset()
     }

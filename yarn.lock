@@ -4735,7 +4735,7 @@
     "mime" "^2.5.2"
     "path-to-regexp" "^0.1.7"
 
-"uWebSockets.js@github:uNetworking/uWebSockets.js#v20.14.0":
+"uWebSockets.js@github:uNetworking/uWebSockets.js#v20.15.0":
   "resolved" "git+ssh://git@github.com/uNetworking/uWebSockets.js.git#873b0a4e9f55e66e1b6cac4767c476fbb3913eba"
   "version" "20.14.0"
 

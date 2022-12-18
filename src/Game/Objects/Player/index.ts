@@ -18,6 +18,8 @@ import PlayerDiagnosticsManager from "../../Managers/Player/PlayerDiagnosticsMan
 import { HealthState } from "../../../Schemas";
 import PlayerRespawnManager from "../../Managers/Player/PlayerRespawnManager";
 import PlayerLoggingManager from "../../Managers/Player/PlayerLoggingManager";
+import DevCommandManager from "../../Managers/Player/DevCommandManager";
+import { APIInterface, WalletRoles } from "chisel-api-interface";
 
 export default class Player extends Phaser.GameObjects.Rectangle {
     
@@ -54,6 +56,13 @@ export default class Player extends Phaser.GameObjects.Rectangle {
         this.m_cargoManager = new PlayerCargoManager(scene, this)
         this.m_respawnManager = new PlayerRespawnManager(scene, this)
         this.m_loggingManager = new PlayerLoggingManager(scene, this)
+
+        // Enable dev commands for developer
+        let player_roles : WalletRoles = client.client.userData;
+        if(player_roles.developer) {
+            this.m_devCommandManager = new DevCommandManager(scene, this)
+        }
+
         //Bind statistics
         this.purchaseManager().on(PlayerPurchaseManager.PURCHASED_EXPLOSIVE, (explosive : Chisel.Explosive) => {
             this.statisticsManager().addAmount(DefaultStatistics.AMOUNT_SPENT_EXPLOSIVES, explosive.price)
@@ -145,7 +154,7 @@ export default class Player extends Phaser.GameObjects.Rectangle {
     private m_purchaseManager : PlayerPurchaseManager
     private m_statisticsManager : PlayerStatisticsManager
     private m_diagnosticsManager : PlayerDiagnosticsManager
-
+    private m_devCommandManager? : DevCommandManager
     public playerSchema : Schema.Player
 
 }

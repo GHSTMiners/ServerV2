@@ -1,6 +1,7 @@
 import http from 'http';
 import needle from "needle"
-import { Client, Presence } from "colyseus";
+import { Presence } from "colyseus";
+import * as APIInterface from "chisel-api-interface"
 import * as Protocol from "gotchiminer-multiplayer-protocol"
 import AavegotchiInfoFetcher from '../AavegotchiInfoFetcher';
 import Config from '../../Config';
@@ -16,7 +17,7 @@ export default class Authenticator {
 
     public async authenticate_full() : Promise<AuthenticatorState> {
         if(process.env.SKIP_VALIDATION) {
-            this.m_roles = {developer: true}
+            this.m_roles = {developer: true, admin: false, moderator: false}
             return AuthenticatorState.Authenticated
         }
         let status : AuthenticatorState = await this.validateAuthenticationInfo()
@@ -66,7 +67,8 @@ export default class Authenticator {
         }
     }
 
-    private async validateWalletOwnership() : Promise<AuthenticatorState>{
+    private async validateWalletOwnership() : Promise<AuthenticatorState> {
+        let api_interface : APIInterface.APIInterface = new APIInterface.APIInterface(Config.apiURL)
         const response = await needle('post', `${Config.apiURL}/token/validate`, { wallet_address: this.m_options.walletAddress, token: this.m_options.authenticationToken })
         //Check result status
         if (response.statusCode == 200) {
@@ -115,7 +117,7 @@ export default class Authenticator {
         }
     }
 
-    private m_roles : any
+    private m_roles : APIInterface.WalletRoles
     private m_request: http.IncomingMessage
     private m_options : Protocol.AuthenticationInfo
     private m_presence : Presence

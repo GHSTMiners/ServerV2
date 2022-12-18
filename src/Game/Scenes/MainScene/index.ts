@@ -10,7 +10,6 @@ import PlayerCollisionManager from "../../Managers/Player/PlayerCollisionManager
 import PlayerManager from "../../Managers/World/PlayerManager"
 import PlayTimeManager from "../../Managers/World/PlayTimeManager"
 import LoggingManager from "../../Managers/World/LoggingManager"
-import DevCommandManager from "../../Managers/World/DevCommandManager"
 
 export default class MainScene extends Phaser.Scene {
 
@@ -31,10 +30,6 @@ export default class MainScene extends Phaser.Scene {
         this.explosiveManager = new ExplosivesManager(this, this.blockManager, this.playerManager)
         this.playTimeManager = new PlayTimeManager(this, this.playerManager)
         this.loggingManager = new LoggingManager(this)
-        var env = process.env.NODE_ENV || 'development';
-        if(env == "development")  {
-            this.devCommandManager = new DevCommandManager(this, this.chatManager)
-        }
     }
 
     update(time: number, delta: number): void {
@@ -51,6 +46,5 @@ export default class MainScene extends Phaser.Scene {
     public exchangeManager : ExchangeManager
     public explosiveManager : ExplosivesManager
     public playerCollisionManager : PlayerCollisionManager
-    public devCommandManager? : DevCommandManager
     public readonly worldInfo : DetailedWorld
 }

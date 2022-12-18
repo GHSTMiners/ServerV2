@@ -16,33 +16,35 @@ export default class PlayerRespawnManager extends Phaser.GameObjects.GameObject 
     }
 
     public respawn(options? : any) {
-        //Notify client of player death
-        this.player.playerSchema.playerState.healthState = HealthState.Deceased;
-        let diedMessage : Protocol.NotifyPlayerDied = new Protocol.NotifyPlayerDied(options)
-        diedMessage.gotchiId = this.player.playerSchema.gotchiID
-        diedMessage.lostCargo = this.player.vitalsManager().get(DefaultVitals.CARGO).isDepleted()
-        let serializedMessage : Protocol.Message = Protocol.MessageSerializer.serialize(diedMessage)
-        this.mainScene.room.broadcast(serializedMessage.name, serializedMessage.data)
-        // Stop all movement and clear cargo
-        this.player.movementManager().suspend(Config.deathTimeout);
-        this.player.movementManager().m_excavationManager.cancelDrilling()
-        this.player.cargoManager().empty()
-        this.emit(PlayerRespawnManager.DIED)
-
-        setTimeout(() => {
-            // Notify client of respawn
-            let respawnedMessage : Protocol.NotifyPlayerRespawned = new Protocol.NotifyPlayerRespawned({gotchiId: this.player.playerSchema.gotchiID})
-            let serializedMessage : Protocol.Message = Protocol.MessageSerializer.serialize(respawnedMessage)
+        if(this.player.playerSchema.playerState.healthState != HealthState.Deceased) {
+            //Notify client of player death
+            this.player.playerSchema.playerState.healthState = HealthState.Deceased;
+            let diedMessage : Protocol.NotifyPlayerDied = new Protocol.NotifyPlayerDied(options)
+            diedMessage.gotchiId = this.player.playerSchema.gotchiID
+            diedMessage.lostCargo = this.player.vitalsManager().get(DefaultVitals.CARGO).isDepleted()
+            let serializedMessage : Protocol.Message = Protocol.MessageSerializer.serialize(diedMessage)
             this.mainScene.room.broadcast(serializedMessage.name, serializedMessage.data)
-            // Reset vitals and respawn
-            this.player.playerSchema.playerState.healthState = HealthState.Healthy;
-            this.player.vitalsManager().resetAll()
-            this.player.movementManager().moveToNearestPortal()
-            this.emit(PlayerRespawnManager.RESPAWNED)
-        }, Config.deathTimeout);
-    }
-    static readonly DIED: unique symbol = Symbol();
+            // Stop all movement and clear cargo
+            this.player.movementManager().suspend(Config.deathTimeout);
+            this.player.movementManager().m_excavationManager.cancelDrilling()
+            this.player.cargoManager().clear()
+            this.emit(PlayerRespawnManager.DIED)
 
+            setTimeout(() => {
+                // Notify client of respawn
+                let respawnedMessage : Protocol.NotifyPlayerRespawned = new Protocol.NotifyPlayerRespawned({gotchiId: this.player.playerSchema.gotchiID})
+                let serializedMessage : Protocol.Message = Protocol.MessageSerializer.serialize(respawnedMessage)
+                this.mainScene.room.broadcast(serializedMessage.name, serializedMessage.data)
+                // Reset vitals and respawn
+                this.player.playerSchema.playerState.healthState = HealthState.Healthy;
+                this.player.vitalsManager().resetAll()
+                this.player.movementManager().moveToNearestPortal()
+                this.emit(PlayerRespawnManager.RESPAWNED)
+            }, Config.deathTimeout);
+        }
+    }
+    
+    static readonly DIED: unique symbol = Symbol();
     static readonly RESPAWNED: unique symbol = Symbol();
     private mainScene : MainScene
     private player : Player

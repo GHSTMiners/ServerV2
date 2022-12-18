@@ -1,17 +1,21 @@
 import Player from "../../../Objects/Player"
 import MainScene from "../../../Scenes/MainScene"
-import ChatManager from "../ChatManager"
 import * as Chisel from "chisel-api-interface"
+import * as Protocol from 'gotchiminer-multiplayer-protocol'
 import { ExplosiveEntry } from "../../../../Schemas/Player/ExplosiveEntry";
 import { WalletEntry } from "../../../../Schemas/Player/WalletEntry";
 import { DefaultVitals } from "../../Player/PlayerVitalsManager";
 
 export default class DevCommandManager extends Phaser.GameObjects.GameObject {
-    constructor(scene : MainScene, chatManager : ChatManager) {
-        super(scene, "ClientManager")
+    constructor(scene : MainScene, player : Player) {
+        super(scene, "DevCommandManager")
+        this.player = player
         this.mainScene = scene
         this.commandMap = new Map<string, () => void>()
-        chatManager.on(ChatManager.RECEIVED_MESSAGE, (msg : string, player : Player) => this.processMessage(msg, player))
+        var self = this;
+        player.client().messageRouter.addRoute(Protocol.MessageToServer, message => {
+            self.processMessage(message);
+        })
         this.commandMap.set("help", this.printHelp.bind(this))
         this.commandMap.set("endgame", this.endGame.bind(this))
         this.commandMap.set("killme", this.killMe.bind(this))
@@ -20,16 +24,14 @@ export default class DevCommandManager extends Phaser.GameObjects.GameObject {
         this.commandMap.set("giveexplosives", this.giveExplosives.bind(this))
         this.commandMap.set("givemoney", this.giveMoney.bind(this))
         this.commandMap.set("giveallupgrades", this.giveAllUpgrades.bind(this))
-        
         this.commandMap.set("refuel", this.giveMoney.bind(this))
-
     }
 
-    private processMessage(message : string, player : Player) {
+    private processMessage(message : string) {
         if(message.startsWith('/')) {
             const command = this.commandMap.get(message.substring(1))
             if(command) {
-                command(player)
+                command(this.player)
             }
         }
     }
@@ -94,4 +96,5 @@ export default class DevCommandManager extends Phaser.GameObjects.GameObject {
 
     private commandMap : Map<string, (player : Player) => void> 
     private mainScene : MainScene
+    private player : Player
 }

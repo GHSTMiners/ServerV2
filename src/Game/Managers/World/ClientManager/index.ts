@@ -24,6 +24,7 @@ export default class ClientManager extends Phaser.GameObjects.GameObject{
         if(clientWrapper) {
             this.clientWrappers.delete(client)
             this.emit(ClientManager.CLIENT_LEFT, clientWrapper)
+            client.close();
         }
     }
 

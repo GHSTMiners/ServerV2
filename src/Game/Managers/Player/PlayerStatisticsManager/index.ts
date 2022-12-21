@@ -102,7 +102,9 @@ export default class PlayerStatisticsManager extends Phaser.GameObjects.GameObje
                         'X-API-KEY': Config.apiKey
                     }
                 }). then(response => {
-
+                    if(response.statusCode != 200) {
+                        console.log(response.body)
+                    }
                     return (response.statusCode == 200)
                 }).catch(error => {
                     console.log(error);

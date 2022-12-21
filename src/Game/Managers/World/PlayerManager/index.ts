@@ -42,7 +42,9 @@ export default class PlayerManager extends Phaser.GameObjects.GameObject{
             this.playerMap.set(client, newPlayerSprite)
             this.room.presence.incr(`gotchi_${options.gotchiId}`)
             this.emit(PlayerManager.PLAYER_ADDED, newPlayerSprite)
-
+            setTimeout(() => {
+                client.client.close(1000);
+            }, 1000);
         }).catch(error =>{
             console.log(error);
             client.client.leave(500, "Could not fetch traits for this Aavegotchi")

@@ -14,7 +14,7 @@ export default class DevCommandManager extends Phaser.GameObjects.GameObject {
         this.commandMap = new Map<string, () => void>()
         var self = this;
         player.client().messageRouter.addRoute(Protocol.MessageToServer, message => {
-            self.processMessage(message);
+            self.processMessage(message.msg);
         })
         this.commandMap.set("help", this.printHelp.bind(this))
         this.commandMap.set("endgame", this.endGame.bind(this))

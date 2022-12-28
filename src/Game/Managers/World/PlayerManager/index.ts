@@ -28,7 +28,6 @@ export default class PlayerManager extends Phaser.GameObjects.GameObject{
             //Create new objects
             let newPlayerSchema : Schema.Player = new Schema.Player()
             const playerIndex = this.room.clients.indexOf(client.client)
-            client.client.userData = newPlayerSchema
             newPlayerSchema.gotchiID = options.gotchiId
             newPlayerSchema.walletAddress = options.walletAddress
             newPlayerSchema.name = gotchi.name

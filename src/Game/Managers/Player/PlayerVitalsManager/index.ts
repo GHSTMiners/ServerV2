@@ -103,6 +103,8 @@ export class PlayerVital extends Phaser.GameObjects.GameObject {
 
                 scope.original = this.m_initial
                 this.m_initial = mathjs.evaluate(upgrade.formula_for_vital(this.vital.id), scope)
+
+                this.m_currentValue = this.m_maximum
                 
             } catch(exception) {
                 console.log(exception)

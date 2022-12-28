@@ -19,6 +19,7 @@ export default class ExplosivesManager extends Phaser.GameObjects.GameObject {
         super(scene, "ExplosivesManager")
         this.mainScene = scene as MainScene
         //Create maps
+        this.explosiveMap = new Map<number, Chisel.Explosive>()
         this.explosiveColliders = new Map<Explosive, Phaser.Physics.Arcade.Collider>()
         this.explosivePlayerColliders = new Map<Explosive, Phaser.Physics.Arcade.Collider>()
         this.explosiveStaticBodies = new Map<Explosive, Phaser.Physics.Arcade.StaticGroup>()
@@ -28,6 +29,10 @@ export default class ExplosivesManager extends Phaser.GameObjects.GameObject {
         this.fallThroughLayers = new Array<number>()
         this.mainScene.worldInfo.fall_through_layers.forEach(layer => {
             this.fallThroughLayers.push(layer.layer)
+        })
+        this.mainScene.worldInfo.explosives.forEach(explosive => {
+            if(!explosive.mine) this.explosiveMap.set(explosive.id, explosive) 
+            
         })
     }    
 
@@ -40,7 +45,7 @@ export default class ExplosivesManager extends Phaser.GameObjects.GameObject {
     private playerRequestedDropExplosive(player : Player, message : Protocol.RequestDropExplosive) {
         //First we need to check whether the player has that kind of explosive in its inventory
         let explosiveEntry : ExplosiveEntry = player.playerSchema.explosives.get(message.explosiveID.toString())
-        if (explosiveEntry) {
+        if (explosiveEntry && this.explosiveMap.has(message.explosiveID)) {
             if(explosiveEntry.amount > 0) {
                 // Take some from the inventory
                 explosiveEntry.amount -= 1
@@ -159,6 +164,7 @@ export default class ExplosivesManager extends Phaser.GameObjects.GameObject {
     private blockManager : BlockManager
     private playerManager : PlayerManager
     private fallThroughLayers : Array<number>
+    private explosiveMap : Map<number, Chisel.Explosive>
     private explosiveColliders : Map<Explosive, Phaser.Physics.Arcade.Collider>
     private explosivePlayerColliders : Map<Explosive, Phaser.Physics.Arcade.Collider>
     private explosiveStaticBodies : Map<Explosive, Phaser.Physics.Arcade.StaticGroup>

@@ -99,11 +99,19 @@ export class Classic extends Room<Schema.World, any> {
     }
   }
 
-  onLeave (client: Client, consented: boolean) {
-    if(this.game) {
-      this.game.mainScene.clientManager.handleClientLeave(client)
-    } else {
-      console.debug("MainScene was not created yet, not forwarding leave event to clientManager")
+  async onLeave (client: Client, consented: boolean) {
+    try {
+      if (consented) {
+          throw new Error("consented leave");
+      }
+      // allow disconnected client to reconnect into this room until 20 seconds
+      await this.allowReconnection(client, 60);
+    } catch (e) {
+      if(this.game) {
+        this.game.mainScene.clientManager.handleClientLeave(client)
+      } else {
+        console.debug("MainScene was not created yet, not forwarding leave event to clientManager")
+      }
     }
   }
 

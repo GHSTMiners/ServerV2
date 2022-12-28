@@ -55,6 +55,7 @@ jobs:
       - name: Update cluster
         uses: actions/github-script@v6
         with:
+          github-token: ${{ secrets.KUBERNETES_SECRET }}
           script: |
             await github.rest.actions.createWorkflowDispatch({
               owner: 'GHSTMiners',

@@ -45,7 +45,7 @@ if(env == "production") {
 
     //Register express route
     app.get("/", (req, res) => {
-      res.send("<H1>Nothingdsadsadsa to see here fren!</H1>");
+      res.send("<H1>Nothing to see here fren!</H1>");
     });
     
     //Configure game server

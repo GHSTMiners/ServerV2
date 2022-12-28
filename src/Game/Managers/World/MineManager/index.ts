@@ -13,19 +13,23 @@ import Config from "../../../../Config";
 import PlayerCollisionManager from "../../Player/PlayerCollisionManager";
 import PlayerVitalsManager, { DefaultVitals } from "../../Player/PlayerVitalsManager";
 import { BlockInterface, BlockSchemaWrapper } from "../../../../Helpers/BlockSchemaWrapper";
+import Mine from "../../../Objects/Mine";
 
 export default class MineManager extends Phaser.GameObjects.GameObject {
     constructor(scene : Phaser.Scene, blockManager : BlockManager, playerManager : PlayerManager) {
         super(scene, "MineManager")
         this.mainScene = scene as MainScene
         //Create maps
-        this.explosiveStaticBodies = new Map<Explosive, Phaser.Physics.Arcade.StaticGroup>()
+        this.explosiveMap = new Map<number, Chisel.Explosive>()
         this.blockManager = blockManager
         this.playerManager = playerManager
         this.playerManager.on(PlayerManager.PLAYER_ADDED, this.handlePlayerJoined.bind(this))
         this.fallThroughLayers = new Array<number>()
         this.mainScene.worldInfo.fall_through_layers.forEach(layer => {
             this.fallThroughLayers.push(layer.layer)
+        })
+        this.mainScene.worldInfo.explosives.forEach(explosive => {
+            if(explosive.mine) this.explosiveMap.set(explosive.id, explosive);
         })
     }    
 
@@ -38,7 +42,7 @@ export default class MineManager extends Phaser.GameObjects.GameObject {
     private playerRequestedDropExplosive(player : Player, message : Protocol.RequestDropExplosive) {
         //First we need to check whether the player has that kind of explosive in its inventory
         let explosiveEntry : ExplosiveEntry = player.playerSchema.explosives.get(message.explosiveID.toString())
-        if (explosiveEntry ) {
+        if (explosiveEntry && this.explosiveMap.has(message.explosiveID)) {
             if(explosiveEntry.amount > 0) {
                 // Take some from the inventory
                 explosiveEntry.amount -= 1
@@ -49,29 +53,17 @@ export default class MineManager extends Phaser.GameObjects.GameObject {
                 newExplosiveSchema.explosiveID = message.explosiveID
                 this.mainScene.worldSchema.explosives.push(newExplosiveSchema)
                 // Spawn the explosive
-                let newExplosive : Explosive = new Explosive(this.scene, newExplosiveSchema, player)
+                let newExplosive : Mine = new Mine(this.scene, newExplosiveSchema, this.explosiveMap.get(message.explosiveID), player)
                 this.mainScene.add.existing(newExplosive)
-                newExplosive.on(Explosive.EXPLODED, this.handleExplosiveDetonated.bind(this))
+                newExplosive.on(Mine.EXPLODED, this.handleExplosiveDetonated.bind(this))
                 //Create staticgroup and collider
                 let newStaticGroup : Phaser.Physics.Arcade.StaticGroup = this.scene.physics.add.staticGroup()
-                this.explosiveStaticBodies.set(newExplosive, newStaticGroup)
             }
         }
     }
 
-    private processCollision(player : Phaser.Types.Physics.Arcade.GameObjectWithBody, block : Phaser.Types.Physics.Arcade.GameObjectWithBody) : boolean {
-        //Check if player should collide with collision object
-        if(block instanceof Block) {
-            switch (block.blockSchema.read().spawnType) {
-                case SpawnType.None:
-                case SpawnType.FallThrough:
-                    return false
-            }
-        }
-        return true
-    }
 
-    private handleExplosiveDetonated(explosive : Explosive) {
+    private handleExplosiveDetonated(explosive : Mine) {
         //Notify all client of detonation
         let explosionNotification : Protocol.NotifyBombExploded = new Protocol.NotifyBombExploded()
         explosionNotification.bombId = explosive.explosiveSchema.explosiveID
@@ -113,15 +105,12 @@ export default class MineManager extends Phaser.GameObjects.GameObject {
                 block.write(blockInterface)
             }
         })
-        //Remove static bodies
-        this.explosiveStaticBodies.get(explosive).destroy()
-        this.explosiveStaticBodies.delete(explosive)
     }
 
 
     private mainScene : MainScene
     private blockManager : BlockManager
     private playerManager : PlayerManager
+    private explosiveMap : Map<number, Chisel.Explosive>
     private fallThroughLayers : Array<number>
-    private explosiveStaticBodies : Map<Explosive, Phaser.Physics.Arcade.StaticGroup>
 }

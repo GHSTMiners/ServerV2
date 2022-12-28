@@ -5,6 +5,7 @@ import BlockManager from "../../Managers/World/BlockManager"
 import ChatManager from "../../Managers/World/ChatManager"
 import ClientManager from "../../Managers/World/ClientManager"
 import ExchangeManager from "../../Managers/World/ExchangeManager"
+import MineManager from "../../Managers/World/MineManager"
 import ExplosivesManager from "../../Managers/World/ExplosivesManager"
 import PlayerCollisionManager from "../../Managers/Player/PlayerCollisionManager"
 import PlayerManager from "../../Managers/World/PlayerManager"
@@ -30,6 +31,7 @@ export default class MainScene extends Phaser.Scene {
         this.explosiveManager = new ExplosivesManager(this, this.blockManager, this.playerManager)
         this.playTimeManager = new PlayTimeManager(this, this.playerManager)
         this.loggingManager = new LoggingManager(this)
+        this.mineManager = new MineManager(this, this.blockManager, this.playerManager)
     }
 
     update(time: number, delta: number): void {
@@ -37,6 +39,7 @@ export default class MainScene extends Phaser.Scene {
 
     public room : Room<World>
     public worldSchema : World
+    public mineManager : MineManager
     public chatManager : ChatManager
     public blockManager : BlockManager
     public playerManager : PlayerManager

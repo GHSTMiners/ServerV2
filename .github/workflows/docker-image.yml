@@ -59,6 +59,6 @@ jobs:
             await github.rest.actions.createWorkflowDispatch({
               owner: 'GHSTMiners',
               repo:  'Kubernetes',
-              workflow_id: 'workflows/update-cluster.yml',
+              workflow_id: '.github/workflows/update-cluster.yml',
               ref: 'main'
             });

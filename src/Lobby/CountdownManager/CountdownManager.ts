@@ -27,7 +27,7 @@ export default class CountdownManager {
 
         // If all player are ready, just start the game
         var env = process.env.NODE_ENV || 'production';
-        if(env == "development") {
+        if(1) {
             if(this.timeRemaining > 15 && this.lobbyManager.seatManager().readyCount() == this.lobbyManager.seatManager().seats().length) {
                 this.timeRemaining = 1
             }

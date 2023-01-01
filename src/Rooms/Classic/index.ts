@@ -39,7 +39,7 @@ export class Classic extends Room<Schema.World, any> {
     this.state.id = options.worldID;
     this.state.serverRegionId = parseInt(process.env.REGION_ID)
     this.roomId = await this.generateRoomId(options.worldID);
-
+    this.playerCount = options.playerCount
     this.development_mode = options.development_mode
     if(options.password) {
       this.setPrivate(true)
@@ -57,8 +57,9 @@ export class Classic extends Room<Schema.World, any> {
         //Register message handler 
         this.onMessage("*", (client: Client, type: string | number, message: string) => this.game.mainScene.clientManager.handleMessage(client, type as string, message))
         //Start running the engine loop
-        self.setPatchRate(0)
+        self.setPatchRate(null)
         self.game.mainScene.events.on(Phaser.Scenes.Events.POST_UPDATE, self.broadcastPatch.bind(this))
+        self.game.mainScene.clientManager.expectedPlayerCount = this.playerCount
     })
   })
   }
@@ -105,7 +106,7 @@ export class Classic extends Room<Schema.World, any> {
           throw new Error("consented leave");
       }
       // allow disconnected client to reconnect into this room until 20 seconds
-      await this.allowReconnection(client, 60);
+      await this.allowReconnection(client, 15);
     } catch (e) {
       if(this.game) {
         this.game.mainScene.clientManager.handleClientLeave(client)
@@ -122,5 +123,6 @@ export class Classic extends Room<Schema.World, any> {
   }
   private game : Game
   private password : string
+  private playerCount : number
   private development_mode : boolean
 }

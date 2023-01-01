@@ -35,6 +35,10 @@ export default class ClientManager extends Phaser.GameObjects.GameObject{
         }
     }
 
+    public clientCount() : number {
+        return this.clientWrappers.size
+    }
+
     public handleMessage(client: Client, type: string, message: string) {
         let clientWrapper : ClientWrapper | undefined = this.clientWrappers.get(client)
         if(clientWrapper) { 
@@ -45,4 +49,5 @@ export default class ClientManager extends Phaser.GameObjects.GameObject{
     static readonly CLIENT_JOINED: unique symbol = Symbol();
     static readonly CLIENT_LEFT: unique symbol = Symbol();
     private clientWrappers : Map<Client, ClientWrapper>
+    public expectedPlayerCount : number
 }

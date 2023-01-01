@@ -1,9 +1,7 @@
 import * as Protocol from "gotchiminer-multiplayer-protocol"
 import PlayerManager from "../PlayerManager";
 import Player from "../../../Objects/Player";
-import ChatManager from "../ChatManager";
 import Config from "../../../../Config";
-import e from "express";
 import MainScene from "../../../Scenes/MainScene";
 
 export default class PlayTimeManager extends Phaser.GameObjects.GameObject {
@@ -17,20 +15,14 @@ export default class PlayTimeManager extends Phaser.GameObjects.GameObject {
         playerManager.on(PlayerManager.PLAYER_REMOVED, this.handlePlayerLeave.bind(this)) 
 
         //Start game commence timer
-        var env = process.env.NODE_ENV || 'production';
-        if(env == "development") {
-            this.startGame()
-            this.m_mainScene.room.state.gameStartUTC = (new Date(Date.now())).getUTCDate()
-        } else {
-            this.m_mainScene.room.state.gameStartUTC = (new Date(Date.now() + 30 * 1000)).getUTCDate()
-            scene.chatManager.broadCastMessage("Game will start in 30 seconds")
-            setTimeout(this.startGame.bind(this), 1000 * 30)
-        }
+        scene.chatManager.broadCastMessage("Game will start in 30 seconds")
+        setTimeout(this.startGame.bind(this), 1000 * 300)
     }
 
     private startGame() {
         // Send notification to all clients
         let response : Protocol.NotifyGameStarted = new Protocol.NotifyGameStarted();
+        response.timestamp = Date.now();
         let serializedResponse : Protocol.Message = Protocol.MessageSerializer.serialize(response);
         this.m_mainScene.room.broadcast(serializedResponse.name, serializedResponse.data)
         // Send chat message and update game state
@@ -46,6 +38,13 @@ export default class PlayTimeManager extends Phaser.GameObjects.GameObject {
         setTimeout(this.endGame.bind(this), gameDurationMs - 30 * 1000)
         if((gameDurationMs - 5 * 60 * 1000) > 0) {
             setTimeout(this.handleGameEndsInGiveMinutes.bind(this), gameDurationMs - 5 * 60 * 1000)
+        }
+    }
+
+    private handlePlayerRequestStartGame(player : Player) {
+        this.m_playerStartTimes.set(player, new Date(Date.now()))
+        if(this.m_playerStartTimes.size >= this.m_mainScene.clientManager.expectedPlayerCount) {
+            this.startGame();
         }
     }
 
@@ -79,7 +78,10 @@ export default class PlayTimeManager extends Phaser.GameObjects.GameObject {
     }
 
     private handlePlayerJoined(player : Player) {
-        this.m_playerStartTimes.set(player, new Date(Date.now()))
+        var self = this;
+        player.client().messageRouter.addRoute(Protocol.RequestStartGame, () => {
+            self.handlePlayerRequestStartGame(player);
+        })
     }
 
     private handlePlayerLeave(player : Player) {

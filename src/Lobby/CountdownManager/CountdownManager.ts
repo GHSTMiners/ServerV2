@@ -108,7 +108,8 @@ export default class CountdownManager {
         });
         // Create a new room
         const matchRoom = await matchMaker.createRoom(`${this.chosenMap}_Classic`, {
-            password : password
+            password : password,
+            playerCount: this.lobbyManager.seatManager().seats().length
         });
         // Sync with schema
         this.lobby.state.game_id = matchRoom.roomId

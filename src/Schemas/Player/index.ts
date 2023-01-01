@@ -28,5 +28,4 @@ export class Player extends Schema {
     @filter(function(this: Player, client: Client, value: Player['explosives']) { return this.playerSessionID == client.sessionId})
     @type ({ map: ExplosiveEntry}) explosives = new MapSchema<ExplosiveEntry>();
     @type ({ map: StatisticEntry}) statistics = new MapSchema<StatisticEntry>();
-
 }

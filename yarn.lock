@@ -497,9 +497,9 @@
     "@types/node" "*"
 
 "@types/express-serve-static-core@^4.17.31":
-  version "4.17.31"
-  resolved "https://registry.yarnpkg.com/@types/express-serve-static-core/-/express-serve-static-core-4.17.31.tgz#a1139efeab4e7323834bb0226e62ac019f474b2f"
-  integrity sha512-DxMhY+NAsTwMMFHBTtJFNp5qiHKJ7TeqOo23zVEM9alT1Ml27Q3xcTH0xwxn7Q0BbMcVEJOs/7aQtUWupUQN3Q==
+  version "4.17.32"
+  resolved "https://registry.yarnpkg.com/@types/express-serve-static-core/-/express-serve-static-core-4.17.32.tgz#93dda387f5516af616d8d3f05f2c4c79d81e1b82"
+  integrity sha512-aI5h/VOkxOF2Z1saPy0Zsxs5avets/iaiAJYznQFm5By/pamU31xWKL//epiF4OfUA2qTOc9PV6tCUjhO8wlZA==
   dependencies:
     "@types/node" "*"
     "@types/qs" "*"
@@ -1186,9 +1186,9 @@ chalk@^4.1.0:
     supports-color "^7.1.0"
 
 chisel-api-interface@^1.24.0:
-  version "1.43.0"
-  resolved "https://registry.yarnpkg.com/chisel-api-interface/-/chisel-api-interface-1.43.0.tgz#b6b8503e7d531546416a8c930bb5a29d3208c56b"
-  integrity sha512-sNrJLX+FP5FPNfXj5/Aha8Nxuf8ACwtkY4+Q2hrm522SRDkuRZ8TlIlYJleTnVfIqDbt4lzaJl/8LjqOnaRiBw==
+  version "1.44.0"
+  resolved "https://registry.yarnpkg.com/chisel-api-interface/-/chisel-api-interface-1.44.0.tgz#914a9b534fc4cd621c575abc96c85e95335dfd61"
+  integrity sha512-+WxnkLZFhpF9WYKTxTvUXeK0j29KIZ+NiqneacLenLvX6b2l8ddRdv6VpH2k9Qf36GOQIoperSsrhzYEGO3wng==
   dependencies:
     needle "^3.2.0"
 
@@ -2329,11 +2329,11 @@ got@^11.8.5:
     responselike "^2.0.0"
 
 gotchiminer-multiplayer-protocol@^1.14.0:
-  version "1.16.0"
-  resolved "https://registry.yarnpkg.com/gotchiminer-multiplayer-protocol/-/gotchiminer-multiplayer-protocol-1.16.0.tgz#f66e8fb7120ac69e365e751d0cf12e85f8d590c1"
-  integrity sha512-FjvmLY2bpiGGKTOiYodbH2470OsHJcRaRolIO5rZf3RTT8UfKAp+Ur1H5ocEluCHQL5EfepgCWRlgMB5FWQQOA==
+  version "1.17.0"
+  resolved "https://registry.yarnpkg.com/gotchiminer-multiplayer-protocol/-/gotchiminer-multiplayer-protocol-1.17.0.tgz#d8971bbe4e1197233b7c20435df7a4253a3d6c15"
+  integrity sha512-bDQaZfvKguD0k+z5AVHYh6HQ04ZwQRk/SZsBx8Yj+DMuJWYVbfvoH93s7Jt7HImD9Pd6bStWUJ21gXhBsYWTyg==
   dependencies:
-    protobufjs "^7.1.1"
+    protobufjs "^7.1.2"
 
 graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.2.6:
   version "4.2.10"
@@ -2837,9 +2837,9 @@ kareem@2.3.2:
   integrity sha512-STHz9P7X2L4Kwn72fA4rGyqyXdmrMSdxqHx9IXon/FXluXieaFA6KJ2upcHAHxQPQ0LeM/OjLrhFxifHewOALQ==
 
 keccak@^3.0.0:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/keccak/-/keccak-3.0.2.tgz#4c2c6e8c54e04f2670ee49fa734eb9da152206e0"
-  integrity sha512-PyKKjkH53wDMLGrvmRGSNWgmSxZOUqbnXwKL9tmgbFYA1iAYqW21kfR7mZXV0MlESiefxQQE9X9fTa3X+2MPDQ==
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/keccak/-/keccak-3.0.3.tgz#4bc35ad917be1ef54ff246f904c2bbbf9ac61276"
+  integrity sha512-JZrLIAJWuZxKbCilMpNz5Vj7Vtb4scDG3dMXLOsbzBmQGyjwE61BbW7bJkfKKCShXiQZt3T6sBgALRtmd+nZaQ==
   dependencies:
     node-addon-api "^2.0.0"
     node-gyp-build "^4.2.0"
@@ -3676,7 +3676,7 @@ promise-retry@^2.0.1:
     err-code "^2.0.2"
     retry "^0.12.0"
 
-protobufjs@^7.1.1:
+protobufjs@^7.1.2:
   version "7.1.2"
   resolved "https://registry.yarnpkg.com/protobufjs/-/protobufjs-7.1.2.tgz#a0cf6aeaf82f5625bffcf5a38b7cd2a7de05890c"
   integrity sha512-4ZPTPkXCdel3+L81yw3dG6+Kq3umdWKh7Dc7GW/CpNk4SX3hK58iPCWeCyhVTDrbkNeKrYNZ7EojM5WDaEWTLQ==

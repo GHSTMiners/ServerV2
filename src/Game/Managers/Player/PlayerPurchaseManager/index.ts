@@ -68,19 +68,26 @@ export default class PlayerPurchaseManager extends Phaser.GameObjects.GameObject
         if (explosive) {
             //Take money, and add explosives to inventory
             let totalAmount : number = explosive.price * message.quantity
-            if(this.player.walletManager().hasAmount(explosive.crypto_id, totalAmount)) {
-                //Take money
-                this.player.walletManager().takeAmount(explosive.crypto_id, totalAmount)
+            let limitReached : boolean = false
+            let explosiveEntry : ExplosiveEntry | undefined = this.player.playerSchema.explosives.get(message.id.toString())
+            // Check if player has reached the spending limit 
+            if(explosiveEntry && explosive.purchase_limit > 0) {
+                limitReached = (explosiveEntry.amountPurchased + message.quantity) > explosive.purchase_limit
+            }
+            if(this.player.walletManager().hasAmount(explosive.crypto_id, totalAmount) && !limitReached) {
                 //Add explosive to inventory
-                let explosiveEntry : ExplosiveEntry | undefined = this.player.playerSchema.explosives.get(message.id.toString())
                 if(explosiveEntry) {
                     explosiveEntry.amount += message.quantity
+                    explosiveEntry.amountPurchased += message.quantity
                 } else {
                     explosiveEntry = new ExplosiveEntry()
                     explosiveEntry.amount = message.quantity
                     explosiveEntry.explosiveID = message.id
+                    explosiveEntry.amountPurchased = message.quantity
                     this.player.playerSchema.explosives.set(message.id.toString(), explosiveEntry)
                 }
+                //Take money
+                this.player.walletManager().takeAmount(explosive.crypto_id, totalAmount)
                 //Notify player that transaction succeeded
                 let transactionMessage : Protocol.NotifyPlayerTransaction = new Protocol.NotifyPlayerTransaction({gotchiId : this.player.playerSchema.gotchiID})
                 transactionMessage.accepted = true

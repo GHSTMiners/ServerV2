@@ -10,8 +10,7 @@ import * as Chisel from "chisel-api-interface";
 import { ExplosionCoordinate, SpawnType } from "chisel-api-interface";
 import Block from "../../../Objects/Block";
 import Config from "../../../../Config";
-import PlayerCollisionManager from "../../Player/PlayerCollisionManager";
-import PlayerVitalsManager, { DefaultVitals } from "../../Player/PlayerVitalsManager";
+import { DefaultVitals } from "../../Player/PlayerVitalsManager";
 import { BlockInterface, BlockSchemaWrapper } from "../../../../Helpers/BlockSchemaWrapper";
 
 export default class ExplosivesManager extends Phaser.GameObjects.GameObject {
@@ -32,7 +31,6 @@ export default class ExplosivesManager extends Phaser.GameObjects.GameObject {
         })
         this.mainScene.worldInfo.explosives.forEach(explosive => {
             if(!explosive.mine) this.explosiveMap.set(explosive.id, explosive) 
-            
         })
     }    
 
@@ -46,15 +44,18 @@ export default class ExplosivesManager extends Phaser.GameObjects.GameObject {
         //First we need to check whether the player has that kind of explosive in its inventory
         let explosiveEntry : ExplosiveEntry = player.playerSchema.explosives.get(message.explosiveID.toString())
         if (explosiveEntry && this.explosiveMap.has(message.explosiveID)) {
-            if(explosiveEntry.amount > 0) {
-                // Take some from the inventory
-                explosiveEntry.amount -= 1
+            let chiselExplosive : Chisel.Explosive = this.explosiveMap.get(message.explosiveID)
+            if(explosiveEntry.amount > 0 && explosiveEntry.nextTimeAvailable < Date.now() && explosiveEntry.amountSpawned < chiselExplosive.spawn_limit) {
                 // Add explosive to schema
                 let newExplosiveSchema : Schema.Explosive = new Schema.Explosive()
                 newExplosiveSchema.x = player.x
                 newExplosiveSchema.y = player.y
                 newExplosiveSchema.explosiveID = message.explosiveID
                 this.mainScene.worldSchema.explosives.push(newExplosiveSchema)
+                // Take some from the inventory, and set next time available
+                explosiveEntry.amount -= 1
+                explosiveEntry.amountSpawned += 1
+                explosiveEntry.nextTimeAvailable = Date.now() + (this.explosiveMap.get(message.explosiveID).lifespan * 1000)
                 // Spawn the explosive
                 let newExplosive : Explosive = new Explosive(this.scene, newExplosiveSchema, player)
                 this.mainScene.add.existing(newExplosive)
@@ -114,6 +115,9 @@ export default class ExplosivesManager extends Phaser.GameObjects.GameObject {
         explosionNotification.y = explosive.blockPosition().y
         let serializedMessage : Protocol.Message = Protocol.MessageSerializer.serialize(explosionNotification)
         this.mainScene.room.broadcast(serializedMessage.name, serializedMessage.data)
+        // Decrement amount spawned
+        let explosiveEntry : ExplosiveEntry = explosive.owner.playerSchema.explosives.get(explosive.explosiveSchema.explosiveID.toString())
+        explosiveEntry.amountSpawned += -1
         //Remove explosive schema
         let explosiveIndex : number = this.mainScene.worldSchema.explosives.indexOf(explosive.explosiveSchema)
         this.mainScene.worldSchema.explosives.deleteAt(explosiveIndex)

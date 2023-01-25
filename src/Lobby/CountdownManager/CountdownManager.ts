@@ -28,7 +28,7 @@ export default class CountdownManager {
         // If all player are ready, just start the game
         var env = process.env.NODE_ENV || 'production';
         if(1) {
-            if(this.timeRemaining > 15 && this.lobbyManager.seatManager().readyCount() == this.lobbyManager.seatManager().seats().length) {
+            if(this.timeRemaining > 15 && this.lobbyManager.seatManager().readyCount() >= this.lobbyManager.seatManager().seats().length) {
                 this.timeRemaining = 1
             }
         } else {
@@ -41,7 +41,7 @@ export default class CountdownManager {
         this.lobby.state.countdown = this.timeRemaining
 
         // Lock loby at 15 seconds remaining
-        if(!this.lobby.locked && this.timeRemaining <= 15) {
+        if(this.lobby.state.state != LobbyState.Locked && (this.timeRemaining < 15)) {
             this.lobby.lock()
             this.pickMap()
             this.lobby.state.state = LobbyState.Locked

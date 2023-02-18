@@ -3,6 +3,7 @@ import * as Protocol from "gotchiminer-multiplayer-protocol"
 import * as Chisel from "chisel-api-interface"
 import MainScene from "../../../Scenes/MainScene";
 import { ExplosiveEntry } from "../../../../Schemas/Player/ExplosiveEntry";
+import { ConsumableEntry } from "../../../../Schemas/Player/ConsumableEntry";
 import { MessageSerializer } from "gotchiminer-multiplayer-protocol";
 import { UpgradeTier } from "../PlayerUpgradeManager";
 
@@ -15,6 +16,8 @@ export default class PlayerPurchaseManager extends Phaser.GameObjects.GameObject
         this.player = player
         this.player.client().messageRouter.addRoute(Protocol.PurchaseUpgrade, this.handlePurchaseUpgrade.bind(this))
         this.player.client().messageRouter.addRoute(Protocol.PurchaseExplosive, this.handlePurchaseExplosive.bind(this))
+        this.player.client().messageRouter.addRoute(Protocol.PurchaseConsumable, this.handlePurchaseConsumable.bind(this))
+
     }
 
     private handlePurchaseUpgrade(message : Protocol.PurchaseUpgrade) {
@@ -108,8 +111,57 @@ export default class PlayerPurchaseManager extends Phaser.GameObjects.GameObject
             }
         }
     }
+
+    private handlePurchaseConsumable(message : Protocol.PurchaseConsumable) {
+        //Get explosive
+        let consumable : Chisel.Consumable | undefined = this.mainScene.worldInfo.consumables.find(consumable => consumable.id == message.id)
+        if (consumable) {
+            //Take money, and add consumables to inventory
+            let totalAmount : number = consumable.price * message.quantity
+            let limitReached : boolean = false
+            let consumableEntry : ConsumableEntry | undefined = this.player.playerSchema.consumables.get(message.id.toString())
+            // Check if player has reached the spending limit 
+            if(consumableEntry && consumable.purchase_limit > 0) {
+                limitReached = (consumableEntry.amountPurchased + message.quantity) > consumable.purchase_limit
+            }
+            if(this.player.walletManager().hasAmount(consumable.crypto_id, totalAmount) && !limitReached) {
+                //Add consumable to inventory
+                if(consumableEntry) {
+                    consumableEntry.amount += message.quantity
+                    consumableEntry.amountPurchased += message.quantity
+                } else {
+                    consumableEntry = new ConsumableEntry()
+                    consumableEntry.amount = message.quantity
+                    consumableEntry.consumableID = message.id
+                    consumableEntry.amountPurchased = message.quantity
+                    this.player.playerSchema.consumables.set(message.id.toString(), consumableEntry)
+                }
+                //Take money
+                this.player.walletManager().takeAmount(consumable.crypto_id, totalAmount)
+                //Notify player that transaction succeeded
+                let transactionMessage : Protocol.NotifyPlayerTransaction = new Protocol.NotifyPlayerTransaction({gotchiId : this.player.playerSchema.gotchiID})
+                transactionMessage.accepted = true
+                transactionMessage.amount = totalAmount
+                transactionMessage.cryptoId = consumable.crypto_id
+                let serializedMessage : Protocol.Message = MessageSerializer.serialize(transactionMessage)
+                this.mainScene.room.broadcast(serializedMessage.name, serializedMessage.data)
+                //Emit event
+                this.emit(PlayerPurchaseManager.PURCHASED_CONSUMABLE, consumable);
+            } else {
+                //Notify player that transaction failed
+                let transactionMessage : Protocol.NotifyPlayerTransaction = new Protocol.NotifyPlayerTransaction({gotchiId : this.player.playerSchema.gotchiID})
+                transactionMessage.accepted = false
+                transactionMessage.amount = totalAmount
+                transactionMessage.cryptoId = consumable.crypto_id
+                let serializedMessage : Protocol.Message = MessageSerializer.serialize(transactionMessage)
+                this.mainScene.room.broadcast(serializedMessage.name, serializedMessage.data)
+            }
+        }
+    }
     
     static readonly PURCHASED_EXPLOSIVE: unique symbol = Symbol();
+    static readonly PURCHASED_CONSUMABLE: unique symbol = Symbol();
+
     private mainScene : MainScene
     private player : Player
 }

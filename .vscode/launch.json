@@ -1,0 +1,40 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+    
+      {
+        "name": "Debug",
+        "type": "pwa-node",
+        "request": "launch",
+        "runtimeExecutable": "node",
+        "runtimeArgs": ["--nolazy", "--inspect", "-r", "ts-node/register/transpile-only"],
+        "args": ["src/index.ts"],
+        "cwd": "${workspaceRoot}",
+        "internalConsoleOptions": "openOnSessionStart",
+        "resolveSourceMapLocations": [
+          "${workspaceFolder}/**",
+          "!**/node_modules/**"
+        ],
+        "skipFiles": ["<node_internals>/**", "node_modules/**"]
+      },
+      {
+        "name": "Debug Production",
+        "type": "pwa-node",
+        "request": "launch",
+        "runtimeExecutable": "node",
+        "runtimeArgs": ["--nolazy", "--inspect", "-r", "ts-node/register/transpile-only"],
+        "args": ["src/index.ts"],
+        "cwd": "${workspaceRoot}",
+        "internalConsoleOptions": "openOnSessionStart",
+        "resolveSourceMapLocations": [
+          "${workspaceFolder}/**",
+          "!**/node_modules/**"
+        ],
+        "env": {
+          "NODE_ENV": "production",
+          "REGION_ID": "1"
+        },
+        "skipFiles": ["<node_internals>/**", "node_modules/**"]
+      }
+    ]
+  }

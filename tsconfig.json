@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "outDir": "build",  
+    "target": "ES2021",
+    "module": "CommonJS",
+    "lib": ["ES2021"],
+    "moduleResolution": "node",
+    "strict": true,
+    "declaration": true,
+    "allowJs": true,
+    "removeComments": true,
+    "noImplicitAny": true,
+    "sourceMap": false,
+    "strictNullChecks": false,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,    
+    "resolveJsonModule": true
+  },
+  "include": [
+    "src"
+  ]
+}
